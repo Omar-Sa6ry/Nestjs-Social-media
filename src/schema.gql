@@ -2,6 +2,81 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: Int!
+  userName: String!
+  avatar: String!
+  phone: String!
+  email: String!
+  password: String!
+}
+
+type AuthResponse {
+  user: User!
+  token: String!
+}
+
 type Query {
   sayHello: String!
+  getUserById(id: Float!): User!
+  getUserByEmail(checkEmail: CheckEmail!): User!
+  deleteUser: String!
+}
+
+input CheckEmail {
+  email: String!
+}
+
+type Mutation {
+  register(createUserDto: CreateUserDto!, avatar: CreateImagDto!): AuthResponse!
+  login(loginDto: LoginDto!): AuthResponse!
+  forgotPassword(checkEmail: CheckEmail!): String!
+  resetPassword(resetPasswordDto: ResetPasswordDto!): String!
+  changePassword(changePasswordDto: ChangePasswordDto!): String!
+  adminLogin(loginDto: LoginDto!): AuthResponse!
+  managerLogin(loginDto: LoginDto!): AuthResponse!
+  companyLogin(loginDto: LoginDto!): AuthResponse!
+  logout: Boolean!
+  updateUser(updateUserDto: UpdateUserDto!): User!
+  UpdateUserRole(checkEmail: CheckEmail!, companyId: Float!): String!
+}
+
+input CreateUserDto {
+  userName: String!
+  email: String!
+  password: String!
+  phone: String!
+}
+
+input CreateImagDto {
+  name: String!
+  breed: String!
+  image: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input LoginDto {
+  email: String!
+  password: String!
+}
+
+input ResetPasswordDto {
+  token: String!
+  password: String!
+}
+
+input ChangePasswordDto {
+  password: String!
+  newPassword: String!
+}
+
+input UpdateUserDto {
+  firstName: String
+  lastName: String
+  avatar: CreateImagDto
+  email: String
+  phone: String
+  addressId: Float
 }
