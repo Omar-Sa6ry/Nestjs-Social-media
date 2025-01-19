@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { UserService } from '../users/users.service'
-import { GenerateToken } from './config/jwt.service'
+import { GenerateToken } from '../../common/config/jwt.service'
 import { User } from '../users/entity/user.entity'
 import { MoreThan, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'

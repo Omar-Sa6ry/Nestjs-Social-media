@@ -13,6 +13,15 @@ import { AuthModule } from './modules/auth/auth.module'
 import { UserModule } from './modules/users/users.module'
 import { UploadModule } from './modules/upload/upload.module'
 import { User } from './modules/users/entity/user.entity'
+import { Notification } from './entities/notification.entity'
+import { Friendship } from './entities/friendship.entity'
+import { Message } from './entities/message.entity'
+import { Post } from './entities/post.entity '
+import { Mention_Post } from './entities/mentionPost.entity '
+import { Comment } from './entities/comment.entity '
+import { Like_Comment } from './entities/likesComment.entity  '
+import { Like_Post } from './entities/likesPost.entity '
+import { Mention_Comment } from './entities/mentionComment.entity  '
 
 @Module({
   imports: [
@@ -50,7 +59,18 @@ import { User } from './modules/users/entity/user.entity'
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [User],
+        entities: [
+          User,
+          Notification,
+          Friendship,
+          Message,
+          Post,
+          Like_Post,
+          Mention_Post,
+          Comment,
+          Like_Comment,
+          Mention_Comment,
+        ],
         synchronize: true,
         logging: true,
       }),
