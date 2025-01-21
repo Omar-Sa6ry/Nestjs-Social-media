@@ -18,7 +18,6 @@ import { ResetPasswordDto } from './dtos/resetPassword.dto'
 // import { Cache } from 'cache-manager'
 import { LoginDto } from './dtos/login.dto'
 import { ComparePassword } from './utils/comparePassword'
-import { SendEmailService } from 'src/queue/services/sendemail.service'
 import { CheckEmail } from 'src/common/dtos/checkEmail.dto '
 import { Role } from 'src/common/constant/enum.constant'
 import { CreateImagDto } from '../upload/dtos/createImage.dto'
@@ -34,6 +33,7 @@ import {
   OldPasswordENewPassword,
   SamePassword,
 } from 'src/common/constant/messages.constant'
+import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 
 @Injectable()
 export class AuthService {

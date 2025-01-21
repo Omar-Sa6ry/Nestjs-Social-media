@@ -4,52 +4,43 @@ import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
-  Column,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Post } from './post.entity '
-import { Mention_Comment } from './mentionComment.entity  '
+import { Post } from '../../post/entity/post.entity '
 
 @Entity()
 @ObjectType()
-export class Comment {
+export class Mention_Post {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
 
-  @Column({ nullable: true })
-  @Field(() => String)
-  content: string
+  @Field(() => Int)
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  mentionFrom: number
 
   @Field(() => Int)
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  userId: number
+  mentionTo: number
 
   @Field(() => Int)
   @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
   postId: number
 
-  @OneToMany(() => Mention_Comment, mention_Comment => mention_Comment.commentId, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
-  mentionComment: Mention_Comment[]
-
   @AfterInsert()
   logInsert () {
-    console.log('Inserted Comment with id: ' + this.id)
+    console.log('Inserted Mention_Post with id: ' + this.id)
   }
 
   @AfterUpdate()
   logUpdate () {
-    console.log('Updated Comment with id: ' + this.id)
+    console.log('Updated Mention_Post with id: ' + this.id)
   }
 
   @AfterRemove()
   logRemove () {
-    console.log('Removed Comment with id: ' + this.id)
+    console.log('Removed Mention_Post with id: ' + this.id)
   }
 }

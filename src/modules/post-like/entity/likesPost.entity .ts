@@ -1,46 +1,43 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Post } from '../../post/entity/post.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
+  Column,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Post } from './post.entity '
 
 @Entity()
 @ObjectType()
-export class Mention_Post {
+export class Like_Post {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
 
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  mentionFrom: number
-
-  @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  mentionTo: number
-
-  @Field(() => Int)
   @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
   postId: number
 
+  @Field(() => Int)
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  userId: number
+
   @AfterInsert()
   logInsert () {
-    console.log('Inserted Mention_Post with id: ' + this.id)
+    console.log('Inserted Like_Post with id: ' + this.id)
   }
 
   @AfterUpdate()
   logUpdate () {
-    console.log('Updated Mention_Post with id: ' + this.id)
+    console.log('Updated Like_Post with id: ' + this.id)
   }
 
   @AfterRemove()
   logRemove () {
-    console.log('Removed Mention_Post with id: ' + this.id)
+    console.log('Removed Like_Post with id: ' + this.id)
   }
 }

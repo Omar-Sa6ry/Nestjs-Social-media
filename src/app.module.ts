@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common'
 import { AppService } from './app.service'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { redisStore } from 'cache-manager-redis-yet'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { join } from 'path'
 import { GraphQLModule } from '@nestjs/graphql'
@@ -13,15 +12,24 @@ import { AuthModule } from './modules/auth/auth.module'
 import { UserModule } from './modules/users/users.module'
 import { UploadModule } from './modules/upload/upload.module'
 import { User } from './modules/users/entity/user.entity'
-import { Notification } from './entities/notification.entity'
-import { Friendship } from './entities/friendship.entity'
-import { Message } from './entities/message.entity'
-import { Post } from './entities/post.entity '
-import { Mention_Post } from './entities/mentionPost.entity '
-import { Comment } from './entities/comment.entity '
-import { Like_Comment } from './entities/likesComment.entity  '
-import { Like_Post } from './entities/likesPost.entity '
-import { Mention_Comment } from './entities/mentionComment.entity  '
+import { Notification } from './modules/notification/entity/notification.entity'
+import { Friendship } from './modules/friendship/entity/friendship.entity'
+import { Message } from './modules/message/entity/message.entity'
+import { Post } from './modules/post/entity/post.entity '
+import { Mention_Post } from './modules/post-mention/entity/mentionPost.entity '
+import { Comment } from './modules/comment/entity/comment.entity '
+import { Like_Comment } from './modules/comment-like/entity/likesComment.entity  '
+import { Like_Post } from './modules/post-like/entity/likesPost.entity '
+import { Mention_Comment } from './modules/comment-mention/entity/mentionComment.entity  '
+import { NotificationModule } from './modules/notification/notification.module'
+import { PostModule } from './modules/post/post.module'
+import { CommentModule } from './modules/comment/comment.module'
+import { FriendshipModule } from './modules/friendship/friendship.module'
+import { CommentLikeModule } from './modules/comment-like/comment-like.module'
+import { PostLikeModule } from './modules/post-like/post-like.module'
+import { MessageModule } from './modules/message/message.module'
+import { CommentMentionModule } from './modules/comment-mention/comment-mention.module'
+import { PostMentionModule } from './modules/post-mention/post-mention.module'
 
 @Module({
   imports: [
@@ -96,6 +104,15 @@ import { Mention_Comment } from './entities/mentionComment.entity  '
     AuthModule,
     UserModule,
     UploadModule,
+    NotificationModule,
+    PostModule,
+    CommentModule,
+    FriendshipModule,
+    CommentLikeModule,
+    PostLikeModule,
+    MessageModule,
+    CommentMentionModule,
+    PostMentionModule,
   ],
 
   providers: [AppService, AppResolver],

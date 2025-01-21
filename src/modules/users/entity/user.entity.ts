@@ -1,13 +1,13 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Role } from 'src/common/constant/enum.constant'
-import { Comment } from 'src/entities/comment.entity '
-import { Friendship } from 'src/entities/friendship.entity'
-import { Like_Comment } from 'src/entities/likesComment.entity  '
-import { Like_Post } from 'src/entities/likesPost.entity '
-import { Mention_Post } from 'src/entities/mentionPost.entity '
-import { Message } from 'src/entities/message.entity'
-import { Notification } from 'src/entities/notification.entity'
-import { Post } from 'src/entities/post.entity '
+import { Comment } from 'src/modules/comment/entity/comment.entity '
+import { Friendship } from 'src/modules/friendship/entity/friendship.entity'
+import { Like_Comment } from 'src/modules/comment-like/entity/likesComment.entity  '
+import { Like_Post } from 'src/modules/post-like/entity/likesPost.entity '
+import { Mention_Post } from 'src/modules/post-mention/entity/mentionPost.entity '
+import { Message } from 'src/modules/message/entity/message.entity'
+import { Notification } from 'src/modules/notification/entity/notification.entity'
+import { Post } from 'src/modules/post/entity/post.entity '
 import {
   AfterInsert,
   AfterRemove,

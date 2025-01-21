@@ -6,9 +6,9 @@ import { AuthService } from './auth.service'
 import { GenerateToken } from '../../common/config/jwt.service'
 import { UserModule } from '../users/users.module'
 import { User } from '../users/entity/user.entity'
-import { QueueModule } from 'src/queue/queue.module'
-import { SendEmailService } from 'src/queue/services/sendemail.service'
 import { UploadModule } from '../upload/upload.module'
+import { QueueModule } from 'src/common/queue/queue.module'
+import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 
 @Module({
   imports: [

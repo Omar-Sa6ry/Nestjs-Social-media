@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { User } from 'src/modules/users/entity/user.entity'
-import { Comment } from './comment.entity '
+import { Comment } from '../../comment/entity/comment.entity '
 import {
   AfterInsert,
   AfterRemove,

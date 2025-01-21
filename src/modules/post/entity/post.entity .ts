@@ -1,9 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { Like_Comment } from './likesComment.entity  '
-import { Like_Post } from './likesPost.entity '
+import { Like_Comment } from '../../comment-like/entity/likesComment.entity  '
+import { Like_Post } from '../../post-like/entity/likesPost.entity '
 import { User } from 'src/modules/users/entity/user.entity'
-import { Mention_Post } from './mentionPost.entity '
-import { Comment } from './comment.entity '
+import { Mention_Post } from '../../post-mention/entity/mentionPost.entity '
+import { Comment } from '../../comment/entity/comment.entity '
 import {
   AfterInsert,
   AfterRemove,
