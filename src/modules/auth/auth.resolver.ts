@@ -9,7 +9,7 @@ import { ResetPasswordDto } from './dtos/resetPassword.dto'
 import { ChangePasswordDto } from './dtos/changePassword.dto'
 // import { CACHE_MANAGER } from '@nestjs/cache-manager'
 // import { Cache } from 'cache-manager'
-import { CreateImagDto } from '../upload/dtos/createImage.dto'
+import { CreateImagDto } from '../../common/dtos/createImage.dto'
 import { CheckEmail } from 'src/common/dtos/checkEmail.dto '
 import { RoleGuard } from 'src/common/guard/role.guard'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
@@ -21,8 +21,7 @@ import { NoToken } from 'src/common/constant/messages.constant'
 @Resolver(of => User)
 export class AuthResolver {
   constructor (
-    private authService: AuthService,
-    // @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private authService: AuthService, // @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Mutation(returns => AuthResponse)

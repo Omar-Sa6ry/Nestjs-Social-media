@@ -1,41 +1,30 @@
-import { CreateImagDto } from './dtos/createImage.dto'
-import { InjectRepository } from '@nestjs/typeorm'
-// import { Images } from '../product/entity/images.entity'
-import { Repository } from 'typeorm'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import * as path from 'path'
-import * as fs from 'fs'
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { InjectQueue } from '@nestjs/bullmq'
+import { Queue } from 'bullmq'
+import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 
 @Injectable()
 export class UploadService {
-  constructor (
-    // @InjectRepository(Images) private imageRepository: Repository<Images>,
-  ) {}
+  constructor (@InjectQueue('image') private readonly imageQueue: Queue) {}
 
   async uploadImage (
     createCatInput: CreateImagDto,
     dirUpload: string = 'avatars',
-  ): Promise<String> {
+  ): Promise<string> {
     try {
       const { createReadStream, filename } = await createCatInput.image
 
       const pathFile = Date.now() + filename
       const uploadDir = path.join(process.cwd(), `./src/images/${dirUpload}`)
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true })
-      }
 
-      await new Promise((resolve, reject) => {
-        createReadStream()
-          .pipe(fs.createWriteStream(path.join(uploadDir, pathFile)))
-          .on('finish', resolve)
-          .on('error', err => {
-            reject(
-              new HttpException('Could not save image', HttpStatus.BAD_REQUEST),
-            )
-          })
+      await this.imageQueue.add('upload-image', {
+        createReadStream: createReadStream.toString(), // Streams cannot be serialized directly; handle this in the worker
+        filename: pathFile,
+        uploadDir,
       })
 
+      console.log(`Job added to queue for uploading image: ${pathFile}`)
       return pathFile
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)

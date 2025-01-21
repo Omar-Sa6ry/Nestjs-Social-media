@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -14,14 +13,11 @@ import { HashPassword } from './utils/hashPassword'
 import { randomBytes } from 'crypto'
 import { ChangePasswordDto } from './dtos/changePassword.dto'
 import { ResetPasswordDto } from './dtos/resetPassword.dto'
-// import { CACHE_MANAGER } from '@nestjs/cache-manager'
-// import { Cache } from 'cache-manager'
 import { LoginDto } from './dtos/login.dto'
 import { ComparePassword } from './utils/comparePassword'
 import { CheckEmail } from 'src/common/dtos/checkEmail.dto '
 import { Role } from 'src/common/constant/enum.constant'
-import { CreateImagDto } from '../upload/dtos/createImage.dto'
-import { UploadService } from '../upload/upload.service'
+import { CreateImagDto } from '../../common/dtos/createImage.dto'
 import { CreateUserDto } from './dtos/createUserData.dto'
 import {
   EmailIsWrong,
@@ -34,13 +30,14 @@ import {
   SamePassword,
 } from 'src/common/constant/messages.constant'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
+import { UploadService } from 'src/common/queue/services/upload.service'
 
 @Injectable()
 export class AuthService {
   constructor (
     private userService: UserService,
-    private uploadService: UploadService,
     private generateToken: GenerateToken,
+    private readonly uploadService: UploadService,
     private readonly sendEmailService: SendEmailService,
     // @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(User) private userRepository: Repository<User>,

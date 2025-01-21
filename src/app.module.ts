@@ -10,7 +10,6 @@ import { ApolloDriver } from '@nestjs/apollo'
 import { AppResolver } from './app.resolver'
 import { AuthModule } from './modules/auth/auth.module'
 import { UserModule } from './modules/users/users.module'
-import { UploadModule } from './modules/upload/upload.module'
 import { User } from './modules/users/entity/user.entity'
 import { Notification } from './modules/notification/entity/notification.entity'
 import { Friendship } from './modules/friendship/entity/friendship.entity'
@@ -103,7 +102,6 @@ import { PostMentionModule } from './modules/post-mention/post-mention.module'
     ]),
     AuthModule,
     UserModule,
-    UploadModule,
     NotificationModule,
     PostModule,
     CommentModule,

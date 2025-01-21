@@ -1,17 +1,16 @@
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './entity/user.entity'
+import { UploadService } from 'src/common/queue/services/upload.service'
 import { UpdateUserDto } from './dtos/updateUser.dto'
 import { EmailIsWrong, EmailUsed } from 'src/common/constant/messages.constant'
 import { Role } from 'src/common/constant/enum.constant'
 import { unlinkSync } from 'fs'
 // import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import * as fs from 'fs'
-import { UploadService } from '../upload/upload.service'
 // import { Cache } from 'cache-manager'
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
@@ -19,7 +18,7 @@ import {
 @Injectable()
 export class UserService {
   constructor (
-    private uploadService: UploadService,
+    private readonly uploadService: UploadService,
     // @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}

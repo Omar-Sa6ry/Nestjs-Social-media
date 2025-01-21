@@ -3,12 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from './entity/user.entity'
 import { UserService } from './users.service'
 import { UserResolver } from './users.resolver'
-import { UploadModule } from '../upload/upload.module'
+import { QueueModule } from 'src/common/queue/queue.module'
+import { UploadService } from 'src/common/queue/services/upload.service'
 // import { CacheModule } from '@nestjs/cache-manager'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), UploadModule,],
-  providers: [UserService, UserResolver],
+  imports: [TypeOrmModule.forFeature([User]), QueueModule],
+  providers: [UserService, UserResolver, UploadService],
   exports: [UserService],
 })
 export class UserModule {}

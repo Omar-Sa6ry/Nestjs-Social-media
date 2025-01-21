@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsNumber,
 } from 'class-validator'
-import { CreateImagDto } from 'src/modules/upload/dtos/createImage.dto'
+import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 
 @InputType()
 export class UpdateUserDto {

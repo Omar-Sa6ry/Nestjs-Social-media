@@ -6,15 +6,14 @@ import { AuthService } from './auth.service'
 import { GenerateToken } from '../../common/config/jwt.service'
 import { UserModule } from '../users/users.module'
 import { User } from '../users/entity/user.entity'
-import { UploadModule } from '../upload/upload.module'
 import { QueueModule } from 'src/common/queue/queue.module'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
+import { UploadService } from 'src/common/queue/services/upload.service'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     UserModule,
-    UploadModule,
     QueueModule,
     JwtModule.register({
       global: true,
@@ -26,6 +25,7 @@ import { SendEmailService } from 'src/common/queue/services/sendemail.service'
     AuthResolver,
     AuthService,
     SendEmailService,
+    UploadService,
     GenerateToken,
     JwtService,
   ],
