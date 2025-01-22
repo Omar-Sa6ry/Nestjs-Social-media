@@ -9,5 +9,9 @@ export class LoginDto {
   email: string
 
   @Field()
+  @IsLowercase()
+  userName: string
+
+  @Field()
   password: string
 }

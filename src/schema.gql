@@ -59,6 +59,7 @@ scalar Upload
 
 input LoginDto {
   email: String!
+  userName: String!
   password: String!
 }
 
@@ -73,8 +74,7 @@ input ChangePasswordDto {
 }
 
 input UpdateUserDto {
-  firstName: String
-  lastName: String
+  userName: String
   avatar: CreateImagDto
   email: String
   phone: String

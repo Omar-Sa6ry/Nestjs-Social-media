@@ -6,6 +6,11 @@ import {
   IsLowercase,
   Length,
 } from 'class-validator'
+import {
+  EmailUsed,
+  PasswordValidator,
+  UserNameUsed,
+} from 'src/common/constant/messages.constant'
 
 @InputType()
 export class CreateUserDto {
@@ -20,7 +25,7 @@ export class CreateUserDto {
 
   @Field()
   @IsString()
-  @Length(8, 16)
+  @Length(8, 16, { message: PasswordValidator })
   password: string
 
   @Field()

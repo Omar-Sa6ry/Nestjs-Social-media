@@ -9,6 +9,7 @@ import { User } from '../users/entity/user.entity'
 import { QueueModule } from 'src/common/queue/queue.module'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 import { UploadService } from 'src/common/queue/services/upload.service'
+import { IsUniqueConstraint } from 'src/common/decerator/isUnique.decerator'
 
 @Module({
   imports: [

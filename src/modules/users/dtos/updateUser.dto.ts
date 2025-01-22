@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
+import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 import {
   IsEmail,
   IsString,
@@ -6,19 +7,13 @@ import {
   IsOptional,
   IsNumber,
 } from 'class-validator'
-import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 
 @InputType()
 export class UpdateUserDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  firstName?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  lastName?: string
+  userName?: string
 
   @Field({ nullable: true })
   @IsOptional()

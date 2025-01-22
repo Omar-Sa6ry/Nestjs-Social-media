@@ -110,9 +110,9 @@ import { PostMentionModule } from './modules/post-mention/post-mention.module'
     PostLikeModule,
     MessageModule,
     CommentMentionModule,
-    PostMentionModule,
+    PostMentionModule, TypeOrmModule.forFeature([User]),
   ],
 
-  providers: [AppService, AppResolver],
+  providers: [AppService, AppResolver,]
 })
 export class AppModule {}

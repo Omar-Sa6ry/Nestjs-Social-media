@@ -17,7 +17,6 @@ import { LoginDto } from './dtos/login.dto'
 import { ComparePassword } from './utils/comparePassword'
 import { CheckEmail } from 'src/common/dtos/checkEmail.dto '
 import { Role } from 'src/common/constant/enum.constant'
-import { CreateImagDto } from '../../common/dtos/createImage.dto'
 import { CreateUserDto } from './dtos/createUserData.dto'
 import {
   EmailIsWrong,
@@ -30,6 +29,7 @@ import {
   SamePassword,
 } from 'src/common/constant/messages.constant'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
+import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 import { UploadService } from 'src/common/queue/services/upload.service'
 
 @Injectable()
@@ -37,8 +37,8 @@ export class AuthService {
   constructor (
     private userService: UserService,
     private generateToken: GenerateToken,
-    private readonly uploadService: UploadService,
     private readonly sendEmailService: SendEmailService,
+    private readonly uploadService: UploadService,
     // @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
