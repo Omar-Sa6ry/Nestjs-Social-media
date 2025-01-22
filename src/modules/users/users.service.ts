@@ -1,26 +1,28 @@
+import {
+  EmailIsWrong,
+  EmailUsed,
+  UserNameUsed,
+} from 'src/common/constant/messages.constant'
+import * as fs from 'fs'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './entity/user.entity'
 import { UpdateUserDto } from './dtos/updateUser.dto'
-import { EmailIsWrong, EmailUsed } from 'src/common/constant/messages.constant'
 import { Role } from 'src/common/constant/enum.constant'
 import { unlinkSync } from 'fs'
-// import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import * as fs from 'fs'
-// import { Cache } from 'cache-manager'
+import { UploadService } from 'src/common/queue/services/upload.service'
+import { RedisService } from 'src/common/redis/redis.service'
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { UploadService } from 'src/common/queue/services/upload.service'
 
 @Injectable()
 export class UserService {
   constructor (
     private uploadService: UploadService,
-    // @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly redisService: RedisService,
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
@@ -31,8 +33,18 @@ export class UserService {
     }
 
     const userCacheKey = `user:${user.id}`
-    // await this.cacheManager.set(userCacheKey, user, 3600)
+    await this.redisService.set(userCacheKey, user)
 
+    return user
+  }
+
+  async findByUserName (userName: string) {
+    const user = await this.userRepository.findOne({ where: { userName } })
+    if (!user) {
+      return new NotFoundException(`User with ${userName} not found`)
+    }
+    const userCacheKey = `user:${user.userName}`
+    await this.redisService.set(userCacheKey, user)
     return user
   }
 
@@ -42,8 +54,7 @@ export class UserService {
       return new NotFoundException(`User with ${email} not found`)
     }
     const userCacheKey = `user:${user.email}`
-    // await this.cacheManager.set(userCacheKey, user, 3600)
-
+    await this.redisService.set(userCacheKey, user)
     return user
   }
 
@@ -65,6 +76,15 @@ export class UserService {
         }
       }
 
+      if (updateUserDto.userName && updateUserDto.userName !== user.userName) {
+        const existingUser = await this.userRepository.findOne({
+          where: { userName: updateUserDto.userName },
+        })
+        if (existingUser) {
+          throw new BadRequestException(UserNameUsed)
+        }
+      }
+
       Object.assign(user, updateUserDto)
 
       if (updateUserDto.avatar) {
@@ -82,7 +102,7 @@ export class UserService {
       }
 
       const userCacheKey = `user:${user.email}`
-      // await this.cacheManager.set(userCacheKey, user)
+      await this.redisService.set(userCacheKey, user)
 
       await this.userRepository.save(user)
       await query.commitTransaction()

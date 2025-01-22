@@ -6,11 +6,7 @@ export class LoginDto {
   @Field()
   @IsEmail()
   @IsLowercase()
-  email: string
-
-  @Field()
-  @IsLowercase()
-  userName: string
+  email?: string
 
   @Field()
   password: string

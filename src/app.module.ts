@@ -29,26 +29,11 @@ import { PostLikeModule } from './modules/post-like/post-like.module'
 import { MessageModule } from './modules/message/message.module'
 import { CommentMentionModule } from './modules/comment-mention/comment-mention.module'
 import { PostMentionModule } from './modules/post-mention/post-mention.module'
+import { RedisModule } from './common/redis/redis.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({ cache: true, isGlobal: true }),
-    // CacheModule.registerAsync({
-    //   isGlobal: true,
-    //   useFactory: async () => {
-    //     const store = await redisStore({
-    //       socket: {
-    //         host: 'localhost',
-    //         port: 6379,
-    //       },
-    //     })
-
-    //     return {
-    //       store: store as unknown as CacheStore,
-    //       ttl: 3 * 60000,
-    //     }
-    //   },
-    // }),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -100,6 +85,7 @@ import { PostMentionModule } from './modules/post-mention/post-mention.module'
         limit: 100,
       },
     ]),
+    RedisModule,
     AuthModule,
     UserModule,
     NotificationModule,
@@ -110,9 +96,9 @@ import { PostMentionModule } from './modules/post-mention/post-mention.module'
     PostLikeModule,
     MessageModule,
     CommentMentionModule,
-    PostMentionModule, TypeOrmModule.forFeature([User]),
+    PostMentionModule,
   ],
 
-  providers: [AppService, AppResolver,]
+  providers: [AppService, AppResolver],
 })
 export class AppModule {}

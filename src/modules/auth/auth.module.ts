@@ -10,11 +10,13 @@ import { QueueModule } from 'src/common/queue/queue.module'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 import { UploadService } from 'src/common/queue/services/upload.service'
 import { IsUniqueConstraint } from 'src/common/decerator/isUnique.decerator'
+import { RedisModule } from 'src/common/redis/redis.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     UserModule,
+    RedisModule,
     QueueModule,
     JwtModule.register({
       global: true,

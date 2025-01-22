@@ -19,7 +19,8 @@ type AuthResponse {
 type Query {
   sayHello: String!
   getUserById(id: Float!): User!
-  getUserByEmail(checkEmail: CheckEmail!): User!
+  getUserByEmail(email: CheckEmail!): User!
+  getUserByUserName(userName: String!): User!
   deleteUser: String!
 }
 
@@ -59,7 +60,6 @@ scalar Upload
 
 input LoginDto {
   email: String!
-  userName: String!
   password: String!
 }
 
@@ -78,5 +78,4 @@ input UpdateUserDto {
   avatar: CreateImagDto
   email: String
   phone: String
-  addressId: Float
 }

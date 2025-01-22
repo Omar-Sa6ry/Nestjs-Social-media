@@ -10,7 +10,9 @@ export const EndOfEmail = 'Email must end of @gmail.com'
 export const SamePassword = 'You entered the same password'
 export const EmailIsWrong = 'Email is Wrong Check from your email'
 export const PasswordValidator = 'Password should be from 6 to 16 digits'
+export const EnterEmailOrUserName = 'You must enter your email or user name'
 export const OldPasswordENewPassword = 'old password is equal to new password'
+
 // image
 export const NotSaveImage = 'Could not save image'
 export const AvatarNotFound = 'Avatar Not Found'

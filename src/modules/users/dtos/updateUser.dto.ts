@@ -28,9 +28,4 @@ export class UpdateUserDto {
   @IsOptional()
   @IsPhoneNumber()
   phone?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsNumber()
-  addressId?: number
 }

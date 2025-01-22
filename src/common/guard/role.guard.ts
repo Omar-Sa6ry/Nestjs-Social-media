@@ -4,6 +4,8 @@ import { GqlExecutionContext } from '@nestjs/graphql'
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
+import { NoToken } from '../constant/messages.constant'
+import { Role } from '../constant/enum.constant'
 import {
   CanActivate,
   ExecutionContext,
@@ -11,9 +13,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { NoToken } from '../constant/messages.constant'
-import { Role } from '../constant/enum.constant'
-
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor (
