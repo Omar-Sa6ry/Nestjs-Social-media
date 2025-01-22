@@ -43,9 +43,12 @@ export class RelationService {
       where: { userId, friendId: checkFriend.id },
     })
     if (!relation) {
-      const createRelation = await this.RelationRepository.create(
-        createRelationDto,
-      )
+      const createRelation = await this.RelationRepository.create({
+        userId,
+        status,
+        friendId: checkFriend.id,
+      })
+      console.log(createRelation)
       await this.RelationRepository.save(createRelation)
       const relationCacheKey = `relation:${userId}`
       await this.redisService.set(relationCacheKey, userId)
@@ -63,6 +66,7 @@ export class RelationService {
       where: { userId, friendId },
     })
     if (!relation) {
+      console.log('jiji')
       return Status.UNKNOWN
     }
     const relationCacheKey = `relation:${userId}`
@@ -71,7 +75,7 @@ export class RelationService {
     return relation.status
   }
 
-  async getAll (userId: number, status: string) {
+  async getAll (userId: number, status: string): Promise<Relation[]> {
     const relations = await this.RelationRepository.find({
       where: { userId, status },
     })
@@ -82,9 +86,14 @@ export class RelationService {
     return relations
   }
 
-  async status (id: number, status: string): Promise<boolean> {
+  async status (userName: string, status: string): Promise<boolean> {
+    const user = await this.usersService.findByUserName(userName)
+    if (!(user instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
     const relation = await this.RelationRepository.findOne({
-      where: { friendId: id },
+      where: { friendId: user.id },
     })
     if (!relation) {
       throw new BadRequestException(ThereisNoRelation)

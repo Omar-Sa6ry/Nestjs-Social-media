@@ -8,7 +8,6 @@ import { Auth } from 'src/common/decerator/auth.decerator'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 
-@Auth(Role.USER)
 @Resolver(() => Relation)
 export class RelationResolver {
   constructor (
@@ -17,6 +16,7 @@ export class RelationResolver {
   ) {}
 
   @Mutation(() => String)
+  @Auth(Role.USER)
   async createRelation (
     @Args('createRelationDto') createRelationDto: CreateRelationDto,
     @CurrentUser() user: CurrentUserDto,
@@ -25,6 +25,7 @@ export class RelationResolver {
   }
 
   @Query(() => String)
+  @Auth(Role.USER)
   async getRelationStatus (
     @CurrentUser() user: CurrentUserDto,
     @Args('friendId', { type: () => Int }) friendId: number,
@@ -39,6 +40,7 @@ export class RelationResolver {
   }
 
   @Query(() => [Relation])
+  @Auth(Role.USER)
   async getAllRelations (
     @CurrentUser() user: CurrentUserDto,
     @Args('status') status: string,
@@ -47,14 +49,16 @@ export class RelationResolver {
   }
 
   @Mutation(() => Boolean)
+  @Auth(Role.USER)
   async updateRelationStatus (
-    @Args('id', { type: () => Int }) id: number,
+    @Args('userName') userName: string,
     @Args('status') status: string,
   ): Promise<boolean> {
-    return await this.relationService.status(id, status)
+    return await this.relationService.status(userName, status)
   }
 
   @Mutation(() => String)
+  @Auth(Role.USER)
   async unfriend (@Args('userName') userName: string): Promise<string> {
     return await this.relationService.unfriend(userName)
   }

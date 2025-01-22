@@ -51,7 +51,7 @@ type Mutation {
   updateUser(updateUserDto: UpdateUserDto!): User!
   UpdateUserRole(checkEmail: CheckEmail!, companyId: Float!): String!
   createRelation(createRelationDto: CreateRelationDto!): String!
-  updateRelationStatus(id: Int!, status: String!): Boolean!
+  updateRelationStatus(userName: String!, status: String!): Boolean!
   unfriend(userName: String!): String!
 }
 

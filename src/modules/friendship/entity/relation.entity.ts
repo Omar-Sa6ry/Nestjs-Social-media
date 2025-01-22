@@ -7,6 +7,7 @@ import {
   AfterUpdate,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
@@ -22,13 +23,21 @@ export class Relation {
   @Field(() => String)
   status: string
 
+  @Column({ type: 'int' })
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   userId: number
 
+  @ManyToOne(() => User, user => user.relations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User
+
+  @Column({ type: 'int' })
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   friendId: number
+
+  @ManyToOne(() => User, user => user.friendRelations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'friendId' })
+  friend: User
 
   @AfterInsert()
   logInsert () {

@@ -68,17 +68,11 @@ export class User {
   })
   notifications: Notification[]
 
-  @OneToMany(() => Relation, Relation => Relation.userId, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
-  Relation: Relation[]
+  @OneToMany(() => Relation, relation => relation.userId)
+  relations: Relation[]
 
-  @OneToMany(() => Relation, Relation => Relation.friendId, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
-  friends: Relation[]
+  @OneToMany(() => Relation, relation => relation.friendId)
+  friendRelations: Relation[]
 
   @OneToMany(() => Message, message => message.recieverId, {
     onDelete: 'SET NULL',
