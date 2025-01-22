@@ -6,11 +6,5 @@ export class CurrentUserDto {
   email: string
 
   @Field()
-  addressId: number
-
-  @Field()
   id: number
-
-  @Field()
-  companyId: number
 }

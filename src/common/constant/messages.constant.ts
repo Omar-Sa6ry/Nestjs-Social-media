@@ -12,6 +12,13 @@ export const EmailIsWrong = 'Email is Wrong Check from your email'
 export const PasswordValidator = 'Password should be from 6 to 16 digits'
 export const EnterEmailOrUserName = 'You must enter your email or user name'
 export const OldPasswordENewPassword = 'old password is equal to new password'
+export const UserNameIsWrong = 'User Name Not Found'
+
+// Relation
+export const NoFriendName = 'There is no user with this userName'
+export const ThereisNoRelation = 'There is no relation'
+export const StatusOfRelation =
+  'Status must be one of block, rejected, unknown, or friend'
 
 // image
 export const NotSaveImage = 'Could not save image'

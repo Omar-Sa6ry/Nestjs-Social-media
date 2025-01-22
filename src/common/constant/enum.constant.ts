@@ -5,4 +5,10 @@ export enum Role {
   MANAGER = 'manager',
 }
 
-
+export enum Status {
+  BLOCK = 'block',
+  REJECTED = 'rejected',
+  PENDING = 'pending',
+  UNKNOWN = 'unknown',
+  FRIEND = 'friend',
+}

@@ -12,7 +12,6 @@ import { AuthModule } from './modules/auth/auth.module'
 import { UserModule } from './modules/users/users.module'
 import { User } from './modules/users/entity/user.entity'
 import { Notification } from './modules/notification/entity/notification.entity'
-import { Friendship } from './modules/friendship/entity/friendship.entity'
 import { Message } from './modules/message/entity/message.entity'
 import { Post } from './modules/post/entity/post.entity '
 import { Mention_Post } from './modules/post-mention/entity/mentionPost.entity '
@@ -23,13 +22,14 @@ import { Mention_Comment } from './modules/comment-mention/entity/mentionComment
 import { NotificationModule } from './modules/notification/notification.module'
 import { PostModule } from './modules/post/post.module'
 import { CommentModule } from './modules/comment/comment.module'
-import { FriendshipModule } from './modules/friendship/friendship.module'
 import { CommentLikeModule } from './modules/comment-like/comment-like.module'
 import { PostLikeModule } from './modules/post-like/post-like.module'
 import { MessageModule } from './modules/message/message.module'
 import { CommentMentionModule } from './modules/comment-mention/comment-mention.module'
 import { PostMentionModule } from './modules/post-mention/post-mention.module'
 import { RedisModule } from './common/redis/redis.module'
+import { RelationModule } from './modules/friendship/relation.module'
+import { Relation } from './modules/friendship/entity/relation.entity'
 
 @Module({
   imports: [
@@ -54,7 +54,7 @@ import { RedisModule } from './common/redis/redis.module'
         entities: [
           User,
           Notification,
-          Friendship,
+          Relation,
           Message,
           Post,
           Like_Post,
@@ -91,7 +91,7 @@ import { RedisModule } from './common/redis/redis.module'
     NotificationModule,
     PostModule,
     CommentModule,
-    FriendshipModule,
+    RelationModule,
     CommentLikeModule,
     PostLikeModule,
     MessageModule,

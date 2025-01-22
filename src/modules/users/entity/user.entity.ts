@@ -1,11 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Role } from 'src/common/constant/enum.constant'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
-import { Friendship } from 'src/modules/friendship/entity/friendship.entity'
 import { Like_Comment } from 'src/modules/comment-like/entity/likesComment.entity  '
 import { Like_Post } from 'src/modules/post-like/entity/likesPost.entity '
 import { Mention_Post } from 'src/modules/post-mention/entity/mentionPost.entity '
 import { Message } from 'src/modules/message/entity/message.entity'
+import { Relation } from 'src/modules/friendship/entity/relation.entity'
 import { Notification } from 'src/modules/notification/entity/notification.entity'
 import { Post } from 'src/modules/post/entity/post.entity '
 import {
@@ -32,6 +32,10 @@ export class User {
   @Column({ nullable: true })
   @Field(() => String)
   avatar: string
+
+  @Column({ nullable: true })
+  @Field(() => String)
+  bio: string
 
   @Column({ unique: true })
   @Field(() => String)
@@ -64,11 +68,17 @@ export class User {
   })
   notifications: Notification[]
 
-  @OneToMany(() => Friendship, Friendship => Friendship.userId, {
+  @OneToMany(() => Relation, Relation => Relation.userId, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  friendship: Friendship[]
+  Relation: Relation[]
+
+  @OneToMany(() => Relation, Relation => Relation.friendId, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  friends: Relation[]
 
   @OneToMany(() => Message, message => message.recieverId, {
     onDelete: 'SET NULL',

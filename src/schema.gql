@@ -2,10 +2,18 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Relation {
+  id: Int!
+  status: String!
+  userId: Int!
+  friendId: Int!
+}
+
 type User {
   id: Int!
   userName: String!
   avatar: String!
+  bio: String!
   phone: String!
   email: String!
   password: String!
@@ -22,6 +30,8 @@ type Query {
   getUserByEmail(email: CheckEmail!): User!
   getUserByUserName(userName: String!): User!
   deleteUser: String!
+  getRelationStatus(friendId: Int!): String!
+  getAllRelations(status: String!): [Relation!]!
 }
 
 input CheckEmail {
@@ -40,6 +50,9 @@ type Mutation {
   logout: Boolean!
   updateUser(updateUserDto: UpdateUserDto!): User!
   UpdateUserRole(checkEmail: CheckEmail!, companyId: Float!): String!
+  createRelation(createRelationDto: CreateRelationDto!): String!
+  updateRelationStatus(id: Int!, status: String!): Boolean!
+  unfriend(userName: String!): String!
 }
 
 input CreateUserDto {
@@ -78,4 +91,9 @@ input UpdateUserDto {
   avatar: CreateImagDto
   email: String
   phone: String
+}
+
+input CreateRelationDto {
+  userName: String!
+  status: String!
 }

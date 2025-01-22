@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Status } from 'src/common/constant/enum.constant'
 import { User } from 'src/modules/users/entity/user.entity'
 import {
   AfterInsert,
@@ -12,12 +13,12 @@ import {
 
 @Entity()
 @ObjectType()
-export class Friendship {
+export class Relation {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
 
-  @Column({ nullable: true })
+  @Column({ type: 'enum', enum: Status, default: Status.PENDING })
   @Field(() => String)
   status: string
 
@@ -25,18 +26,22 @@ export class Friendship {
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   userId: number
 
+  @Field(() => Int)
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  friendId: number
+
   @AfterInsert()
   logInsert () {
-    console.log('Inserted Friendship with id: ' + this.id)
+    console.log('Inserted Relation with id: ' + this.id)
   }
 
   @AfterUpdate()
   logUpdate () {
-    console.log('Updated Friendship with id: ' + this.id)
+    console.log('Updated Relation with id: ' + this.id)
   }
 
   @AfterRemove()
   logRemove () {
-    console.log('Removed Friendship with id: ' + this.id)
+    console.log('Removed Relation with id: ' + this.id)
   }
 }
