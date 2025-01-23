@@ -74,7 +74,7 @@ export class User {
   @OneToMany(() => Relation, relation => relation.friendId)
   friendRelations: Relation[]
 
-  @OneToMany(() => Message, message => message.recieverId, {
+  @OneToMany(() => Message, message => message.receiverId, {
     onDelete: 'SET NULL',
     nullable: true,
   })

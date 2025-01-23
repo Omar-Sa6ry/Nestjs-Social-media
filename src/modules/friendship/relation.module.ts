@@ -6,10 +6,11 @@ import { Relation } from './entity/relation.entity'
 import { RelationService } from './relation.service'
 import { RelationResolver } from './relation.resolver'
 import { RedisModule } from 'src/common/redis/redis.module'
+import { UserService } from '../users/users.service'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Relation]),
+    TypeOrmModule.forFeature([Relation]),
     RedisModule,
     UserModule,
   ],

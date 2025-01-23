@@ -22,7 +22,6 @@ export class RelationService {
   constructor (
     private usersService: UserService,
     private readonly redisService: RedisService,
-    @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Relation)
     private RelationRepository: Repository<Relation>,
   ) {}
@@ -32,10 +31,8 @@ export class RelationService {
     userId: number,
   ): Promise<string> {
     const { userName, status } = createRelationDto
-    const checkFriend = await this.userRepository.findOne({
-      where: { userName },
-    })
-    if (!checkFriend) {
+    const checkFriend = await this.usersService.findByUserName(userName)
+    if (!(checkFriend instanceof User)) {
       throw new NotFoundException(NoFriendName)
     }
 

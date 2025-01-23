@@ -25,5 +25,11 @@ export const NotSaveImage = 'Could not save image'
 export const AvatarNotFound = 'Avatar Not Found'
 export const ImageNotMatch = 'This image is not match with userId'
 
+// Message
+export const NoMessages = 'There is any message'
+export const NoMessagesSend = 'There is any message sent'
+export const DeleteMessage = 'Message is deleted Sucessfully'
+export const MessageRead = 'Messages marked as read'
+
 // Decerator
 export const CurrentUserMsg = 'User not found in request'
