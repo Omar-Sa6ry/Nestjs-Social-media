@@ -62,11 +62,17 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   resetTokenExpiry?: Date | null
 
-  @OneToMany(() => Notification, notification => notification.userId, {
+  @OneToMany(() => Notification, notification => notification.senderId, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  notifications: Notification[]
+  notificationS: Notification[]
+
+  @OneToMany(() => Notification, notification => notification.receiverId, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  notificationR: Notification[]
 
   @OneToMany(() => Relation, relation => relation.userId)
   relations: Relation[]

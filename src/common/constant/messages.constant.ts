@@ -31,5 +31,13 @@ export const NoMessagesSend = 'There is any message sent'
 export const DeleteMessage = 'Message is deleted Sucessfully'
 export const MessageRead = 'Messages marked as read'
 
+// Notification
+export const NoNotification = 'There is any Notification'
+export const NoNotificationsSend = 'There is any Notifications sent'
+export const DeleteNotification = 'Notification is deleted Sucessfully'
+export const DeleteAllNotification = 'All Notification are deleted Sucessfully'
+export const NotificationRead = 'Notification marked as read'
+export const ThisNotificationNotExosted='This Notification not Found'
+
 // Decerator
 export const CurrentUserMsg = 'User not found in request'

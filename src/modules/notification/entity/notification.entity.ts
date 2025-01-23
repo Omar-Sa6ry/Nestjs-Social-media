@@ -5,7 +5,9 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
@@ -22,12 +24,27 @@ export class Notification {
   content: string
 
   @Column({ default: false })
-  @Field(() => Boolean)
-  isRead: boolean
+  Isread: boolean
 
+  @Column({ type: 'int' })
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  userId: number
+  senderId: number
+
+  @Column({ type: 'int' })
+  @Field(() => Int)
+  receiverId: number
+
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt: Date
+
+  @ManyToOne(() => User, user => user.relations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'senderId' })
+  sender: User
+
+  @ManyToOne(() => User, user => user.friendRelations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'receiverId' })
+  receiver: User
 
   @AfterInsert()
   logInsert () {

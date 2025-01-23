@@ -24,7 +24,7 @@ export class Message {
   content: string
 
   @Column({ default: false })
-  read: boolean
+  Isread: boolean
 
   @Column({ type: 'int' })
   @Field(() => Int)

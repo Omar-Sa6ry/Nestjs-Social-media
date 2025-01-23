@@ -94,11 +94,11 @@ export class MessageService {
     }
 
     const messages = await this.MessageRepository.find({
-      where: { senderId, receiverId: user.id, read: false },
+      where: { senderId, receiverId: user.id, Isread: false },
     })
 
     for (const message of messages) {
-      message.read = true
+      message.Isread = true
     }
     await this.MessageRepository.save(messages)
     return MessageRead
@@ -106,7 +106,7 @@ export class MessageService {
 
   async gotNotRead (senderId: number, receiverId: number): Promise<Message[]> {
     const messages = await this.MessageRepository.find({
-      where: { receiverId, senderId, read: false },
+      where: { receiverId, senderId, Isread: false },
     })
     return messages
   }
