@@ -48,5 +48,14 @@ export const DeletePost = 'Post is deleted Successfully'
 export const EnterContentOrImage = 'Please ,Enter Image Or Content in post'
 export const ImageLength = 'you can upload maximum 5 images'
 
+// Likes of Post
+export const NoLikePost = 'There is no likes on this post from you'
+export const DeletePostLike = 'Post like is deleted Successfully'
+export const NotCreateLikePost = 'You donot do like before'
+export const CreatePostLike = 'you like on post sucessfully'
+export const NotAnyLikes = 'You didnot do any likes yet'
+export const ZeroLikes = 'There is no likes on post'
+export const PostLikeExisted = 'you like on this post'
+
 // Decerator
 export const CurrentUserMsg = 'User not found in request'

@@ -73,7 +73,7 @@ export class PostService {
     return post
   }
 
-  async getContent (content: string, paginationDto: PaginationDto) {
+  async getContent (content: string, paginationDto?: PaginationDto) {
     let posts = await this.postRepository.find({
       order: { createdAt: 'DESC' },
     })

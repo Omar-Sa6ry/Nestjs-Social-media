@@ -6,25 +6,39 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 
 @Entity()
 @ObjectType()
-export class Like_Post {
+export class PostLike {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
 
+  @Column({ nullable: true })
   @Field(() => Int)
-  @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
+  userId: number
+
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt: Date
+
+  @Column({ nullable: true })
+  @Field(() => Int)
   postId: number
 
-  @Field(() => Int)
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  userId: number
+  @JoinColumn({ name: 'userId' })
+  user: User
+
+  @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'postId' })
+  post: Post
 
   @AfterInsert()
   logInsert () {
