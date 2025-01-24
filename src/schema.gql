@@ -2,6 +2,19 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Post {
+  id: Int!
+  content: String
+  userId: Int!
+  createdAt: DateTime!
+  images: [String!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Message {
   id: Int!
   content: String!
@@ -9,11 +22,6 @@ type Message {
   receiverId: Int!
   createdAt: DateTime!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Relation {
   id: Int!
@@ -55,6 +63,9 @@ type Query {
   getNotificationById(id: Int!): Notification!
   userNotifications: [Notification!]!
   unreadNotifications(receiverId: Int!): [Notification!]!
+  getPostById(id: Int!): Post!
+  searchPosts(content: String!, pagination: PaginationDto): [Post!]!
+  getUserPosts: [Post!]!
   getRelationStatus(friendId: Int!): String!
   getAllRelations(status: String!): [Relation!]!
   chat(userName: String!): [Message!]!
@@ -64,6 +75,11 @@ type Query {
 
 input CheckEmail {
   email: String!
+}
+
+input PaginationDto {
+  limit: Int
+  offset: Int
 }
 
 type Mutation {
@@ -83,6 +99,9 @@ type Mutation {
   markAllNotificationsAsRead(userName: String!): String!
   deleteNotification(id: Int!): String!
   deleteAllNotifications: String!
+  createPost(content: String, images: [CreateImagDto!]): Post!
+  updatePost(id: Int!, content: String!): Post!
+  deletePost(id: Int!): String!
   createRelation(createRelationDto: CreateRelationDto!): String!
   updateRelationStatus(userName: String!, status: String!): Boolean!
   unfriend(userName: String!): String!

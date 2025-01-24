@@ -9,12 +9,12 @@ import { User } from '../users/entity/user.entity'
 import { QueueModule } from 'src/common/queue/queue.module'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 import { UploadService } from 'src/common/queue/services/upload.service'
-import { IsUniqueConstraint } from 'src/common/decerator/isUnique.decerator'
 import { RedisModule } from 'src/common/redis/redis.module'
+import { Image } from '../post/entity/image.entity'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Image]),
     UserModule,
     RedisModule,
     QueueModule,

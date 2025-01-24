@@ -3,10 +3,16 @@ import * as path from 'path'
 import { InjectQueue } from '@nestjs/bullmq'
 import { Queue } from 'bullmq'
 import { CreateImagDto } from 'src/common/dtos/createImage.dto'
+import { Image } from 'src/modules/post/entity/image.entity'
+import { Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class UploadService {
-  constructor (@InjectQueue('image') private readonly imageQueue: Queue) {}
+  constructor (
+    @InjectQueue('image') private readonly imageQueue: Queue,
+    @InjectRepository(Image) private imageRepository: Repository<Image>,
+  ) {}
 
   async uploadImage (
     createCatInput: CreateImagDto,
@@ -15,11 +21,12 @@ export class UploadService {
     try {
       const { createReadStream, filename } = await createCatInput.image
 
-      const pathFile = Date.now() + filename
+      const pathFile = Date.now() + '-' + filename
       const uploadDir = path.join(process.cwd(), `./src/images/${dirUpload}`)
 
+      console.log(createReadStream, 'lljiju')
       await this.imageQueue.add('upload-image', {
-        createReadStream: createReadStream.toString(), // Streams cannot be serialized directly; handle this in the worker
+        createReadStream,
         filename: pathFile,
         uploadDir,
       })
@@ -31,41 +38,42 @@ export class UploadService {
     }
   }
 
-  // async uploadImages (
-  //   createCatInput: CreateImagDto[],
-  //   productId: number,
-  // ): Promise<string[]> {
-  //   let images: string[] = []
+  async uploadImages (
+    createCatInput: CreateImagDto[],
+    postId: number,
+  ): Promise<string[]> {
+    let images: string[] = []
 
-  //   const queryRunner =
-  //     this.imageRepository.manager.connection.createQueryRunner()
-  //   await queryRunner.startTransaction()
+    const queryRunner =
+      this.imageRepository.manager.connection.createQueryRunner()
+    await queryRunner.startTransaction()
 
-  //   try {
-  //     await Promise.all(
-  //       createCatInput.map(async img => {
-  //         const imagePath = await this.uploadImage(img, 'products')
+    try {
+      await Promise.all(
+        createCatInput.map(async img => {
+          const imagePath = await this.uploadImage(img, 'posts')
 
-  //         if (typeof imagePath === 'string') {
-  //           const image = this.imageRepository.create({
-  //             path: imagePath,
-  //             productId,
-  //           })
+          if (typeof imagePath === 'string') {
+            const image = this.imageRepository.create({
+              path: imagePath,
+              postId,
+            })
 
-  //           await queryRunner.manager.save(image)
-  //           images.push(imagePath)
-  //         }
-  //       }),
-  //     )
+            await queryRunner.manager.save(image)
+            images.push(imagePath)
+          }
+        }),
+      )
 
-  //     await queryRunner.commitTransaction()
-  //   } catch (error) {
-  //     await queryRunner.rollbackTransaction()
-  //     throw error // Rethrow the error to handle it outside
-  //   } finally {
-  //     await queryRunner.release()
-  //   }
+      await queryRunner.commitTransaction()
+      return images
+    } catch (error) {
+      await queryRunner.rollbackTransaction()
+      throw error
+    } finally {
+      await queryRunner.release()
+    }
 
-  //   return images
-  // }
+    return images
+  }
 }

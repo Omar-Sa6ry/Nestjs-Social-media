@@ -3,13 +3,16 @@ import { Like_Comment } from '../../comment-like/entity/likesComment.entity  '
 import { Like_Post } from '../../post-like/entity/likesPost.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 import { Mention_Post } from '../../post-mention/entity/mentionPost.entity '
+import { Image } from './image.entity'
 import { Comment } from '../../comment/entity/comment.entity '
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
   Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -23,16 +26,27 @@ export class Post {
   id: number
 
   @Column({ nullable: true })
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   content: string
 
   @Column({ nullable: true })
-  @Field(() => String)
-  image: string
-
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   userId: number
+
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt: Date
+
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User
+
+  @Field(() => [String], { nullable: true })
+  @OneToMany(() => Image, image => image.postId, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  images: string[]
 
   @OneToMany(() => Comment, comment => comment.postId, {
     onDelete: 'SET NULL',

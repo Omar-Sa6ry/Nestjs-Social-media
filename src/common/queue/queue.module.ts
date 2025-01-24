@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
 import { BullModule } from '@nestjs/bullmq'
 import { EmailProcessor } from './process/email.processing'
-import { UploadService } from './services/upload.service'
+import { ImageProcessor } from './process/image.processing.'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Image } from 'src/modules/post/entity/image.entity'
 
 @Module({
   imports: [
@@ -12,8 +14,8 @@ import { UploadService } from './services/upload.service'
       },
     }),
     BullModule.registerQueue({ name: 'email' }, { name: 'image' }),
-  ],
-  providers: [EmailProcessor, UploadService],
+  TypeOrmModule.forFeature([Image])],
+  providers: [EmailProcessor, ImageProcessor],
   exports: [BullModule],
 })
 export class QueueModule {}

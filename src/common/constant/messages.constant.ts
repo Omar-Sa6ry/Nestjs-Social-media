@@ -37,7 +37,16 @@ export const NoNotificationsSend = 'There is any Notifications sent'
 export const DeleteNotification = 'Notification is deleted Sucessfully'
 export const DeleteAllNotification = 'All Notification are deleted Sucessfully'
 export const NotificationRead = 'Notification marked as read'
-export const ThisNotificationNotExosted='This Notification not Found'
+export const ThisNotificationNotExosted = 'This Notification not Found'
+
+// Post
+export const PostNotFound = 'Post Not Found'
+export const NoPosts = 'No Posts Existed'
+export const PostsNotFound = 'Posts with caption Not Found'
+export const NotPostYou = 'This post isnot for you'
+export const DeletePost = 'Post is deleted Successfully'
+export const EnterContentOrImage = 'Please ,Enter Image Or Content in post'
+export const ImageLength = 'you can upload maximum 5 images'
 
 // Decerator
 export const CurrentUserMsg = 'User not found in request'

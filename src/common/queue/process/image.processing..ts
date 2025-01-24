@@ -2,10 +2,9 @@ import { Processor, WorkerHost } from '@nestjs/bullmq'
 import { Job } from 'bullmq'
 import * as fs from 'fs'
 import * as path from 'path'
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { HttpException, HttpStatus } from '@nestjs/common'
 
 @Processor('image')
-@Injectable()
 export class ImageProcessor extends WorkerHost {
   async process (job: Job): Promise<void> {
     const { createReadStream, filename, uploadDir } = job.data

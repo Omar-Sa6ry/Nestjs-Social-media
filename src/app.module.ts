@@ -30,6 +30,7 @@ import { PostMentionModule } from './modules/post-mention/post-mention.module'
 import { RedisModule } from './common/redis/redis.module'
 import { RelationModule } from './modules/friendship/relation.module'
 import { Relation } from './modules/friendship/entity/relation.entity'
+import { Image } from './modules/post/entity/image.entity'
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { Relation } from './modules/friendship/entity/relation.entity'
           Relation,
           Message,
           Post,
+          Image,
           Like_Post,
           Mention_Post,
           Comment,
