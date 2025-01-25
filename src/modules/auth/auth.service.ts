@@ -19,13 +19,12 @@ import { CheckEmail } from 'src/common/dtos/checkEmail.dto '
 import { Role } from 'src/common/constant/enum.constant'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 import { CreateImagDto } from 'src/common/dtos/createImage.dto'
-import { UploadService } from 'src/common/queue/services/upload.service'
 import { RedisService } from 'src/common/redis/redis.service'
 import { CreateUserDto } from './dtos/createUserData.dto'
+import { UploadService } from '../upload/upload.service'
 import {
   EmailIsWrong,
   EndOfEmail,
-  EnterEmailOrUserName,
   InvalidToken,
   IsnotAdmin,
   IsnotCompany,

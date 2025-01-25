@@ -11,12 +11,14 @@ import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 import { UploadService } from 'src/common/queue/services/upload.service'
 import { RedisModule } from 'src/common/redis/redis.module'
 import { Image } from '../post/entity/image.entity'
+import { UploadModule } from '../upload/upload.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Image]),
     UserModule,
     RedisModule,
+    UploadModule,
     QueueModule,
     JwtModule.register({
       global: true,

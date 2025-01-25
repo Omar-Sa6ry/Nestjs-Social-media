@@ -1,4 +1,3 @@
-// import { CacheModule, CacheStore } from '@nestjs/cache-manager'
 import { Module } from '@nestjs/common'
 import { AppService } from './app.service'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -31,6 +30,7 @@ import { Relation } from './modules/friendship/entity/relation.entity'
 import { Image } from './modules/post/entity/image.entity'
 import { PostLike } from './modules/post-like/entity/likesPost.entity '
 import { PostMention } from './modules/post-mention/entity/mentionPost.entity '
+import { UploadModule } from './modules/upload/upload.module'
 
 @Module({
   imports: [
@@ -89,6 +89,7 @@ import { PostMention } from './modules/post-mention/entity/mentionPost.entity '
     ]),
     RedisModule,
     AuthModule,
+    UploadModule,
     UserModule,
     NotificationModule,
     PostModule,

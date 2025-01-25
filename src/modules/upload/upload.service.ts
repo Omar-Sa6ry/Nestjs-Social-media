@@ -1,38 +1,41 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import * as path from 'path'
-import { InjectQueue } from '@nestjs/bullmq'
-import { Queue } from 'bullmq'
-import { CreateImagDto } from 'src/common/dtos/createImage.dto'
-import { Image } from 'src/modules/post/entity/image.entity'
-import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import * as path from 'path'
+import * as fs from 'fs'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { Image } from '../post/entity/image.entity'
+import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 
 @Injectable()
 export class UploadService {
   constructor (
-    @InjectQueue('image') private readonly imageQueue: Queue,
     @InjectRepository(Image) private imageRepository: Repository<Image>,
   ) {}
 
   async uploadImage (
     createCatInput: CreateImagDto,
     dirUpload: string = 'avatars',
-  ): Promise<string> {
+  ): Promise<String> {
     try {
       const { createReadStream, filename } = await createCatInput.image
 
-      const pathFile = Date.now() + '-' + filename
+      const pathFile = Date.now() + filename
       const uploadDir = path.join(process.cwd(), `./src/images/${dirUpload}`)
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true })
+      }
 
-      console.log(createReadStream)
-      await this.imageQueue.add('upload-image', {
-        createReadStream,
-        filename: pathFile,
-        uploadDir,
+      await new Promise((resolve, reject) => {
+        createReadStream()
+          .pipe(fs.createWriteStream(path.join(uploadDir, pathFile)))
+          .on('finish', resolve)
+          .on('error', err => {
+            reject(
+              new HttpException('Could not save image', HttpStatus.BAD_REQUEST),
+            )
+          })
       })
 
-      console.log(createReadStream)
-      console.log(`Job added to queue for uploading image: ${pathFile}`)
       return pathFile
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -67,10 +70,9 @@ export class UploadService {
       )
 
       await queryRunner.commitTransaction()
-      return images
     } catch (error) {
       await queryRunner.rollbackTransaction()
-      throw error
+      throw error // Rethrow the error to handle it outside
     } finally {
       await queryRunner.release()
     }

@@ -9,6 +9,7 @@ export class ImageProcessor extends WorkerHost {
   async process (job: Job): Promise<void> {
     const { createReadStream, filename, uploadDir } = job.data
 
+    console.log(createReadStream)
     try {
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true })

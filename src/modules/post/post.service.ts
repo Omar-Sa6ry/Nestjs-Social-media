@@ -5,12 +5,10 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CreateImagDto } from 'src/common/dtos/createImage.dto'
-import { Image } from './entity/image.entity'
-import { UploadService } from 'src/common/queue/services/upload.service'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Post } from './entity/post.entity '
+import { UploadService } from '../upload/upload.service'
 import { Repository } from 'typeorm'
-import { UserService } from '../users/users.service'
 import { RedisService } from 'src/common/redis/redis.service'
 import {
   DeletePost,
@@ -25,10 +23,8 @@ import {
 @Injectable()
 export class PostService {
   constructor (
-    private usersService: UserService,
     private readonly redisService: RedisService,
     private readonly uploadService: UploadService,
-    @InjectRepository(Image) private imageRepository: Repository<Image>,
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
   ) {}
