@@ -74,5 +74,12 @@ export const DeleteComment = 'Comment is deleted Sucessfully'
 // Comment Mention
 export const NoMentionOnComment="No Mentions on this comment"
 
+// Likes of Comment
+export const NoLikeComment = 'There is no likes on this Comment from you'
+export const DeleteCommentLike = 'Comment like is deleted Successfully'
+export const NotCreateLikeComment = 'You donot do like before'
+export const CreateCommentLike = 'you like on Comment sucessfully'
+export const CommentLikeExisted = 'you like on this comment'
+
 // Decerator
 export const CurrentUserMsg = 'User not found in request'

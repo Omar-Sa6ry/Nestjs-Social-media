@@ -108,6 +108,9 @@ type Query {
   getPostByComment(commentId: Int!): Post!
   getRelationStatus(friendId: Int!): String!
   getAllRelations(status: String!): [Relation!]!
+  hasLikedComment(commentId: Int!): Boolean!
+  getUserLikedComments(pagination: PaginationDto): [Comment!]!
+  getCommentLikesCount(commentId: Int!): Int!
   isPostLiked(postId: Int!): Boolean!
   likedUser(pagination: PaginationDto): [Post!]!
   postLikeCount(postId: Int!): Int!
@@ -161,6 +164,8 @@ type Mutation {
   createRelation(createRelationDto: CreateRelationDto!): String!
   updateRelationStatus(userName: String!, status: String!): Boolean!
   unfriend(userName: String!): String!
+  likeComment(commentId: Int!): String!
+  unlikeComment(commentId: Int!): String!
   likePost(postId: Int!): String!
   unlikePost(postId: Int!): String!
   sendMessage(createMessageDto: CreateMessageDto!): Message!

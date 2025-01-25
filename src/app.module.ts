@@ -14,11 +14,9 @@ import { Notification } from './modules/notification/entity/notification.entity'
 import { Message } from './modules/message/entity/message.entity'
 import { Post } from './modules/post/entity/post.entity '
 import { Comment } from './modules/comment/entity/comment.entity '
-import { Like_Comment } from './modules/comment-like/entity/likesComment.entity  '
 import { NotificationModule } from './modules/notification/notification.module'
 import { PostModule } from './modules/post/post.module'
 import { CommentModule } from './modules/comment/comment.module'
-import { CommentLikeModule } from './modules/comment-like/comment-like.module'
 import { PostLikeModule } from './modules/post-like/post-like.module'
 import { MessageModule } from './modules/message/message.module'
 import { CommentMentionModule } from './modules/comment-mention/comment-mention.module'
@@ -31,6 +29,8 @@ import { PostLike } from './modules/post-like/entity/likesPost.entity '
 import { PostMention } from './modules/post-mention/entity/mentionPost.entity '
 import { UploadModule } from './modules/upload/upload.module'
 import { CommentMention } from './modules/comment-mention/entity/comment.mention.entity '
+import { CommentLike } from './modules/comment-like/entity/likesComment.entity '
+import { CommentLikeModule } from './modules/comment-like/comment-like.module'
 
 @Module({
   imports: [
@@ -62,7 +62,7 @@ import { CommentMention } from './modules/comment-mention/entity/comment.mention
           PostLike,
           PostMention,
           Comment,
-          Like_Comment,
+          CommentLike,
           CommentMention,
         ],
         synchronize: true,
