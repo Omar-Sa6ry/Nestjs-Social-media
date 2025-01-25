@@ -15,6 +15,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Comment {
+  id: Int!
+  content: String!
+  postId: Int!
+  userId: Int!
+  createdAt: DateTime!
+}
+
 type Message {
   id: Int!
   content: String!
@@ -61,6 +69,14 @@ type CommentResponsee {
   createdAt: DateTime!
 }
 
+type CommentMentionResponsee {
+  id: Float!
+  username: String!
+  mentionTo: Float!
+  comment: Comment!
+  createdAt: DateTime!
+}
+
 type PostMentionResponsee {
   id: Float!
   username: String!
@@ -98,6 +114,11 @@ type Query {
   chat(userName: String!): [Message!]!
   userMessages: [Message!]!
   unreadMessages(receiverId: Int!): [Message!]!
+  getCommentMention(userName: String!, commentId: Int!): CommentMentionResponsee!
+  getCommentMentionsToUser: [CommentMentionResponsee!]!
+  getCommentMentionsFromUser: [CommentMentionResponsee!]!
+  getCommentMentionsForComment(commentId: Int!): [CommentMentionResponsee!]!
+  isUserMentionedInComment(commentId: Int!, userName: String!): Boolean!
   getMention(userName: String!, postId: Int!): PostMentionResponsee!
   mentionsToUser: [PostMentionResponsee!]!
   mentionsFromUser: [PostMentionResponsee!]!
@@ -145,6 +166,8 @@ type Mutation {
   sendMessage(createMessageDto: CreateMessageDto!): Message!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!
+  createCommentMention(userName: String!, commentId: Int!): CommentMentionResponsee!
+  deleteCommentMention(userName: String!, commentId: Int!): String!
   createMention(userName: String!, postId: Int!): PostMentionResponsee!
   deleteMention(userName: String!, postId: Int!): String!
 }

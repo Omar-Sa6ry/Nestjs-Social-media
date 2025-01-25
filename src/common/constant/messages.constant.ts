@@ -71,5 +71,8 @@ export const CommentsNotFound = 'There is no Comments'
 export const UpdateComment = 'Comment is update Sucessfully'
 export const DeleteComment = 'Comment is deleted Sucessfully'
 
+// Comment Mention
+export const NoMentionOnComment="No Mentions on this comment"
+
 // Decerator
 export const CurrentUserMsg = 'User not found in request'

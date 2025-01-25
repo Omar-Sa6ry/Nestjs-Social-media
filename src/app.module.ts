@@ -15,7 +15,6 @@ import { Message } from './modules/message/entity/message.entity'
 import { Post } from './modules/post/entity/post.entity '
 import { Comment } from './modules/comment/entity/comment.entity '
 import { Like_Comment } from './modules/comment-like/entity/likesComment.entity  '
-import { Mention_Comment } from './modules/comment-mention/entity/mentionComment.entity  '
 import { NotificationModule } from './modules/notification/notification.module'
 import { PostModule } from './modules/post/post.module'
 import { CommentModule } from './modules/comment/comment.module'
@@ -31,6 +30,7 @@ import { Image } from './modules/post/entity/image.entity'
 import { PostLike } from './modules/post-like/entity/likesPost.entity '
 import { PostMention } from './modules/post-mention/entity/mentionPost.entity '
 import { UploadModule } from './modules/upload/upload.module'
+import { CommentMention } from './modules/comment-mention/entity/comment.mention.entity '
 
 @Module({
   imports: [
@@ -63,7 +63,7 @@ import { UploadModule } from './modules/upload/upload.module'
           PostMention,
           Comment,
           Like_Comment,
-          Mention_Comment,
+          CommentMention,
         ],
         synchronize: true,
         logging: true,
