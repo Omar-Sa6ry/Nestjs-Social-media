@@ -1,18 +1,14 @@
 import { Module } from '@nestjs/common'
 import { PostLikeResolver } from './post-like.resolver'
 import { PostLikeService } from './post-like.service'
-import { UserModule } from '../users/users.module'
-import { RedisModule } from 'src/common/redis/redis.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { PostLike } from './entity/likesPost.entity '
 import { Post } from '../post/entity/post.entity '
+import { UserModule } from '../users/users.module'
 
 @Module({
-  imports: [
-    UserModule,
-    RedisModule,
-    TypeOrmModule.forFeature([Post, PostLike]),
-  ],
+  imports: [TypeOrmModule.forFeature([Post, PostLike]), UserModule],
   providers: [PostLikeResolver, PostLikeService],
+  exports: [PostLikeService],
 })
 export class PostLikeModule {}

@@ -6,14 +6,11 @@ import {
 import { PostLike } from './entity/likesPost.entity '
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { RedisService } from 'src/common/redis/redis.service'
-import { UserService } from '../users/users.service'
 import {
   CreatePostLike,
   DeletePostLike,
   NoLikePost,
   NotAnyLikes,
-  NotCreateLikePost,
   PostLikeExisted,
   PostNotFound,
   ZeroLikes,
@@ -24,8 +21,6 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto'
 @Injectable()
 export class PostLikeService {
   constructor (
-    private usersService: UserService,
-    private readonly redisService: RedisService,
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
     @InjectRepository(PostLike)
@@ -112,7 +107,7 @@ export class PostLikeService {
       where: { postId },
     })
     if (postLikes.length === 0) {
-      throw new BadRequestException(ZeroLikes)
+      return 0
     }
 
     return postLikes.length

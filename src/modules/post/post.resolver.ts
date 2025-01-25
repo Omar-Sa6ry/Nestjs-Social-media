@@ -8,56 +8,54 @@ import { Role } from 'src/common/constant/enum.constant'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { RedisService } from 'src/common/redis/redis.service'
+import { PostResponsee } from './dto/postResponse.dto'
 
 @Resolver(() => Post)
 export class PostResolver {
-  constructor (
-    private readonly postService: PostService,
-    private readonly redisService: RedisService,
-  ) {}
+  constructor (private readonly postService: PostService) {}
 
-  @Mutation(() => Post)
+  @Mutation(() => PostResponsee)
   @Auth(Role.USER)
   async createPost (
     @CurrentUser() user: CurrentUserDto,
     @Args('content', { type: () => String, nullable: true }) content: string,
     @Args('images', { type: () => [CreateImagDto], nullable: true })
     images: CreateImagDto[],
-  ): Promise<Post> {
+  ): Promise<PostResponsee> {
     return this.postService.create(user.id, content, images || [])
   }
 
-  @Query(() => Post)
+  @Query(() => PostResponsee)
   async getPostById (
     @Args('id', { type: () => Int }) id: number,
-  ): Promise<Post> {
-    const post = await this.postService.getId(id)
-
-    return post
+  ): Promise<PostResponsee> {
+    return await this.postService.getId(id)
   }
 
-  @Query(() => [Post])
+  @Query(() => [PostResponsee])
   async searchPosts (
     @Args('content', { type: () => String }) content: string,
     @Args('pagination', { type: () => PaginationDto, nullable: true })
     paginationDto: PaginationDto,
-  ): Promise<Post[]> {
+  ): Promise<PostResponsee[]> {
     return this.postService.getContent(content, paginationDto)
   }
 
-  @Query(() => [Post])
+  @Query(() => [PostResponsee])
   @Auth(Role.USER)
-  async getUserPosts (@CurrentUser() user: CurrentUserDto): Promise<Post[]> {
+  async getUserPosts (
+    @CurrentUser() user: CurrentUserDto,
+  ): Promise<PostResponsee[]> {
     return this.postService.userPosts(user.id)
   }
 
-  @Mutation(() => Post)
+  @Mutation(() => PostResponsee)
   @Auth(Role.USER)
   async updatePost (
     @CurrentUser() user: CurrentUserDto,
     @Args('id', { type: () => Int }) id: number,
     @Args('content', { type: () => String }) content: string,
-  ): Promise<Post> {
+  ): Promise<PostResponsee> {
     return this.postService.update(user.id, id, content)
   }
 
