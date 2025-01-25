@@ -3,9 +3,9 @@ import { Role } from 'src/common/constant/enum.constant'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { Like_Comment } from 'src/modules/comment-like/entity/likesComment.entity  '
 import { PostLike } from 'src/modules/post-like/entity/likesPost.entity '
-import { Mention_Post } from 'src/modules/post-mention/entity/mentionPost.entity '
 import { Message } from 'src/modules/message/entity/message.entity'
 import { Relation } from 'src/modules/friendship/entity/relation.entity'
+import { PostMention } from 'src/modules/post-mention/entity/mentionPost.entity '
 import { Notification } from 'src/modules/notification/entity/notification.entity'
 import { Post } from 'src/modules/post/entity/post.entity '
 import {
@@ -98,17 +98,17 @@ export class User {
   })
   post: Post[]
 
-  @OneToMany(() => Mention_Post, mention_Post => mention_Post.mentionTo, {
+  @OneToMany(() => PostMention, mention_Post => mention_Post.mentionTo, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  mentionTo: Mention_Post[]
+  mentionTo: PostMention[]
 
-  @OneToMany(() => Mention_Post, mention_Post => mention_Post.mentionFrom, {
+  @OneToMany(() => PostMention, mention_Post => mention_Post.mentionFrom, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  mentionfrom: Mention_Post[]
+  mentionfrom: PostMention[]
 
   @OneToMany(() => Comment, comment => comment.userId, {
     onDelete: 'SET NULL',

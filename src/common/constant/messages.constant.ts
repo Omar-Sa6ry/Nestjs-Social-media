@@ -57,5 +57,13 @@ export const NotAnyLikes = 'You didnot do any likes yet'
 export const ZeroLikes = 'There is no likes on post'
 export const PostLikeExisted = 'you like on this post'
 
+// Mentions of post
+export const MentionPostFound = 'This mention not found'
+export const NoMentionForYou = 'No mentions for you'
+export const NoMentionForPost = 'No mentions for this post'
+export const DeleteMention = 'Mention id deleted Sucessfully'
+export const UserMentionNotFound = 'User to mention not found'
+export const MentionExisted='Mention is existed'
+
 // Decerator
 export const CurrentUserMsg = 'User not found in request'

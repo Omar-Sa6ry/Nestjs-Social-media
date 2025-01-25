@@ -53,6 +53,14 @@ type AuthResponse {
   token: String!
 }
 
+type PostMentionResponsee {
+  id: Float!
+  username: String!
+  mentionTo: Float!
+  post: Post!
+  createdAt: DateTime!
+}
+
 type Query {
   sayHello: String!
   getUserById(id: Float!): User!
@@ -74,6 +82,11 @@ type Query {
   chat(userName: String!): [Message!]!
   userMessages: [Message!]!
   unreadMessages(receiverId: Int!): [Message!]!
+  getMention(userName: String!, postId: Int!): PostMentionResponsee!
+  mentionsToUser: [PostMentionResponsee!]!
+  mentionsFromUser: [PostMentionResponsee!]!
+  mentionsForPost(postId: Int!): [PostMentionResponsee!]!
+  isUserMentioned(postId: Int!, userName: String!): Boolean!
 }
 
 input CheckEmail {
@@ -113,6 +126,8 @@ type Mutation {
   sendMessage(createMessageDto: CreateMessageDto!): Message!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!
+  createMention(userName: String!, postId: Int!): PostMentionResponsee!
+  deleteMention(userName: String!, postId: Int!): String!
 }
 
 input CreateUserDto {

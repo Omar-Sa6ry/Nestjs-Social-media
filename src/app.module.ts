@@ -14,7 +14,6 @@ import { User } from './modules/users/entity/user.entity'
 import { Notification } from './modules/notification/entity/notification.entity'
 import { Message } from './modules/message/entity/message.entity'
 import { Post } from './modules/post/entity/post.entity '
-import { Mention_Post } from './modules/post-mention/entity/mentionPost.entity '
 import { Comment } from './modules/comment/entity/comment.entity '
 import { Like_Comment } from './modules/comment-like/entity/likesComment.entity  '
 import { Mention_Comment } from './modules/comment-mention/entity/mentionComment.entity  '
@@ -31,6 +30,7 @@ import { RelationModule } from './modules/friendship/relation.module'
 import { Relation } from './modules/friendship/entity/relation.entity'
 import { Image } from './modules/post/entity/image.entity'
 import { PostLike } from './modules/post-like/entity/likesPost.entity '
+import { PostMention } from './modules/post-mention/entity/mentionPost.entity '
 
 @Module({
   imports: [
@@ -60,7 +60,7 @@ import { PostLike } from './modules/post-like/entity/likesPost.entity '
           Post,
           Image,
           PostLike,
-          Mention_Post,
+          PostMention,
           Comment,
           Like_Comment,
           Mention_Comment,

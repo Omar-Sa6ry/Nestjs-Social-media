@@ -4,7 +4,10 @@ import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
+  Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
@@ -12,22 +15,38 @@ import { Post } from '../../post/entity/post.entity '
 
 @Entity()
 @ObjectType()
-export class Mention_Post {
+export class PostMention {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
 
+  @Column({ nullable: true })
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  mentionFrom: number
+  userId: number
+
+  @Column({ nullable: true })
+  @Field(() => Int)
+  to: number
 
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  mentionTo: number
-
-  @Field(() => Int)
-  @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
+  @Column({ nullable: true })
   postId: number
+
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  mentionFrom: User
+
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'to' })
+  mentionTo: User
+
+  @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'postId' })
+  post: Post
+
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt: Date
 
   @AfterInsert()
   logInsert () {
