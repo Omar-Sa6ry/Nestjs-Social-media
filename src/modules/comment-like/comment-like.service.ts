@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { CommentLike } from './entity/likesComment.entity '
 import { Comment } from '../comment/entity/comment.entity '
-import { RedisService } from 'src/common/redis/redis.service'
 import {
   CommentNotFound,
   CreateCommentLike,
@@ -22,7 +21,6 @@ import {
 @Injectable()
 export class CommentLikeService {
   constructor (
-    private readonly redisService: RedisService,
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
     @InjectRepository(CommentLike)

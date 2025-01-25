@@ -1,5 +1,4 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { CommentLikeService } from './comment-like.service'
 import { Role } from 'src/common/constant/enum.constant'

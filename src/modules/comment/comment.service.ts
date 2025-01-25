@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { RedisService } from 'src/common/redis/redis.service'
 import { Comment } from './entity/comment.entity '
 import { User } from '../users/entity/user.entity'
 import { CommentResponse } from './dto/commentResponse.dto'
@@ -22,7 +21,6 @@ import {
 @Injectable()
 export class CommentService {
   constructor (
-    private readonly redisService: RedisService,
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
     @InjectRepository(User) private userRepository: Repository<User>,

@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { User } from '../users/entity/user.entity'
+import { PostMentionResponse } from './dto/mentionPostResponse.dto'
 import { Post } from '../post/entity/post.entity '
 import { PostMention } from './entity/mentionPost.entity '
-import { RedisService } from 'src/common/redis/redis.service'
 import { UserService } from '../users/users.service'
 import {
   DeleteMention,
@@ -18,8 +19,6 @@ import {
   PostNotFound,
   UserMentionNotFound,
 } from 'src/common/constant/messages.constant'
-import { User } from '../users/entity/user.entity'
-import { PostMentionResponse } from './dto/mentionPostResponse.dto'
 
 @Injectable()
 export class PostMentionService {
