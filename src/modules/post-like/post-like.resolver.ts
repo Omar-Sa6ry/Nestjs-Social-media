@@ -6,6 +6,7 @@ import { Auth } from 'src/common/decerator/auth.decerator'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
+import { PostResponsee } from '../post/dto/postResponse.dto'
 
 @Resolver(() => Post)
 export class PostLikeResolver {
@@ -38,13 +39,13 @@ export class PostLikeResolver {
     return this.postLikeService.checkIfLike(user.id, postId)
   }
 
-  @Query(() => [Post])
+  @Query(() => [PostResponsee])
   @Auth(Role.USER)
   async likedUser (
     @Args('pagination', { type: () => PaginationDto, nullable: true })
     paginationDto: PaginationDto,
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<Post[]> {
+  ): Promise<PostResponsee[]> {
     return this.postLikeService.userLikes(user.id, paginationDto)
   }
 

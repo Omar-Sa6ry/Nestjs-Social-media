@@ -13,10 +13,14 @@ import {
   NotAnyLikes,
   PostLikeExisted,
   PostNotFound,
+  UserNameIsWrong,
   ZeroLikes,
 } from 'src/common/constant/messages.constant'
 import { Post } from '../post/entity/post.entity '
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
+import { User } from '../users/entity/user.entity'
+import { Comment } from '../comment/entity/comment.entity '
+import { PostResponse } from '../post/dto/postResponse.dto'
 
 @Injectable()
 export class PostLikeService {
@@ -25,9 +29,11 @@ export class PostLikeService {
     private postRepository: Repository<Post>,
     @InjectRepository(PostLike)
     private postLikeRepository: Repository<PostLike>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
   ) {}
 
-  async like (userId: number, id: number) {
+  async like (userId: number, id: number): Promise<string> {
     const post = await this.postRepository.findOne({ where: { id } })
     if (!post) {
       throw new NotFoundException(PostNotFound)
@@ -73,7 +79,7 @@ export class PostLikeService {
   async userLikes (
     userId: number,
     paginationDto?: PaginationDto,
-  ): Promise<Post[]> {
+  ): Promise<PostResponse[]> {
     const postLikes = await this.postLikeRepository.find({
       where: { userId },
     })
@@ -81,25 +87,45 @@ export class PostLikeService {
       throw new BadRequestException(NotAnyLikes)
     }
 
-    console.log(postLikes)
-
-
-    let posts = []
-    for (const post of postLikes) {
-      const getPost = await this.postRepository.findOne({
-        where: { id: post.postId },
+    let result = []
+    for (const postlike of postLikes) {
+      const post = await this.postRepository.findOne({
+        where: { id: postlike.userId },
       })
-      posts.push(getPost)
+      if (!post) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      const user = await this.userRepository.findOne({
+        where: { id: post.userId },
+      })
+      if (!user) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      const comments = await this.commentRepository.find({
+        where: { id: post.userId },
+      })
+
+      const likes = await this.numPostLikes(post.id)
+
+      result.push({
+        id: post.id,
+        content: post.content,
+        user,
+        comments,
+        likes,
+        createdAt: post.createdAt,
+      })
     }
 
-    
     if (paginationDto) {
       const { limit, offset } = paginationDto
       if (limit !== undefined) {
-        posts = posts.slice(offset || 0, limit + (offset || 0))
+        result = result.slice(offset || 0, limit + (offset || 0))
       }
     }
-    return posts
+    return result
   }
 
   async numPostLikes (postId: number): Promise<number> {

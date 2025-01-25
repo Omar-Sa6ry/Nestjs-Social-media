@@ -108,7 +108,7 @@ type Query {
   searchPosts(content: String!, pagination: PaginationDto): [PostResponsee!]!
   getUserPosts: [PostResponsee!]!
   isPostLiked(postId: Int!): Boolean!
-  likedUser(pagination: PaginationDto): [Post!]!
+  likedUser(pagination: PaginationDto): [PostResponsee!]!
   postLikeCount(postId: Int!): Int!
   getComment(postId: Int!, content: String!): CommentResponsee!
   getCommentsForPost(postId: Int!): [CommentResponsee!]!
