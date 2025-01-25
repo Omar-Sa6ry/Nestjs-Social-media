@@ -53,6 +53,14 @@ type AuthResponse {
   token: String!
 }
 
+type CommentResponsee {
+  id: Float!
+  content: String!
+  post: Post!
+  user: User!
+  createdAt: DateTime!
+}
+
 type PostMentionResponsee {
   id: Float!
   username: String!
@@ -74,6 +82,14 @@ type Query {
   getPostById(id: Int!): Post!
   searchPosts(content: String!, pagination: PaginationDto): [Post!]!
   getUserPosts: [Post!]!
+  getComment(postId: Int!, content: String!): CommentResponsee!
+  getCommentsForPost(postId: Int!): [CommentResponsee!]!
+  getCountCommentPost(postId: Int!): Int!
+  getCommentsByUserOnPost(postId: Int!): [CommentResponsee!]!
+  getCommentsByUser: [CommentResponsee!]!
+  getLastComments(postId: Int!, pagination: PaginationDto): [CommentResponsee!]!
+  getUserByComment(commentId: Int!): User!
+  getPostByComment(commentId: Int!): Post!
   getRelationStatus(friendId: Int!): String!
   getAllRelations(status: String!): [Relation!]!
   isPostLiked(postId: Int!): Boolean!
@@ -118,6 +134,9 @@ type Mutation {
   createPost(content: String, images: [CreateImagDto!]): Post!
   updatePost(id: Int!, content: String!): Post!
   deletePost(id: Int!): String!
+  writeComment(postId: Int!, content: String!): CommentResponsee!
+  updateComment(commentId: Int!, content: String!): String!
+  deleteComment(commentId: Int!): String!
   createRelation(createRelationDto: CreateRelationDto!): String!
   updateRelationStatus(userName: String!, status: String!): Boolean!
   unfriend(userName: String!): String!

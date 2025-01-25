@@ -5,7 +5,9 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -25,12 +27,24 @@ export class Comment {
   content: string
 
   @Field(() => Int)
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  userId: number
+  @Column({ nullable: true })
+  postId: number
 
   @Field(() => Int)
+  @Column({ nullable: true })
+  userId: number
+
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt: Date
+
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User
+
   @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
-  postId: number
+  @JoinColumn({ name: 'postId' })
+  post: Post
 
   @OneToMany(
     () => Mention_Comment,

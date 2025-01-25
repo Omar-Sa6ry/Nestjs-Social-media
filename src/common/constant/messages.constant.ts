@@ -63,7 +63,13 @@ export const NoMentionForYou = 'No mentions for you'
 export const NoMentionForPost = 'No mentions for this post'
 export const DeleteMention = 'Mention id deleted Sucessfully'
 export const UserMentionNotFound = 'User to mention not found'
-export const MentionExisted='Mention is existed'
+export const MentionExisted = 'Mention is existed'
+
+// Comment
+export const CommentNotFound = 'Comment Not Found'
+export const CommentsNotFound = 'There is no Comments'
+export const UpdateComment = 'Comment is update Sucessfully'
+export const DeleteComment = 'Comment is deleted Sucessfully'
 
 // Decerator
 export const CurrentUserMsg = 'User not found in request'
