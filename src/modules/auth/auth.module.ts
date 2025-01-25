@@ -8,10 +8,10 @@ import { UserModule } from '../users/users.module'
 import { User } from '../users/entity/user.entity'
 import { QueueModule } from 'src/common/queue/queue.module'
 import { SendEmailService } from 'src/common/queue/services/sendemail.service'
-import { UploadService } from 'src/common/queue/services/upload.service'
 import { RedisModule } from 'src/common/redis/redis.module'
 import { Image } from '../post/entity/image.entity'
 import { UploadModule } from '../upload/upload.module'
+import { UploadService } from '../upload/upload.service'
 
 @Module({
   imports: [

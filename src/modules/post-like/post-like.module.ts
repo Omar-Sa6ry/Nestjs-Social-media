@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { PostLike } from './entity/likesPost.entity '
 import { Post } from '../post/entity/post.entity '
 import { UserModule } from '../users/users.module'
-import { CommentModule } from '../comment/comment.module'
 import { Comment } from '../comment/entity/comment.entity '
 import { User } from '../users/entity/user.entity'
 

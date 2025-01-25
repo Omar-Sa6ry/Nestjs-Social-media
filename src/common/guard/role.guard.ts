@@ -50,7 +50,6 @@ export class RoleGuard implements CanActivate {
         if (requiredRoles && requiredRoles.includes(user.role)) {
           request['user'] = {
             id: payload.id,
-            email: payload.email,
           }
         } else {
           throw new UnauthorizedException('Invalid token Paylod')

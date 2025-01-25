@@ -8,6 +8,10 @@ import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Post } from './entity/post.entity '
 import { UploadService } from '../upload/upload.service'
+import { User } from '../users/entity/user.entity'
+import { PostResponse } from './dto/postResponse.dto'
+import { Comment } from '../comment/entity/comment.entity '
+import { PostLikeService } from '../post-like/post-like.service'
 import { Repository } from 'typeorm'
 import { RedisService } from 'src/common/redis/redis.service'
 import {
@@ -20,10 +24,6 @@ import {
   PostsNotFound,
   UserNameIsWrong,
 } from 'src/common/constant/messages.constant'
-import { User } from '../users/entity/user.entity'
-import { PostResponse } from './dto/postResponse.dto'
-import { Comment } from '../comment/entity/comment.entity '
-import { PostLikeService } from '../post-like/post-like.service'
 
 @Injectable()
 export class PostService {

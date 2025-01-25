@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Post } from './post.entity '
 import {
   AfterInsert,
   AfterRemove,
@@ -8,7 +9,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Post } from './post.entity '
 
 @Entity()
 @ObjectType()

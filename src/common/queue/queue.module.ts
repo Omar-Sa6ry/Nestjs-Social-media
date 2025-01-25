@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { BullModule } from '@nestjs/bullmq'
 import { EmailProcessor } from './process/email.processing'
-import { ImageProcessor } from './process/image.processing.'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Image } from 'src/modules/post/entity/image.entity'
 
@@ -13,9 +12,10 @@ import { Image } from 'src/modules/post/entity/image.entity'
         port: parseInt(process.env.REDIS_PORT, 10) || 6379,
       },
     }),
-    BullModule.registerQueue({ name: 'email' }, { name: 'image' }),
-  TypeOrmModule.forFeature([Image])],
-  providers: [EmailProcessor, ImageProcessor],
+    BullModule.registerQueue({ name: 'email' }),
+    TypeOrmModule.forFeature([Image]),
+  ],
+  providers: [EmailProcessor],
   exports: [BullModule],
 })
 export class QueueModule {}

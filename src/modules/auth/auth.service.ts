@@ -157,7 +157,7 @@ export class AuthService {
     }
   }
 
-  async changePassword (email: string, changePassword: ChangePasswordDto) {
+  async changePassword (id: number, changePassword: ChangePasswordDto) {
     const query = this.userRepository.manager.connection.createQueryRunner()
     await query.startTransaction()
 
@@ -167,7 +167,7 @@ export class AuthService {
         throw new BadRequestException(SamePassword)
       }
 
-      const user = await this.userService.findByEmail(email)
+      const user = await this.userService.findById(id)
       if (!(user instanceof User)) {
         throw new NotFoundException(EmailIsWrong)
       }

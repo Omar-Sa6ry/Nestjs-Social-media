@@ -65,7 +65,7 @@ export class UserResolver {
   @Query(returns => String)
   @Auth(Role.ADMIN, Role.MANAGER)
   async deleteUser (@CurrentUser() user: CurrentUserDto) {
-    return await this.usersService.deleteUser(user.email)
+    return await this.usersService.deleteUser(user.id)
   }
 
   @Mutation(returns => String)

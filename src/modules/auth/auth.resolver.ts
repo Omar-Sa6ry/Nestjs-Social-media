@@ -67,7 +67,7 @@ export class AuthResolver {
     @CurrentUser() user: CurrentUserDto,
     @Args('changePasswordDto') changePasswordDto: ChangePasswordDto,
   ) {
-    return await this.authService.changePassword(user?.email, changePasswordDto)
+    return await this.authService.changePassword(user?.id, changePasswordDto)
   }
 
   @Mutation(returns => AuthResponse)

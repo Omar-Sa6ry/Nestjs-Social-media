@@ -1,4 +1,3 @@
-import { UploadService } from 'src/common/queue/services/upload.service'
 import { Module } from '@nestjs/common'
 import { PostResolver } from './post.resolver'
 import { PostService } from './post.service'
@@ -14,6 +13,7 @@ import { Comment } from '../comment/entity/comment.entity '
 import { PostLikeModule } from '../post-like/post-like.module'
 import { PostLikeService } from '../post-like/post-like.service'
 import { PostLike } from '../post-like/entity/likesPost.entity '
+import { UploadService } from '../upload/upload.service'
 
 @Module({
   imports: [

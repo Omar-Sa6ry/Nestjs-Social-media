@@ -10,13 +10,13 @@ import { User } from './entity/user.entity'
 import { UpdateUserDto } from './dtos/updateUser.dto'
 import { Role } from 'src/common/constant/enum.constant'
 import { unlinkSync } from 'fs'
-import { UploadService } from 'src/common/queue/services/upload.service'
 import { RedisService } from 'src/common/redis/redis.service'
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
+import { UploadService } from '../upload/upload.service'
 
 @Injectable()
 export class UserService {
@@ -115,14 +115,14 @@ export class UserService {
     }
   }
 
-  async deleteUser (email: string) {
-    const user = await this.findByEmail(email)
+  async deleteUser (id: number) {
+    const user = await this.findById(id)
     if (!(user instanceof User)) {
       throw new NotFoundException(EmailIsWrong)
     }
 
     await this.userRepository.remove(user)
-    return `User with email : ${email} deleted Successfully`
+    return `User with email : ${id} deleted Successfully`
   }
 
   async editUserRole (email: string) {
