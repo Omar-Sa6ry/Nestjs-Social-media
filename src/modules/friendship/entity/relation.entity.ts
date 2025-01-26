@@ -25,19 +25,19 @@ export class Relation {
 
   @Column({ type: 'int' })
   @Field(() => Int)
-  userId: number
-
-  @ManyToOne(() => User, user => user.relations, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: User
+  followerId: number
 
   @Column({ type: 'int' })
   @Field(() => Int)
-  friendId: number
+  followingId: number
+
+  @ManyToOne(() => User, user => user.relations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'followerId' })
+  follower: User
 
   @ManyToOne(() => User, user => user.friendRelations, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'friendId' })
-  friend: User
+  @JoinColumn({ name: 'followingId' })
+  following: User
 
   @AfterInsert()
   logInsert () {

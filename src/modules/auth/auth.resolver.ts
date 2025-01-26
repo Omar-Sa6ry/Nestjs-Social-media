@@ -94,18 +94,6 @@ export class AuthResolver {
     return await this.authService.managerLogin(loginDto)
   }
 
-  @Mutation(returns => AuthResponse)
-  async companyLogin (@Args('loginDto') loginDto: LoginDto) {
-    const userCacheKey = `user:${loginDto.email}`
-    const cachedUser = await this.redisService.get(userCacheKey)
-
-    if (cachedUser) {
-      return { result: cachedUser }
-    }
-
-    return await this.authService.companyLogin(loginDto)
-  }
-
   @Mutation(() => Boolean)
   @Auth(Role.ADMIN, Role.MANAGER)
   async logout (@Context('req') req): Promise<boolean> {

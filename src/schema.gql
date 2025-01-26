@@ -31,13 +31,6 @@ type Message {
   createdAt: DateTime!
 }
 
-type Relation {
-  id: Int!
-  status: String!
-  userId: Int!
-  friendId: Int!
-}
-
 type Notification {
   id: Int!
   content: String!
@@ -94,6 +87,12 @@ type PostMentionResponsee {
   createdAt: DateTime!
 }
 
+type RelationResponseOutput {
+  follower: User!
+  following: User!
+  status: String!
+}
+
 type Query {
   sayHello: String!
   getUserById(id: Float!): User!
@@ -118,8 +117,11 @@ type Query {
   getLastComments(postId: Int!, pagination: PaginationDto): [CommentResponsee!]!
   getUserByComment(commentId: Int!): User!
   getPostByComment(commentId: Int!): Post!
-  getRelationStatus(friendId: Int!): String!
-  getAllRelations(status: String!): [Relation!]!
+  getBlockedUsers: [RelationResponseOutput!]!
+  getRelationStatus(followingId: Float!): String!
+  getFollowers(userName: String!): [RelationResponseOutput!]!
+  getFollowings(userName: String!): [RelationResponseOutput!]!
+  getFriends: [RelationResponseOutput!]!
   hasLikedComment(commentId: Int!): Boolean!
   getUserLikedComments(pagination: PaginationDto): [Comment!]!
   getCommentLikesCount(commentId: Int!): Int!
@@ -155,7 +157,6 @@ type Mutation {
   changePassword(changePasswordDto: ChangePasswordDto!): String!
   adminLogin(loginDto: LoginDto!): AuthResponse!
   managerLogin(loginDto: LoginDto!): AuthResponse!
-  companyLogin(loginDto: LoginDto!): AuthResponse!
   logout: Boolean!
   updateUser(updateUserDto: UpdateUserDto!): User!
   UpdateUserRole(checkEmail: CheckEmail!, companyId: Float!): String!
@@ -172,9 +173,11 @@ type Mutation {
   writeComment(postId: Int!, content: String!): CommentResponsee!
   updateComment(commentId: Int!, content: String!): String!
   deleteComment(commentId: Int!): String!
-  createRelation(createRelationDto: CreateRelationDto!): String!
-  updateRelationStatus(userName: String!, status: String!): Boolean!
-  unfriend(userName: String!): String!
+  blockUser(userName: String!): String!
+  unblockUser(userName: String!): String!
+  followUser(userName: String!): String!
+  unfollowingUser(userName: String!): String!
+  acceptFollowRequest(userName: String!, status: Boolean!): String!
   likeComment(commentId: Int!): String!
   unlikeComment(commentId: Int!): String!
   sendMessage(createMessageDto: CreateMessageDto!): Message!
@@ -227,11 +230,6 @@ input UpdateUserDto {
 input CreateNotificationDto {
   content: String!
   userName: String!
-}
-
-input CreateRelationDto {
-  userName: String!
-  status: String!
 }
 
 input CreateMessageDto {

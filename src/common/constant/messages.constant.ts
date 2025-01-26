@@ -14,8 +14,13 @@ export const EnterEmailOrUserName = 'You must enter your email or user name'
 export const OldPasswordENewPassword = 'old password is equal to new password'
 export const UserNameIsWrong = 'User Name Not Found'
 
-// Relation
+// Follow
 export const NoFriendName = 'There is no user with this userName'
+export const AccountPrivacy ='This account is privacy'
+export const NoFriends = 'You havnot any friends'
+export const NoBlocks = 'You havnot any Blocks'
+export const NoFollowYou = 'This user Not Follow you'
+export const NoRelation = 'There is no relation between these user'
 export const ThereisNoRelation = 'There is no relation'
 export const StatusOfRelation =
   'Status must be one of block, rejected, unknown, or friend'

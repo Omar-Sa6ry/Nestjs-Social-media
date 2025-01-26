@@ -1,10 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { Role } from 'src/common/constant/enum.constant'
+import { Role, UserStatus } from 'src/common/constant/enum.constant'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { PostLike } from 'src/modules/post-like/entity/likesPost.entity '
 import { Message } from 'src/modules/message/entity/message.entity'
 import { Relation } from 'src/modules/friendship/entity/relation.entity'
 import { PostMention } from 'src/modules/post-mention/entity/mentionPost.entity '
+import { CommentLike } from 'src/modules/comment-like/entity/likesComment.entity '
 import { Notification } from 'src/modules/notification/entity/notification.entity'
 import { Post } from 'src/modules/post/entity/post.entity '
 import {
@@ -16,7 +17,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { CommentLike } from 'src/modules/comment-like/entity/likesComment.entity '
 
 @Entity()
 @ObjectType()
@@ -56,6 +56,13 @@ export class User {
   })
   role: Role
 
+    @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.PUBLIC,
+  })
+  status: UserStatus
+
   @Column({ nullable: true })
   resetToken?: string
 
@@ -74,10 +81,10 @@ export class User {
   })
   notificationR: Notification[]
 
-  @OneToMany(() => Relation, relation => relation.userId)
+  @OneToMany(() => Relation, relation => relation.followerId)
   relations: Relation[]
 
-  @OneToMany(() => Relation, relation => relation.friendId)
+  @OneToMany(() => Relation, relation => relation.followingId)
   friendRelations: Relation[]
 
   @OneToMany(() => Message, message => message.receiverId, {

@@ -66,7 +66,7 @@ import { CommentLikeModule } from './modules/comment-like/comment-like.module'
           CommentMention,
         ],
         synchronize: true,
-        logging: true,
+        logging: false,
       }),
       inject: [ConfigService],
     }),

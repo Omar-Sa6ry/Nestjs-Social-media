@@ -205,25 +205,6 @@ export class AuthService {
     return { user, token }
   }
 
-  async companyLogin (loginDto: LoginDto) {
-    const { email, password } = loginDto
-
-    let user = await this.userService.findByEmail(email.toLowerCase())
-    if (!(user instanceof User)) {
-      throw new NotFoundException(EmailIsWrong)
-    }
-
-    if (user.role !== (Role.COMPANY || Role.MANAGER)) {
-      throw new UnauthorizedException(IsnotCompany)
-    }
-    await ComparePassword(password, user?.password)
-    const token = await this.generateToken.jwt(user?.email, user?.id)
-    const userCacheKey = `user:${email}`
-    await this.redisService.set(userCacheKey, { user, token })
-
-    return { user, token }
-  }
-
   async managerLogin (loginDto: LoginDto) {
     const { email, password } = loginDto
 

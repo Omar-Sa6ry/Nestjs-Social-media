@@ -1,0 +1,81 @@
+# mutation {
+#   unfollowingUser(userName: "ogfffgnher")
+# }
+
+# mutation {
+#   followUser(userName: "ogfffgnher")
+# }
+
+# query {
+#   getRelationStatus(followingId: 23)
+# }
+
+# query {
+#   getFollowers(userName: "oggnher") {
+#     follower {
+#       id
+#       userName
+#     }
+#     following {
+#       id
+#       userName
+#     }
+#     status
+#   }
+# }
+
+# query {
+#   getFollowings(userName: "oggnhver") {
+#     follower {
+#       id
+#       userName
+#     }
+#     following {
+#       id
+#       userName
+#     }
+#     status
+#   }
+# }
+
+# mutation {
+#   acceptFollowRequest(userName: "targetUserName", status: true) # Use false to reject
+# }
+
+# mutation {
+#   blockUser(userName: "targetUserName")
+# }
+
+# mutation {
+#   unblockUser(userName: "targetUserName")
+# }
+
+
+# query {
+#   getBlockedUsers {
+#     follower {
+#       id
+#       userName
+#     }
+#     following {
+#       id
+#       userName
+#     }
+#     status
+#   }
+# }
+
+
+# query {
+#   getFriends {
+#     follower {
+#       id
+#       userName
+#     }
+#     following {
+#       id
+#       userName
+#     }
+#     status
+#   }
+# }
