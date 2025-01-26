@@ -1,0 +1,49 @@
+query {
+  getUserById(id: 1) {
+    id
+    userName
+    email
+  }
+}
+
+query {
+  getUserByEmail(email:{email: "user@example.com"}) {
+    id
+    userName
+    email
+  }
+}
+
+query {
+  getUserByUserName(userName: "john_doe") {
+    id
+    userName
+    email
+  }
+}
+
+mutation {
+  updateUser(
+    updateUserDto: {
+      userName: "new_user_name",
+      email: "new_email@example.com",
+      phone: "1234567890"
+    }
+  ) {
+    id
+    userName
+    email
+    phone
+  }
+}
+
+query {
+  deleteUser
+}
+
+mutation {
+  UpdateUserRole(
+    checkEmail: { email: "user@example.com" },
+    companyId: 1
+  )
+}

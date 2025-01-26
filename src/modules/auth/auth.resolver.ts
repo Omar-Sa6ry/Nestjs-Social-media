@@ -25,7 +25,7 @@ export class AuthResolver {
   @Mutation(returns => AuthResponse)
   async register (
     @Args('createUserDto') createUserDto: CreateUserDto,
-    @Args('avatar') avatar: CreateImagDto,
+    @Args('avatar', { nullable: true }) avatar: CreateImagDto,
   ) {
     const userCacheKey = `user:${createUserDto.email}`
     const cachedUser = await this.redisService.get(userCacheKey)

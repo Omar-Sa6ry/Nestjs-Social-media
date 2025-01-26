@@ -26,6 +26,7 @@ import { Mention } from './modules/mention/entity/mention.entity '
 import { MentionModule } from './modules/mention/mention.module'
 import { LikeModule } from './modules/like/like.module'
 import { Like } from './modules/like/entity/like.entity '
+import { CommentModule } from './modules/comment/comment.module'
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { Like } from './modules/like/entity/like.entity '
     PostModule,
     RelationModule,
     LikeModule,
+    CommentModule,
     MessageModule,
     MentionModule,
   ],

@@ -85,6 +85,14 @@ type CommentMentionResponsee {
   createdAt: DateTime!
 }
 
+type CommentResponsee {
+  id: Float!
+  content: String!
+  post: Post!
+  user: User!
+  createdAt: DateTime!
+}
+
 type Query {
   sayHello: String!
   getUserById(id: Float!): User!
@@ -109,6 +117,14 @@ type Query {
   getFollowers(userName: String!): [RelationResponseOutput!]!
   getFollowings(userName: String!): [RelationResponseOutput!]!
   getFriends: [RelationResponseOutput!]!
+  getComment(postId: Int!, content: String!): CommentResponsee!
+  getCommentsForPost(postId: Int!): [CommentResponsee!]!
+  getCountCommentPost(postId: Int!): Int!
+  getCommentsByUserOnPost(postId: Int!): [CommentResponsee!]!
+  getCommentsByUser: [CommentResponsee!]!
+  getLastComments(postId: Int!, pagination: PaginationDto): [CommentResponsee!]!
+  getUserByComment(commentId: Int!): User!
+  getPostByComment(commentId: Int!): Post!
   chat(userName: String!): [Message!]!
   userMessages: [Message!]!
   unreadMessages(receiverId: Int!): [Message!]!
@@ -134,7 +150,7 @@ input PaginationDto {
 }
 
 type Mutation {
-  register(createUserDto: CreateUserDto!, avatar: CreateImagDto!): AuthResponse!
+  register(createUserDto: CreateUserDto!, avatar: CreateImagDto): AuthResponse!
   login(loginDto: LoginDto!): AuthResponse!
   forgotPassword(checkEmail: CheckEmail!): String!
   resetPassword(resetPasswordDto: ResetPasswordDto!): String!
@@ -161,6 +177,9 @@ type Mutation {
   followUser(userName: String!): String!
   unfollowingUser(userName: String!): String!
   acceptFollowRequest(userName: String!, status: Boolean!): String!
+  writeComment(postId: Int!, content: String!): CommentResponsee!
+  updateComment(commentId: Int!, content: String!): String!
+  deleteComment(commentId: Int!): String!
   sendMessage(createMessageDto: CreateMessageDto!): Message!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!

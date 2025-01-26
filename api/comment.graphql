@@ -1,0 +1,103 @@
+mutation {
+  writeaComment(postId: 1, content: "This is my first comment!") {
+    id
+    content
+    createdAt
+    post {
+      id
+      title
+    }
+    user {
+      id
+      userName
+    }
+  }
+}
+
+query {
+  getComment(postId: 1, content: "This is my first comment!") {
+    id
+    content
+    createdAt
+    post {
+      id
+    }
+    user {
+      id
+      userName
+    }
+  }
+}
+
+query {
+  getCommentsForPost(postId: 1) {
+    id
+    content
+    createdAt
+    post {
+      id
+    }
+    user {
+      id
+      userName
+    }
+  }
+}
+
+query {
+  getCountCommentPost(postId: 1)
+}
+
+query {
+  getCommentsByUserOnPost(postId: 1) {
+    id
+    content
+    createdAt
+    post {
+      id
+    }
+    user {
+      id
+      userName
+    }
+  }
+}
+
+query {
+  getUserByComment(commentId: 1) {
+    id
+    userName
+    email
+  }
+}
+
+query {
+  getLastComments(postId: 1, pagination: { limit: 5, offset: 0 }) {
+    id
+    content
+    createdAt
+    post {
+      id
+      content
+    }
+    user {
+      id
+      userName
+    }
+  }
+}
+
+mutation {
+  deleteComment(commentId: 1)
+}
+
+query {
+  getPostByComment(commentId: 1) {
+    id
+    content
+  }
+}
+
+mutation {
+  updateComment(commentId: 1, content: "Updated comment content!")
+}

@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { User } from './entity/user.entity'
 import { UserService } from './users.service'
-import { ParseIntPipe, UseGuards } from '@nestjs/common'
+import { ParseIntPipe } from '@nestjs/common'
 import { UpdateUserDto } from './dtos/updateUser.dto'
 import { Role } from 'src/common/constant/enum.constant'
 import { CheckEmail } from 'src/common/dtos/checkEmail.dto '

@@ -1,0 +1,74 @@
+mutation {
+  register(
+    createUserDto: {
+      userName: "john_doe"
+      email: "john@example.com"
+      password: "securePassword123"
+      phone: "+1234567890"
+    }
+  ) {
+    user {
+      id
+      userName
+      email
+    }
+    token
+  }
+}
+
+mutation {
+  login(loginDto: { email: "test@example.com", password: "password123" }) {
+    token
+    user {
+      id
+      email
+    }
+  }
+}
+
+mutation {
+  managerLogin(
+    loginDto: { email: "manager@example.com", password: "managerPassword123" }
+  ) {
+    token
+    user {
+      id
+      email
+    }
+  }
+}
+
+mutation {
+  adminLogin(
+    loginDto: { email: "admin@example.com", password: "adminPassword123" }
+  ) {
+    token
+    user {
+      id
+      email
+    }
+  }
+}
+
+mutation {
+  forgotPassword(checkEmail: { email: "test@example.com" })
+}
+
+mutation {
+  resetPassword(
+    resetPasswordDto: { token: "resetToken123", password: "newPassword123" }
+  )
+}
+
+mutation {
+  changePassword(
+    changePasswordDto: {
+      password: "oldPassword123"
+      newPassword: "newPassword123"
+    }
+  )
+}
+
+mutation {
+  logout
+}
