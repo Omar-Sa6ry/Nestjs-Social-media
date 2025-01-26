@@ -63,14 +63,6 @@ type PostResponsee {
   createdAt: DateTime!
 }
 
-type CommentResponsee {
-  id: Float!
-  content: String!
-  post: Post!
-  user: User!
-  createdAt: DateTime!
-}
-
 type RelationResponseOutput {
   follower: User!
   following: User!
@@ -109,22 +101,14 @@ type Query {
   isPostLiked(postId: Int!): Boolean!
   likedUser(pagination: PaginationDto): [PostResponsee!]!
   postLikeCount(postId: Int!): Int!
-  getComment(postId: Int!, content: String!): CommentResponsee!
-  getCommentsForPost(postId: Int!): [CommentResponsee!]!
-  getCountCommentPost(postId: Int!): Int!
-  getCommentsByUserOnPost(postId: Int!): [CommentResponsee!]!
-  getCommentsByUser: [CommentResponsee!]!
-  getLastComments(postId: Int!, pagination: PaginationDto): [CommentResponsee!]!
-  getUserByComment(commentId: Int!): User!
-  getPostByComment(commentId: Int!): Post!
+  hasLikedComment(commentId: Int!): Boolean!
+  getUserLikedComments(pagination: PaginationDto): [Comment!]!
+  getCommentLikesCount(commentId: Int!): Int!
   getBlockedUsers: [RelationResponseOutput!]!
   getRelationStatus(followingId: Float!): String!
   getFollowers(userName: String!): [RelationResponseOutput!]!
   getFollowings(userName: String!): [RelationResponseOutput!]!
   getFriends: [RelationResponseOutput!]!
-  hasLikedComment(commentId: Int!): Boolean!
-  getUserLikedComments(pagination: PaginationDto): [Comment!]!
-  getCommentLikesCount(commentId: Int!): Int!
   chat(userName: String!): [Message!]!
   userMessages: [Message!]!
   unreadMessages(receiverId: Int!): [Message!]!
@@ -170,16 +154,13 @@ type Mutation {
   deletePost(id: Int!): String!
   likePost(postId: Int!): String!
   unlikePost(postId: Int!): String!
-  writeComment(postId: Int!, content: String!): CommentResponsee!
-  updateComment(commentId: Int!, content: String!): String!
-  deleteComment(commentId: Int!): String!
+  likeComment(commentId: Int!): String!
+  unlikeComment(commentId: Int!): String!
   blockUser(userName: String!): String!
   unblockUser(userName: String!): String!
   followUser(userName: String!): String!
   unfollowingUser(userName: String!): String!
   acceptFollowRequest(userName: String!, status: Boolean!): String!
-  likeComment(commentId: Int!): String!
-  unlikeComment(commentId: Int!): String!
   sendMessage(createMessageDto: CreateMessageDto!): Message!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!

@@ -1,0 +1,24 @@
+mutation {
+  likePost(postId: 8)
+}
+
+mutation {
+  unlikePost(postId: 8)
+}
+
+
+query {
+  isPostLiked(postId: 8)
+}
+
+query {
+  likedUser(pagination: { limit: 10, offset: 0 }) {
+    id
+    content
+    createdAt
+  }
+}
+
+query {
+  postLikeCount(postId: 5)
+}

@@ -10,10 +10,8 @@ import { QueueModule } from 'src/common/queue/queue.module'
 import { UploadModule } from '../upload/upload.module'
 import { User } from '../users/entity/user.entity'
 import { Comment } from '../comment/entity/comment.entity '
-import { PostLikeModule } from '../post-like/post-like.module'
-import { PostLikeService } from '../post-like/post-like.service'
-import { PostLike } from '../post-like/entity/likesPost.entity '
 import { UploadService } from '../upload/upload.service'
+import { LikeModule } from '../like/like.module'
 
 @Module({
   imports: [
@@ -21,7 +19,7 @@ import { UploadService } from '../upload/upload.service'
     UploadModule,
     QueueModule,
     RedisModule,
-    PostLikeModule,
+    LikeModule,
     TypeOrmModule.forFeature([Post, Comment, User, Image]),
   ],
   providers: [PostResolver, PostService, UploadService],

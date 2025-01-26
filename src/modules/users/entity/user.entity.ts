@@ -1,10 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Role, UserStatus } from 'src/common/constant/enum.constant'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
-import { PostLike } from 'src/modules/post-like/entity/likesPost.entity '
 import { Message } from 'src/modules/message/entity/message.entity'
 import { Relation } from 'src/modules/friendship/entity/relation.entity'
-import { CommentLike } from 'src/modules/comment-like/entity/likesComment.entity '
+import { Like } from 'src/modules/like/entity/like.entity '
 import { Notification } from 'src/modules/notification/entity/notification.entity'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { Post } from 'src/modules/post/entity/post.entity '
@@ -123,17 +122,11 @@ export class User {
   })
   comments: Comment[]
 
-  @OneToMany(() => CommentLike, like_Comment => like_Comment.userId, {
+  @OneToMany(() => Like, like => like.userId, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  commentLikes: CommentLike[]
-
-  @OneToMany(() => PostLike, like_Post => like_Post.userId, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
-  PostLikes: PostLike[]
+  PostLikes: Like[]
 
   @AfterInsert()
   logInsert () {

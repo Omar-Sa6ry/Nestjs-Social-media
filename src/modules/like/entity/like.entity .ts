@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { Comment } from 'src/modules/comment/entity/comment.entity '
+import { Post } from '../../post/entity/post.entity '
 import { User } from 'src/modules/users/entity/user.entity'
+import { Comment } from 'src/modules/comment/entity/comment.entity '
 import {
   AfterInsert,
   AfterRemove,
@@ -15,7 +16,7 @@ import {
 
 @Entity()
 @ObjectType()
-export class CommentLike {
+export class Like {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
@@ -30,29 +31,36 @@ export class CommentLike {
 
   @Column({ nullable: true })
   @Field(() => Int)
+  postId: number
+
+  @Column({ nullable: true })
+  @Field(() => Int)
   commentId: number
-
-
-  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: User
 
   @ManyToOne(() => Comment, comment => comment.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'commentId' })
   comment: Comment
 
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User
+
+  @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'postId' })
+  post: Post
+
   @AfterInsert()
   logInsert () {
-    console.log('Inserted Like_Post with id: ' + this.id)
+    console.log('Inserted Like with id: ' + this.id)
   }
 
   @AfterUpdate()
   logUpdate () {
-    console.log('Updated Like_Post with id: ' + this.id)
+    console.log('Updated Like with id: ' + this.id)
   }
 
   @AfterRemove()
   logRemove () {
-    console.log('Removed Like_Post with id: ' + this.id)
+    console.log('Removed Like with id: ' + this.id)
   }
 }

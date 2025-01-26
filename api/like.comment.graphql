@@ -1,0 +1,15 @@
+mutation {
+  likeComment(commentId: 7)
+}
+
+mutation {
+  unlikeComment(commentId: 7)
+}
+
+query {
+  hasLikedComment(commentId: 77)
+}
+
+query {
+  getCommentLikesCount(commentId: 7)
+}

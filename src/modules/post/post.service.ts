@@ -8,10 +8,10 @@ import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Post } from './entity/post.entity '
 import { UploadService } from '../upload/upload.service'
+import { LikeService } from '../like/like.service'
 import { User } from '../users/entity/user.entity'
 import { PostResponse } from './dto/postResponse.dto'
 import { Comment } from '../comment/entity/comment.entity '
-import { PostLikeService } from '../post-like/post-like.service'
 import { Repository } from 'typeorm'
 import { RedisService } from 'src/common/redis/redis.service'
 import {
@@ -30,7 +30,7 @@ export class PostService {
   constructor (
     private readonly redisService: RedisService,
     private readonly uploadService: UploadService,
-    private readonly postLikeService: PostLikeService,
+    private readonly likeService: LikeService,
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
     @InjectRepository(User) private userRepository: Repository<User>,
@@ -105,7 +105,7 @@ export class PostService {
       where: { id: post.userId },
     })
 
-    const likes = await this.postLikeService.numPostLikes(post.id)
+    const likes = await this.likeService.numPostLikes(post.id)
 
     const result = {
       id: post.id,
@@ -152,7 +152,7 @@ export class PostService {
         where: { id: post.userId },
       })
 
-      const likes = await this.postLikeService.numPostLikes(post.id)
+      const likes = await this.likeService.numPostLikes(post.id)
 
       result.push({
         id: post.id,
@@ -192,7 +192,7 @@ export class PostService {
         where: { id: post.userId },
       })
 
-      const likes = await this.postLikeService.numPostLikes(post.id)
+      const likes = await this.likeService.numPostLikes(post.id)
 
       result.push({
         id: post.id,
@@ -234,7 +234,7 @@ export class PostService {
       where: { id: post.userId },
     })
 
-    const likes = await this.postLikeService.numPostLikes(post.id)
+    const likes = await this.likeService.numPostLikes(post.id)
 
     const result = {
       id: post.id,

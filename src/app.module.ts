@@ -16,19 +16,16 @@ import { Post } from './modules/post/entity/post.entity '
 import { Comment } from './modules/comment/entity/comment.entity '
 import { NotificationModule } from './modules/notification/notification.module'
 import { PostModule } from './modules/post/post.module'
-import { CommentModule } from './modules/comment/comment.module'
-import { PostLikeModule } from './modules/post-like/post-like.module'
 import { MessageModule } from './modules/message/message.module'
 import { RedisModule } from './common/redis/redis.module'
 import { RelationModule } from './modules/friendship/relation.module'
 import { Relation } from './modules/friendship/entity/relation.entity'
 import { Image } from './modules/post/entity/image.entity'
-import { PostLike } from './modules/post-like/entity/likesPost.entity '
 import { UploadModule } from './modules/upload/upload.module'
-import { CommentLike } from './modules/comment-like/entity/likesComment.entity '
-import { CommentLikeModule } from './modules/comment-like/comment-like.module'
 import { Mention } from './modules/mention/entity/mention.entity '
 import { MentionModule } from './modules/mention/mention.module'
+import { LikeModule } from './modules/like/like.module'
+import { Like } from './modules/like/entity/like.entity '
 
 @Module({
   imports: [
@@ -57,10 +54,9 @@ import { MentionModule } from './modules/mention/mention.module'
           Message,
           Post,
           Image,
-          PostLike,
           Comment,
-          CommentLike,
           Mention,
+          Like,
         ],
         synchronize: true,
         logging: false,
@@ -90,10 +86,8 @@ import { MentionModule } from './modules/mention/mention.module'
     UserModule,
     NotificationModule,
     PostModule,
-    CommentModule,
     RelationModule,
-    CommentLikeModule,
-    PostLikeModule,
+    LikeModule,
     MessageModule,
     MentionModule,
   ],
