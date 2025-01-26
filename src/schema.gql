@@ -71,12 +71,10 @@ type CommentResponsee {
   createdAt: DateTime!
 }
 
-type CommentMentionResponsee {
-  id: Float!
-  username: String!
-  mentionTo: Float!
-  comment: Comment!
-  createdAt: DateTime!
+type RelationResponseOutput {
+  follower: User!
+  following: User!
+  status: String!
 }
 
 type PostMentionResponsee {
@@ -87,10 +85,12 @@ type PostMentionResponsee {
   createdAt: DateTime!
 }
 
-type RelationResponseOutput {
-  follower: User!
-  following: User!
-  status: String!
+type CommentMentionResponsee {
+  id: Float!
+  username: String!
+  mentionTo: Float!
+  comment: Comment!
+  createdAt: DateTime!
 }
 
 type Query {
@@ -128,16 +128,16 @@ type Query {
   chat(userName: String!): [Message!]!
   userMessages: [Message!]!
   unreadMessages(receiverId: Int!): [Message!]!
+  getPostMention(userName: String!, postId: Int!): PostMentionResponsee!
+  postMentionsToUser: [PostMentionResponsee!]!
+  postMentionsFromUser: [PostMentionResponsee!]!
+  mentionsForPost(postId: Int!): [PostMentionResponsee!]!
+  isUserPostMentioned(postId: Int!, userName: String!): Boolean!
   getCommentMention(userName: String!, commentId: Int!): CommentMentionResponsee!
   getCommentMentionsToUser: [CommentMentionResponsee!]!
   getCommentMentionsFromUser: [CommentMentionResponsee!]!
   getCommentMentionsForComment(commentId: Int!): [CommentMentionResponsee!]!
   isUserMentionedInComment(commentId: Int!, userName: String!): Boolean!
-  getMention(userName: String!, postId: Int!): PostMentionResponsee!
-  mentionsToUser: [PostMentionResponsee!]!
-  mentionsFromUser: [PostMentionResponsee!]!
-  mentionsForPost(postId: Int!): [PostMentionResponsee!]!
-  isUserMentioned(postId: Int!, userName: String!): Boolean!
 }
 
 input CheckEmail {
@@ -183,10 +183,10 @@ type Mutation {
   sendMessage(createMessageDto: CreateMessageDto!): Message!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!
+  createPostMention(userName: String!, postId: Int!): PostMentionResponsee!
+  deletePostMention(userName: String!, postId: Int!): String!
   createCommentMention(userName: String!, commentId: Int!): CommentMentionResponsee!
   deleteCommentMention(userName: String!, commentId: Int!): String!
-  createMention(userName: String!, postId: Int!): PostMentionResponsee!
-  deleteMention(userName: String!, postId: Int!): String!
 }
 
 input CreateUserDto {

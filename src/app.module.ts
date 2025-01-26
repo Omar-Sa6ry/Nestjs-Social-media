@@ -19,18 +19,16 @@ import { PostModule } from './modules/post/post.module'
 import { CommentModule } from './modules/comment/comment.module'
 import { PostLikeModule } from './modules/post-like/post-like.module'
 import { MessageModule } from './modules/message/message.module'
-import { CommentMentionModule } from './modules/comment-mention/comment-mention.module'
-import { PostMentionModule } from './modules/post-mention/post-mention.module'
 import { RedisModule } from './common/redis/redis.module'
 import { RelationModule } from './modules/friendship/relation.module'
 import { Relation } from './modules/friendship/entity/relation.entity'
 import { Image } from './modules/post/entity/image.entity'
 import { PostLike } from './modules/post-like/entity/likesPost.entity '
-import { PostMention } from './modules/post-mention/entity/mentionPost.entity '
 import { UploadModule } from './modules/upload/upload.module'
-import { CommentMention } from './modules/comment-mention/entity/comment.mention.entity '
 import { CommentLike } from './modules/comment-like/entity/likesComment.entity '
 import { CommentLikeModule } from './modules/comment-like/comment-like.module'
+import { Mention } from './modules/mention/entity/mention.entity '
+import { MentionModule } from './modules/mention/mention.module'
 
 @Module({
   imports: [
@@ -60,10 +58,9 @@ import { CommentLikeModule } from './modules/comment-like/comment-like.module'
           Post,
           Image,
           PostLike,
-          PostMention,
           Comment,
           CommentLike,
-          CommentMention,
+          Mention,
         ],
         synchronize: true,
         logging: false,
@@ -98,8 +95,7 @@ import { CommentLikeModule } from './modules/comment-like/comment-like.module'
     CommentLikeModule,
     PostLikeModule,
     MessageModule,
-    CommentMentionModule,
-    PostMentionModule,
+    MentionModule,
   ],
 
   providers: [AppService, AppResolver],

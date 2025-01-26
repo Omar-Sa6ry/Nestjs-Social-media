@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { User } from 'src/modules/users/entity/user.entity'
+import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { PostLike } from 'src/modules/post-like/entity/likesPost.entity '
-import { PostMention } from 'src/modules/post-mention/entity/mentionPost.entity '
 import { Image } from './image.entity'
 import { Comment } from '../../comment/entity/comment.entity '
 import {
@@ -59,11 +59,11 @@ export class Post {
   })
   likesPost: PostLike[]
 
-  @OneToMany(() => PostMention, mention_Post => mention_Post.postId, {
+  @OneToMany(() => Mention, mention => mention.postId, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  mentionPost: PostMention[]
+  mentionPost: Mention[]
 
   @AfterInsert()
   logInsert () {

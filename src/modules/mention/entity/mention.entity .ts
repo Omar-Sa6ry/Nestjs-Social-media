@@ -1,4 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Post } from '../../post/entity/post.entity '
+import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 import {
   AfterInsert,
@@ -11,11 +13,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Post } from '../../post/entity/post.entity '
 
 @Entity()
 @ObjectType()
-export class PostMention {
+export class Mention {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
@@ -31,6 +32,14 @@ export class PostMention {
   @Field(() => Int)
   @Column({ nullable: true })
   postId: number
+
+  @Field(() => Int)
+  @Column({ nullable: true })
+  commentId: number
+
+  @ManyToOne(() => Comment, comment => comment.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'commentId' })
+  comment: Comment
 
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
@@ -50,16 +59,16 @@ export class PostMention {
 
   @AfterInsert()
   logInsert () {
-    console.log('Inserted Mention_Post with id: ' + this.id)
+    console.log('Inserted mention with id: ' + this.id)
   }
 
   @AfterUpdate()
   logUpdate () {
-    console.log('Updated Mention_Post with id: ' + this.id)
+    console.log('Updated mention with id: ' + this.id)
   }
 
   @AfterRemove()
   logRemove () {
-    console.log('Removed Mention_Post with id: ' + this.id)
+    console.log('Removed mention with id: ' + this.id)
   }
 }

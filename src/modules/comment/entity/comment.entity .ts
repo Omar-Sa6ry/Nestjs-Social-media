@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 import { Post } from '../../post/entity/post.entity '
-import { CommentMention } from 'src/modules/comment-mention/entity/comment.mention.entity '
 import {
   AfterInsert,
   AfterRemove,
@@ -47,14 +47,14 @@ export class Comment {
   post: Post
 
   @OneToMany(
-    () => CommentMention,
-    mention_Comment => mention_Comment.commentId,
+    () => Mention,
+    mention => mention.commentId,
     {
       onDelete: 'SET NULL',
       nullable: true,
     },
   )
-  mentionComment: CommentMention[]
+  mentionComment: Mention[]
 
   @AfterInsert()
   logInsert () {

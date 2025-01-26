@@ -4,9 +4,9 @@ import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { PostLike } from 'src/modules/post-like/entity/likesPost.entity '
 import { Message } from 'src/modules/message/entity/message.entity'
 import { Relation } from 'src/modules/friendship/entity/relation.entity'
-import { PostMention } from 'src/modules/post-mention/entity/mentionPost.entity '
 import { CommentLike } from 'src/modules/comment-like/entity/likesComment.entity '
 import { Notification } from 'src/modules/notification/entity/notification.entity'
+import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { Post } from 'src/modules/post/entity/post.entity '
 import {
   AfterInsert,
@@ -56,7 +56,7 @@ export class User {
   })
   role: Role
 
-    @Column({
+  @Column({
     type: 'enum',
     enum: UserStatus,
     default: UserStatus.PUBLIC,
@@ -105,17 +105,17 @@ export class User {
   })
   post: Post[]
 
-  @OneToMany(() => PostMention, mention_Post => mention_Post.mentionTo, {
+  @OneToMany(() => Mention, mention => mention.mentionTo, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  mentionTo: PostMention[]
+  mentionTo: Mention[]
 
-  @OneToMany(() => PostMention, mention_Post => mention_Post.mentionFrom, {
+  @OneToMany(() => Mention, mention => mention.mentionFrom, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  mentionfrom: PostMention[]
+  mentionfrom: Mention[]
 
   @OneToMany(() => Comment, comment => comment.userId, {
     onDelete: 'SET NULL',

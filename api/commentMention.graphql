@@ -1,0 +1,77 @@
+# mutation {
+#   createCommentMention(userName: "ogfgnher", commentId: 5) {
+#     id
+#     username
+#     mentionTo
+#     comment {
+#       id
+#       content
+#       createdAt
+#     }
+#     createdAt
+#   }
+# }
+
+# query {
+#   getCommentMention(userName: "ogfgnher", commentId: 5) {
+#     id
+#     username
+#     mentionTo
+#     comment {
+#       id
+#       content
+#       createdAt
+#     }
+#     createdAt
+#   }
+# }
+
+# query {
+#   getCommentMentionsToUser {
+#     id
+#     username
+#     mentionTo
+#     comment {
+#       id
+#       content
+#       createdAt
+#     }
+#     createdAt
+#   }
+# }
+
+# query {
+#   getCommentMentionsFromUser {
+#     id
+#     username
+#     mentionTo
+#     comment {
+#       id
+#       content
+#       createdAt
+#     }
+#     createdAt
+#   }
+# }
+
+# query {
+#   getCommentMentionsForComment(commentId: 5) {
+#     id
+#     username
+#     mentionTo
+#     comment {
+#       id
+#       content
+#       createdAt
+#     }
+#     createdAt
+#   }
+# }
+
+# query {
+#   isUserMentionedInComment(commentId: 5, userName: "ogfgnher")
+# }
+
+# mutation {
+#   deleteCommentMention(userName: "ogfgnher", commentId: 5)
+# }
