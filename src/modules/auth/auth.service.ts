@@ -76,6 +76,8 @@ export class AuthService {
       )
 
       const token = await this.generateToken.jwt(user?.email, user?.id)
+      user.firebaseToken = token
+      await this.userRepository.save(user)
       const result = { user, token }
       const userCacheKey = `user:${email}`
       await this.redisService.set(userCacheKey, result)
@@ -101,7 +103,8 @@ export class AuthService {
     const token = await this.generateToken.jwt(user?.email, user?.id)
     const userCacheKey = `user:${email}`
     await this.redisService.set(userCacheKey, { user, token })
-
+    user.firebaseToken = token
+    await this.userRepository.save(user)
     return { user, token }
   }
 

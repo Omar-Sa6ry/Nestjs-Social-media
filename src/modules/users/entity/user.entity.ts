@@ -68,6 +68,9 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   resetTokenExpiry?: Date | null
 
+  @Column({ nullable: true })
+  firebaseToken?: string
+
   @OneToMany(() => Notification, notification => notification.senderId, {
     onDelete: 'SET NULL',
     nullable: true,

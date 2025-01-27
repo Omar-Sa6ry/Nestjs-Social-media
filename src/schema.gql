@@ -164,7 +164,7 @@ input PaginationDto {
 }
 
 type Mutation {
-  register(createUserDto: CreateUserDto!, avatar: CreateImagDto): AuthResponse!
+  register(createUserDto: CreateUserDto!, avatar: CreateImagDto!): AuthResponse!
   login(loginDto: LoginDto!): AuthResponse!
   forgotPassword(checkEmail: CheckEmail!): String!
   resetPassword(resetPasswordDto: ResetPasswordDto!): String!
