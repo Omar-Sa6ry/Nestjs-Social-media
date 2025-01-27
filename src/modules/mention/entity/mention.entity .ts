@@ -1,8 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Post } from '../../post/entity/post.entity '
+import { Reply } from 'src/modules/reply/entity/reply.entity '
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { User } from 'src/modules/users/entity/user.entity'
-import { Reply } from 'src/modules/comment copy/entity/reply.entity '
 import {
   AfterInsert,
   AfterRemove,
@@ -42,8 +42,8 @@ export class Mention {
   @JoinColumn({ name: 'commentId' })
   comment: Comment
 
-  @ManyToOne(() => Comment, comment => comment.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'commentId' })
+  @ManyToOne(() => Reply, comment => comment.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'replyId' })
   reply: Reply
 
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })

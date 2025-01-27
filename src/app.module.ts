@@ -27,8 +27,8 @@ import { MentionModule } from './modules/mention/mention.module'
 import { LikeModule } from './modules/like/like.module'
 import { Like } from './modules/like/entity/like.entity '
 import { CommentModule } from './modules/comment/comment.module'
-import { Reply } from './modules/comment copy/entity/reply.entity '
-import { ReplyModule } from './modules/comment copy/reply.module'
+import { ReplyModule } from './modules/reply/reply.module'
+import { Reply } from './modules/reply/entity/reply.entity '
 
 @Module({
   imports: [
