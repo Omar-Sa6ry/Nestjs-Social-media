@@ -1,0 +1,93 @@
+mutation {
+  writeReply(commentId: 7, content: "This is a reply") {
+    id
+    content
+    user {
+      id
+      userName
+    }
+    comment {
+      id
+      content
+    }
+  }
+}
+
+query {
+  getReply(commentId: 7, content: "This is a reply") {
+    id
+    content
+    user {
+      id
+      userName
+    }
+    comment {
+      id
+      content
+    }
+  }
+}
+
+query {
+  getRepliesByComment(commentId: 7) {
+    id
+    content
+    user {
+      id
+      userName
+    }
+    comment {
+      id
+      content
+    }
+  }
+}
+
+query {
+  getRepliesCount(commentId: 7)
+}
+
+query {
+  getRepliesByUser {
+    id
+    content
+    user {
+      id
+      userName
+    }
+    comment {
+      id
+      content
+    }
+  }
+}
+
+query {
+  getLastReplies(commentId: 7, paginationDto: { limit: 5, offset: 0 }) {
+    id
+    content
+    user {
+      id
+      userName
+    }
+    comment {
+      id
+      content
+    }
+  }
+}
+
+query {
+  getUserByReply(id: 1) {
+    id
+    userName
+  }
+}
+
+mutation {
+  updateReply(id: 1, content: "Updated reply content") 
+}
+
+mutation {
+  deleteReply(id: 1) 
+}

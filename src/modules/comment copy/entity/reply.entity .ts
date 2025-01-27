@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 import { Like } from 'src/modules/like/entity/like.entity '
+import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { Post } from '../../post/entity/post.entity '
 import {
   AfterInsert,
@@ -18,7 +19,7 @@ import {
 
 @Entity()
 @ObjectType()
-export class Comment {
+export class Reply {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
@@ -29,7 +30,7 @@ export class Comment {
 
   @Field(() => Int)
   @Column({ nullable: true })
-  postId: number
+  commentId: number
 
   @Field(() => Int)
   @Column({ nullable: true })
@@ -44,33 +45,33 @@ export class Comment {
   user: User
 
   @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'postId' })
-  post: Post
+  @JoinColumn({ name: 'commentId' })
+  comment: Comment
 
   @OneToMany(() => Mention, mention => mention.commentId, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  mentionComment: Mention[]
+  mentionReply: Mention[]
 
   @OneToMany(() => Like, like => like.commentId, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  likeComment: Like[]
+  likeReply: Like[]
 
   @AfterInsert()
   logInsert () {
-    console.log('Inserted Comment with id: ' + this.id)
+    console.log('Inserted Reply Comment with id: ' + this.id)
   }
 
   @AfterUpdate()
   logUpdate () {
-    console.log('Updated Comment with id: ' + this.id)
+    console.log('Updated Reply Comment with id: ' + this.id)
   }
 
   @AfterRemove()
   logRemove () {
-    console.log('Removed Comment with id: ' + this.id)
+    console.log('Removed Reply Comment with id: ' + this.id)
   }
 }

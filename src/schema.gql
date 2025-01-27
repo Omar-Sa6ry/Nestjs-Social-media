@@ -93,6 +93,14 @@ type CommentResponsee {
   createdAt: DateTime!
 }
 
+type ReplyResponsee {
+  id: Float!
+  content: String!
+  comment: Comment!
+  user: User!
+  createdAt: DateTime!
+}
+
 type Query {
   sayHello: String!
   getUserById(id: Float!): User!
@@ -125,6 +133,12 @@ type Query {
   getLastComments(postId: Int!, pagination: PaginationDto): [CommentResponsee!]!
   getUserByComment(commentId: Int!): User!
   getPostByComment(commentId: Int!): Post!
+  getReply(commentId: Float!, content: String!): ReplyResponsee!
+  getRepliesByComment(commentId: Float!): [ReplyResponsee!]!
+  getRepliesCount(commentId: Float!): Float!
+  getRepliesByUser: [ReplyResponsee!]!
+  getLastReplies(commentId: Float!, paginationDto: PaginationDto!): [ReplyResponsee!]!
+  getUserByReply(id: Float!): User!
   chat(userName: String!): [Message!]!
   userMessages: [Message!]!
   unreadMessages(receiverId: Int!): [Message!]!
@@ -180,6 +194,9 @@ type Mutation {
   writeComment(postId: Int!, content: String!): CommentResponsee!
   updateComment(commentId: Int!, content: String!): String!
   deleteComment(commentId: Int!): String!
+  writeReply(commentId: Float!, content: String!): ReplyResponsee!
+  updateReply(id: Float!, content: String!): String!
+  deleteReply(id: Float!): String!
   sendMessage(createMessageDto: CreateMessageDto!): Message!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!
