@@ -6,9 +6,14 @@ import { Comment } from './entity/comment.entity '
 import { Post } from '../post/entity/post.entity '
 import { User } from '../users/entity/user.entity'
 import { UserModule } from '../users/users.module'
+import { WebSocketModule } from 'src/common/websocket/websocket.module'
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forFeature([Post, User, Comment])],
+  imports: [
+    UserModule,
+    WebSocketModule,
+    TypeOrmModule.forFeature([Post, User, Comment]),
+  ],
   providers: [CommentResolver, CommentService],
 })
 export class CommentModule {}

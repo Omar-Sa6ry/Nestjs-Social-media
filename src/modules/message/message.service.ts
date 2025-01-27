@@ -6,6 +6,7 @@ import {
 import { UserService } from '../users/users.service'
 import { User } from '../users/entity/user.entity'
 import { RedisService } from 'src/common/redis/redis.service'
+import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
 import { Message } from './entity/message.entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -23,6 +24,7 @@ export class MessageService {
   constructor (
     private usersService: UserService,
     private readonly redisService: RedisService,
+    private readonly websocketGateway: WebSocketMessageGateway,
     @InjectRepository(Message)
     private MessageRepository: Repository<Message>,
   ) {}
@@ -46,6 +48,12 @@ export class MessageService {
 
     const relationCacheKey = `message:${senderId}:${user.id}`
     await this.redisService.set(relationCacheKey, message)
+
+    await this.websocketGateway.sendMessageToUser(
+      user.id.toString(),
+      'newMessage',
+      message,
+    )
     return message
   }
 

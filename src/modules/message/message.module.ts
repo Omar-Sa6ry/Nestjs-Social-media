@@ -5,9 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Message } from './entity/message.entity'
 import { RedisModule } from 'src/common/redis/redis.module'
 import { UserModule } from '../users/users.module'
+import { WebSocketModule } from 'src/common/websocket/websocket.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message]), RedisModule, UserModule],
+  imports: [
+    TypeOrmModule.forFeature([Message]),
+    RedisModule,
+    UserModule,
+    WebSocketModule,
+  ],
   providers: [MessageResolver, MessageService],
 })
 export class MessageModule {}

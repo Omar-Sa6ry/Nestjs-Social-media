@@ -19,10 +19,12 @@ import {
   ThisNotificationNotExosted,
   DeleteAllNotification,
 } from 'src/common/constant/messages.constant'
+import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
 
 @Injectable()
 export class NotificationService {
   constructor (
+    private readonly websocketGateway: WebSocketMessageGateway,
     private usersService: UserService,
     private readonly redisService: RedisService,
     @InjectRepository(Notification)
@@ -48,6 +50,12 @@ export class NotificationService {
 
     const relationCacheKey = `notification:${senderId}:${user.id}`
     await this.redisService.set(relationCacheKey, notification)
+
+    this.websocketGateway.broadcast('notigicationSend', {
+      NotificationId: notification.id,
+      userId: senderId,
+    })
+
     return notification
   }
 
@@ -150,6 +158,10 @@ export class NotificationService {
       throw new BadRequestException(NoNotification)
     }
     await this.notificationRepository.remove(notification)
+    this.websocketGateway.broadcast('notigicationSend', {
+      NotificationId: notification.id,
+      userId: senderId,
+    })
     return DeleteNotification
   }
 

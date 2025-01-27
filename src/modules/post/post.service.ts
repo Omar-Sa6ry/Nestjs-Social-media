@@ -14,6 +14,7 @@ import { PostResponse } from './dto/postResponse.dto'
 import { Comment } from '../comment/entity/comment.entity '
 import { Repository } from 'typeorm'
 import { RedisService } from 'src/common/redis/redis.service'
+import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
 import {
   DeletePost,
   EnterContentOrImage,
@@ -31,6 +32,7 @@ export class PostService {
     private readonly redisService: RedisService,
     private readonly uploadService: UploadService,
     private readonly likeService: LikeService,
+    private readonly websocketGateway: WebSocketMessageGateway,
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
     @InjectRepository(User) private userRepository: Repository<User>,
@@ -79,6 +81,12 @@ export class PostService {
       likes: 0,
       createdAt: post.createdAt,
     }
+
+    this.websocketGateway.broadcast('postCreated', {
+      postId: post.id,
+      content: post.content,
+      userId,
+    })
 
     return result
   }
@@ -236,6 +244,11 @@ export class PostService {
 
     const likes = await this.likeService.numPostLikes(post.id)
 
+    this.websocketGateway.broadcast('postUpdated', {
+      postId: id,
+      userId,
+    })
+
     const result = {
       id: post.id,
       content: post.content,
@@ -259,6 +272,12 @@ export class PostService {
       throw new BadRequestException(NotPostYou)
     }
     await this.postRepository.remove(post)
+
+    this.websocketGateway.broadcast('postDeleted', {
+      postId: id,
+      userId,
+    })
+
     return DeletePost
   }
 }

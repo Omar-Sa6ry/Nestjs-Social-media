@@ -10,6 +10,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Post } from '../post/entity/post.entity '
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
+import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
 import {
   CommentNotFound,
   CommentsNotFound,
@@ -21,6 +22,7 @@ import {
 @Injectable()
 export class CommentService {
   constructor (
+    private readonly websocketGateway: WebSocketMessageGateway,
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
     @InjectRepository(User) private userRepository: Repository<User>,
@@ -57,6 +59,12 @@ export class CommentService {
       user,
       createdAt: comment.createdAt,
     }
+
+    this.websocketGateway.broadcast('commentWrite', {
+      comment: comment.id,
+      userId,
+    })
+
     return result
   }
 
@@ -275,6 +283,11 @@ export class CommentService {
 
     comment.content = content
     await this.commentRepository.save(comment)
+
+    this.websocketGateway.broadcast('commentUdate', {
+      comment: comment.id,
+      userId,
+    })
     return UpdateComment
   }
 
@@ -294,6 +307,12 @@ export class CommentService {
     }
 
     await this.commentRepository.remove(comment)
+
+    this.websocketGateway.broadcast('commentDelete', {
+      comment: comment.id,
+      userId,
+    })
+
     return DeleteComment
   }
 }

@@ -12,6 +12,7 @@ import { User } from '../users/entity/user.entity'
 import { Comment } from '../comment/entity/comment.entity '
 import { UploadService } from '../upload/upload.service'
 import { LikeModule } from '../like/like.module'
+import { WebSocketModule } from 'src/common/websocket/websocket.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LikeModule } from '../like/like.module'
     QueueModule,
     RedisModule,
     LikeModule,
+    WebSocketModule,
     TypeOrmModule.forFeature([Post, Comment, User, Image]),
   ],
   providers: [PostResolver, PostService, UploadService],
