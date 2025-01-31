@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { User } from '../users/entity/user.entity'
-import { ReplyResponse } from './dto/replyResponse.dto'
+import { ReplyResponse } from './dto/ReplyResponse.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Repository } from 'typeorm'
 import { Reply } from './entity/reply.entity '

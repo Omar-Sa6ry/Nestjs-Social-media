@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserService } from '../users/users.service'
 import { User } from '../users/entity/user.entity'
-import { RelationResponseInput } from './dto/relationResponse.dto'
+import { RelationResponseInput } from './dto/RelationResponse.dto'
 import { Repository } from 'typeorm'
 import { Relation } from './entity/relation.entity'
 import { Status, UserStatus } from 'src/common/constant/enum.constant'

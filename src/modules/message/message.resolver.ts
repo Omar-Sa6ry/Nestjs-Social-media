@@ -1,37 +1,38 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { MessageService } from './message.service'
 import { Message } from './entity/message.entity'
-import { CreateMessageDto } from './dto/createMessage.dto'
+import { CreateMessageDto } from './dto/CreateMessage.dto'
 import { Auth } from 'src/common/decerator/auth.decerator'
 import { Role } from 'src/common/constant/enum.constant'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
+import { MessageOutput } from './dto/message.output '
 
 @Resolver(() => Message)
 export class MessageResolver {
   constructor (private readonly messageService: MessageService) {}
 
-  @Mutation(() => Message)
+  @Mutation(() => MessageOutput)
   @Auth(Role.USER)
   async sendMessage (
     @CurrentUser() user: CurrentUserDto,
     @Args('createMessageDto') createMessageDto: CreateMessageDto,
-  ): Promise<Message> {
+  ): Promise<MessageOutput> {
     return this.messageService.send(user.id, createMessageDto)
   }
 
-  @Query(() => [Message])
+  @Query(() => [MessageOutput])
   @Auth(Role.USER)
   async chat (
     @CurrentUser() user: CurrentUserDto,
     @Args('userName', { type: () => String }) userName: string,
-  ): Promise<Message[]> {
+  ): Promise<MessageOutput[]> {
     return this.messageService.chat(user.id, userName)
   }
 
-  @Query(() => [Message])
+  @Query(() => [MessageOutput])
   @Auth(Role.USER)
-  async userMessages (@CurrentUser() user: CurrentUserDto): Promise<Message[]> {
+  async userMessages (@CurrentUser() user: CurrentUserDto): Promise<MessageOutput[]> {
     return this.messageService.userMessages(user.id)
   }
 
@@ -44,12 +45,12 @@ export class MessageResolver {
     return this.messageService.markMessageRead(user.id, userName)
   }
 
-  @Query(() => [Message])
+  @Query(() => [MessageOutput])
   @Auth(Role.USER)
   async unreadMessages (
     @CurrentUser() user: CurrentUserDto,
     @Args('receiverId', { type: () => Int }) receiverId: number,
-  ): Promise<Message[]> {
+  ): Promise<MessageOutput[]> {
     return this.messageService.gotNotRead(user.id, receiverId)
   }
 

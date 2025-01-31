@@ -6,12 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../users/entity/user.entity'
-import { PostMentionResponse } from './dtos/mentionPostResponse.dto'
+import { PostMentionResponse } from './dtos/MentionPostResponse.dto'
 import { Mention } from './entity/mention.entity '
 import { Post } from '../post/entity/post.entity '
 import { UserService } from '../users/users.service'
 import { Comment } from '../comment/entity/comment.entity '
-import { CommentMentionResponse } from './dtos/mentionCommentResponse.dto'
+import { CommentMentionResponse } from './dtos/MentionCommentResponse.dto'
 import {
   CommentNotFound,
   DeleteMention,

@@ -23,22 +23,6 @@ type Comment {
   createdAt: DateTime!
 }
 
-type Message {
-  id: Int!
-  content: String!
-  senderId: Int!
-  receiverId: Int!
-  createdAt: DateTime!
-}
-
-type Notification {
-  id: Int!
-  content: String!
-  senderId: Int!
-  receiverId: Int!
-  createdAt: DateTime!
-}
-
 type User {
   id: Int!
   userName: String!
@@ -54,12 +38,29 @@ type AuthResponse {
   token: String!
 }
 
+type NotificationOutput {
+  id: Float!
+  Isread: Boolean!
+  sender: User!
+  receive: User!
+  createdAt: DateTime!
+}
+
 type PostResponsee {
   id: Float!
   content: String!
   user: User!
   likes: Float!
   comments: [Comment!]
+  createdAt: DateTime!
+}
+
+type MessageOutput {
+  id: Float!
+  content: String!
+  Isread: Boolean!
+  sender: User!
+  receive: User!
   createdAt: DateTime!
 }
 
@@ -107,10 +108,10 @@ type Query {
   getUserByEmail(email: CheckEmail!): User!
   getUserByUserName(userName: String!): User!
   deleteUser: String!
-  getAllNotifications: [Notification!]!
-  getNotificationById(id: Int!): Notification!
-  userNotifications: [Notification!]!
-  unreadNotifications(receiverId: Int!): [Notification!]!
+  getAllNotifications: [NotificationOutput!]!
+  getNotificationById(id: Int!): NotificationOutput!
+  userNotifications: [NotificationOutput!]!
+  unreadNotifications(receiverId: Int!): [NotificationOutput!]!
   getPostById(id: Int!): PostResponsee!
   searchPosts(content: String!, pagination: PaginationDto): [PostResponsee!]!
   getUserPosts: [PostResponsee!]!
@@ -139,9 +140,9 @@ type Query {
   getRepliesByUser: [ReplyResponsee!]!
   getLastReplies(commentId: Float!, paginationDto: PaginationDto!): [ReplyResponsee!]!
   getUserByReply(id: Float!): User!
-  chat(userName: String!): [Message!]!
-  userMessages: [Message!]!
-  unreadMessages(receiverId: Int!): [Message!]!
+  chat(userName: String!): [MessageOutput!]!
+  userMessages: [MessageOutput!]!
+  unreadMessages(receiverId: Int!): [MessageOutput!]!
   getPostMention(userName: String!, postId: Int!): PostMentionResponsee!
   postMentionsToUser: [PostMentionResponsee!]!
   postMentionsFromUser: [PostMentionResponsee!]!
@@ -174,7 +175,7 @@ type Mutation {
   logout: Boolean!
   updateUser(updateUserDto: UpdateUserDto!): User!
   UpdateUserRole(checkEmail: CheckEmail!, companyId: Float!): String!
-  sendNotification(createNotificationDto: CreateNotificationDto!): Notification!
+  sendNotification(createNotificationDto: CreateNotificationDto!): NotificationOutput!
   markNotificationAsRead(userName: String!): String!
   markAllNotificationsAsRead(userName: String!): String!
   deleteNotification(id: Int!): String!
@@ -197,7 +198,7 @@ type Mutation {
   writeReply(commentId: Float!, content: String!): ReplyResponsee!
   updateReply(id: Float!, content: String!): String!
   deleteReply(id: Float!): String!
-  sendMessage(createMessageDto: CreateMessageDto!): Message!
+  sendMessage(createMessageDto: CreateMessageDto!): MessageOutput!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!
   createPostMention(userName: String!, postId: Int!): PostMentionResponsee!

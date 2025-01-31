@@ -23,6 +23,7 @@ export class Notification {
   @Field(() => String)
   content: string
 
+  @Field(() => Boolean)
   @Column({ default: false })
   Isread: boolean
 

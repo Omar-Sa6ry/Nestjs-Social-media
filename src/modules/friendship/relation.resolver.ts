@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { RelationService } from './relation.service'
-import { RelationResponseOutput } from './dto/relationResponse.dto'
+import { RelationResponseOutput } from './dto/RelationResponse.dto'
 import { User } from '../users/entity/user.entity'
 import { Role } from 'src/common/constant/enum.constant'
 import { Auth } from 'src/common/decerator/auth.decerator'

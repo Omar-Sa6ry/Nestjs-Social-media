@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { CreateNotificationDto } from './dto/createNotificationdto'
+import { CreateNotificationDto } from './dto/CreateNotificationdto'
 import { UserService } from '../users/users.service'
 import { Notification } from './entity/notification.entity'
 import * as firebase from 'firebase-admin'
@@ -12,6 +12,7 @@ import { User } from '../users/entity/user.entity'
 import { RedisService } from 'src/common/redis/redis.service'
 import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
 import { Repository } from 'typeorm'
+import { NotificationInput } from './dto/notification.input'
 import { BatchResponse } from 'firebase-admin/lib/messaging/messaging-api'
 import { InjectRepository } from '@nestjs/typeorm'
 import { mapLimit } from 'async'
@@ -127,7 +128,7 @@ export class NotificationService {
   async send (
     senderId: number,
     createNotificationDto: CreateNotificationDto,
-  ): Promise<Notification> {
+  ): Promise<NotificationInput> {
     const { content, userName } = createNotificationDto
 
     const user = await this.usersService.findByUserName(userName)
@@ -142,19 +143,32 @@ export class NotificationService {
     })
     await this.notificationRepository.save(notification)
 
-    const relationCacheKey = `notification:${senderId}:${user.id}`
-    await this.redisService.set(relationCacheKey, notification)
-
     this.websocketGateway.broadcast('notificationSend', {
       notificationId: notification.id,
       userId: senderId,
     })
 
+    const sender = await this.usersService.findById(senderId)
+    if (!(sender instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
+    const result = {
+      id: notification.id,
+      Isread: notification.Isread,
+      createdAt: notification.createdAt,
+      sender,
+      receive: user,
+    }
+
+    const relationCacheKey = `notification:${senderId}:${user.id}`
+    await this.redisService.set(relationCacheKey, result)
+
     // const firebaseMessages: ISendFirebaseMessages[] = [
     //   {
-    //     token: user.firebaseToken, 
+    //     token: user.firebaseToken,
     //     message: content,
-    //     title: 'New Notification', 
+    //     title: 'New Notification',
     //   },
     // ]
 
@@ -166,10 +180,15 @@ export class NotificationService {
     //   console.error('Error sending push notification:', error.message)
     // }
 
-    return notification
+    return result
   }
 
-  async getAll (userId: number): Promise<Notification[]> {
+  async getAll (userId: number): Promise<NotificationInput[]> {
+    const user = await this.usersService.findById(userId)
+    if (!(user instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
     const notifications = await this.notificationRepository.find({
       where: { receiverId: userId },
       order: { createdAt: 'ASC' },
@@ -179,12 +198,35 @@ export class NotificationService {
       throw new NotFoundException(NoNotificationsSend)
     }
 
+    const result = []
+
+    for (const notification of notifications) {
+      const sender = await this.usersService.findById(notification.senderId)
+      if (!(sender instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      result.push({
+        id: notification.id,
+        Isread: notification.Isread,
+        createdAt: notification.createdAt,
+        sender,
+        receive: user,
+      })
+    }
+
     const relationCacheKey = `notification:${userId}`
-    await this.redisService.set(relationCacheKey, notifications)
-    return notifications
+    await this.redisService.set(relationCacheKey, result)
+
+    return result
   }
 
-  async get (userId: number, id: number): Promise<Notification> {
+  async get (userId: number, id: number): Promise<NotificationInput> {
+    const user = await this.usersService.findById(userId)
+    if (!(user instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
     const notification = await this.notificationRepository.findOne({
       where: { receiverId: userId, id },
     })
@@ -193,12 +235,31 @@ export class NotificationService {
       throw new NotFoundException(ThisNotificationNotExosted)
     }
 
-    const relationCacheKey = `notification:${userId}:${id}`
-    await this.redisService.set(relationCacheKey, notification)
-    return notification
+    const sender = await this.usersService.findById(notification.senderId)
+    if (!(sender instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
+    const result = {
+      id: notification.id,
+      Isread: notification.Isread,
+      createdAt: notification.createdAt,
+      sender,
+      receive: user,
+    }
+
+    const relationCacheKey = `notification:${sender.id}:${user.id}`
+    await this.redisService.set(relationCacheKey, result)
+
+    return result
   }
 
-  async userNotifications (userId: number): Promise<Notification[]> {
+  async userNotifications (userId: number): Promise<NotificationInput[]> {
+    const user = await this.usersService.findById(userId)
+    if (!(user instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
     const notifications = await this.notificationRepository.find({
       where: [{ receiverId: userId }, { senderId: userId }],
       order: { createdAt: 'ASC' },
@@ -208,19 +269,55 @@ export class NotificationService {
       throw new NotFoundException(NoNotificationsSend)
     }
 
-    const relationCacheKey = `Notification:${userId}`
-    await this.redisService.set(relationCacheKey, notifications)
-    return notifications
+    const result = []
+
+    for (const notification of notifications) {
+      const sender = await this.usersService.findById(notification.senderId)
+      if (!(sender instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      result.push({
+        id: notification.id,
+        Isread: notification.Isread,
+        createdAt: notification.createdAt,
+        sender,
+        receive: user,
+      })
+    }
+    return result
   }
 
   async gotNotRead (
     senderId: number,
     receiverId: number,
-  ): Promise<Notification[]> {
+  ): Promise<NotificationInput[]> {
+    const user = await this.usersService.findById(receiverId)
+    if (!(user instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
     const notifications = await this.notificationRepository.find({
       where: { receiverId, senderId, Isread: false },
     })
-    return notifications
+
+    const result = []
+
+    for (const notification of notifications) {
+      const sender = await this.usersService.findById(notification.senderId)
+      if (!(sender instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      result.push({
+        id: notification.id,
+        Isread: notification.Isread,
+        createdAt: notification.createdAt,
+        sender,
+        receive: user,
+      })
+    }
+    return result
   }
 
   async markNotificationRead (

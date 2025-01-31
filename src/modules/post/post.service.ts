@@ -10,7 +10,7 @@ import { Post } from './entity/post.entity '
 import { UploadService } from '../upload/upload.service'
 import { LikeService } from '../like/like.service'
 import { User } from '../users/entity/user.entity'
-import { PostResponse } from './dto/postResponse.dto'
+import { PostResponse } from './dto/PostResponse.dto'
 import { Comment } from '../comment/entity/comment.entity '
 import { Repository } from 'typeorm'
 import { RedisService } from 'src/common/redis/redis.service'
@@ -60,7 +60,6 @@ export class PostService {
         createImageDto,
         post.id,
       )
-      console.log(images)
     }
 
     const relationCacheKey = `post:${post.id}`

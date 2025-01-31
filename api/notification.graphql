@@ -1,0 +1,100 @@
+mutation {
+  sendNotification(
+    createNotificationDto: {
+      content: "You have a new message!"
+      userName: "egeff"
+    }
+  ) {
+    id
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+query {
+  userNotifications {
+    id
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+query {
+  unreadNotifications(receiverId: 2) {
+    id
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+query {
+  getAllNotifications {
+    id
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+query {
+  getNotificationById(id: 1) {
+    id
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+mutation {
+  markNotificationAsRead(userName: "gvgbrgrb")
+}
+
+mutation {
+  markAllNotificationsAsRead(userName: "bjfbiuvbi")
+}
+
+mutation {
+  deleteNotification(id: 1)
+}
+
+mutation {
+  deleteAllNotifications
+}

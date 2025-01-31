@@ -7,10 +7,11 @@ import { UserService } from '../users/users.service'
 import { User } from '../users/entity/user.entity'
 import { RedisService } from 'src/common/redis/redis.service'
 import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
+import { messageInput } from './dto/message.input'
 import { Message } from './entity/message.entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { CreateMessageDto } from './dto/createMessage.dto'
+import { CreateMessageDto } from './dto/CreateMessage.dto'
 import {
   DeleteMessage,
   MessageRead,
@@ -26,44 +27,58 @@ export class MessageService {
     private readonly redisService: RedisService,
     private readonly websocketGateway: WebSocketMessageGateway,
     @InjectRepository(Message)
-    private MessageRepository: Repository<Message>,
+    private messageRepository: Repository<Message>,
   ) {}
 
   async send (
     senderId: number,
     createMessageDto: CreateMessageDto,
-  ): Promise<Message> {
+  ): Promise<messageInput> {
     const { content, userName } = createMessageDto
     const user = await this.usersService.findByUserName(userName)
     if (!(user instanceof User)) {
       throw new NotFoundException(UserNameIsWrong)
     }
 
-    const message = await this.MessageRepository.create({
+    const message = await this.messageRepository.create({
       content,
       senderId,
       receiverId: user.id,
     })
-    await this.MessageRepository.save(message)
+    await this.messageRepository.save(message)
+
+    const sender = await this.usersService.findById(senderId)
+    if (!(sender instanceof User)) {
+      throw new NotFoundException(UserNameIsWrong)
+    }
+
+    const result = {
+      id: message.id,
+      content: message.content,
+      Isread: message.Isread,
+      createdAt: message.createdAt,
+      sender,
+      receive: user,
+    }
 
     const relationCacheKey = `message:${senderId}:${user.id}`
-    await this.redisService.set(relationCacheKey, message)
+    await this.redisService.set(relationCacheKey, result)
 
     await this.websocketGateway.sendMessageToUser(
       user.id.toString(),
       'newMessage',
-      message,
+      result,
     )
-    return message
+    return result
   }
 
-  async chat (userId: number, userName: string): Promise<Message[]> {
+  async chat (userId: number, userName: string): Promise<messageInput[]> {
     const user = await this.usersService.findByUserName(userName)
     if (!(user instanceof User)) {
       throw new NotFoundException(UserNameIsWrong)
     }
 
-    const message = await this.MessageRepository.find({
+    const messages = await this.messageRepository.find({
       where: [
         { receiverId: userId, senderId: user.id },
         { senderId: userId, receiverId: user.id },
@@ -71,17 +86,39 @@ export class MessageService {
       order: { createdAt: 'ASC' },
     })
 
-    if (message.length === 0) {
+    if (messages.length === 0) {
       throw new NotFoundException(NoMessages)
     }
 
+    const result = []
+    for (const message of messages) {
+      const sender = await this.usersService.findById(message.senderId)
+      if (!(sender instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      const user = await this.usersService.findById(message.receiverId)
+      if (!(user instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      result.push({
+        id: message.id,
+        content: message.content,
+        Isread: message.Isread,
+        createdAt: message.createdAt,
+        sender,
+        receive: user,
+      })
+    }
+
     const relationCacheKey = `message:${userId}:${user.id}`
-    await this.redisService.set(relationCacheKey, message)
-    return message
+    await this.redisService.set(relationCacheKey, result)
+    return result
   }
 
-  async userMessages (userId: number): Promise<Message[]> {
-    const messages = await this.MessageRepository.find({
+  async userMessages (userId: number): Promise<messageInput[]> {
+    const messages = await this.messageRepository.find({
       where: [{ receiverId: userId }, { senderId: userId }],
       order: { createdAt: 'ASC' },
     })
@@ -90,9 +127,31 @@ export class MessageService {
       throw new NotFoundException(NoMessagesSend)
     }
 
-    const relationCacheKey = `message:${userId}`
-    await this.redisService.set(relationCacheKey, messages)
-    return messages
+    const result = []
+    for (const message of messages) {
+      const sender = await this.usersService.findById(message.senderId)
+      if (!(sender instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      const user = await this.usersService.findById(message.receiverId)
+      if (!(user instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      result.push({
+        id: message.id,
+        content: message.content,
+        Isread: message.Isread,
+        createdAt: message.createdAt,
+        sender,
+        receive: user,
+      })
+
+      const relationCacheKey = `message:${userId}`
+      await this.redisService.set(relationCacheKey, messages)
+      return result
+    }
   }
 
   async markMessageRead (senderId: number, userName: string): Promise<string> {
@@ -101,32 +160,57 @@ export class MessageService {
       throw new NotFoundException(UserNameIsWrong)
     }
 
-    const messages = await this.MessageRepository.find({
+    const messages = await this.messageRepository.find({
       where: { senderId, receiverId: user.id, Isread: false },
     })
 
     for (const message of messages) {
       message.Isread = true
     }
-    await this.MessageRepository.save(messages)
+    await this.messageRepository.save(messages)
     return MessageRead
   }
 
-  async gotNotRead (senderId: number, receiverId: number): Promise<Message[]> {
-    const messages = await this.MessageRepository.find({
+  async gotNotRead (
+    senderId: number,
+    receiverId: number,
+  ): Promise<messageInput[]> {
+    const messages = await this.messageRepository.find({
       where: { receiverId, senderId, Isread: false },
     })
-    return messages
+
+    const result = []
+    for (const message of messages) {
+      const sender = await this.usersService.findById(message.senderId)
+      if (!(sender instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      const user = await this.usersService.findById(message.receiverId)
+      if (!(user instanceof User)) {
+        throw new NotFoundException(UserNameIsWrong)
+      }
+
+      result.push({
+        id: message.id,
+        content: message.content,
+        Isread: message.Isread,
+        createdAt: message.createdAt,
+        sender,
+        receive: user,
+      })
+      return result
+    }
   }
 
   async deleteMessage (senderId: number, id: number): Promise<string> {
-    const message = await this.MessageRepository.findOne({
+    const message = await this.messageRepository.findOne({
       where: { senderId, id },
     })
     if (!message) {
       throw new BadRequestException(NoMessages)
     }
-    await this.MessageRepository.remove(message)
+    await this.messageRepository.remove(message)
     return DeleteMessage
   }
 }

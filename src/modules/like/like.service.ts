@@ -9,7 +9,7 @@ import { Post } from '../post/entity/post.entity '
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { User } from '../users/entity/user.entity'
 import { Comment } from '../comment/entity/comment.entity '
-import { PostResponse } from '../post/dto/postResponse.dto'
+import { PostResponse } from '../post/dto/PostResponse.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
   CommentLikeExisted,

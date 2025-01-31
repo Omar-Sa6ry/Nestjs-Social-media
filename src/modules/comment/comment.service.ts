@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { Comment } from './entity/comment.entity '
 import { User } from '../users/entity/user.entity'
-import { CommentResponse } from './dto/commentResponse.dto'
+import { CommentResponse } from './dto/CommentResponse.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Post } from '../post/entity/post.entity '
 import { Repository } from 'typeorm'

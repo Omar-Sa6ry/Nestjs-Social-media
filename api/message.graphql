@@ -1,0 +1,77 @@
+mutation SendMessage {
+  sendMessage(
+    createMessageDto: { userName: "ifghuhgu", content: "Hello, how are you?" }
+  ) {
+    id
+    content
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+query GetChat {
+  chat(userName: "buihgi") {
+    id
+    content
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+query GetUserMessages {
+  userMessages {
+    id
+    content
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+mutation MarkMessageAsRead {
+  markMessageAsRead(userName: "hfuierhgtie")
+}
+
+query GetUnreadMessages {
+  unreadMessages(receiverId: 2) {
+    id
+    content
+    Isread
+    sender {
+      id
+      userName
+    }
+    receive {
+      id
+      userName
+    }
+    createdAt
+  }
+}
+
+mutation DeleteMessage {
+  deleteMessage(id: 1)
+}

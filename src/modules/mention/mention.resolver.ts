@@ -3,10 +3,10 @@ import { Role } from 'src/common/constant/enum.constant'
 import { Auth } from 'src/common/decerator/auth.decerator'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
-import { PostMentionResponsee } from './dtos/mentionPostResponse.dto'
+import { PostMentionResponsee } from './dtos/MentionPostResponse.dto'
 import { Mention } from './entity/mention.entity '
 import { MentionService } from './mention.service'
-import { CommentMentionResponsee } from './dtos/mentionCommentResponse.dto'
+import { CommentMentionResponsee } from './dtos/MentionCommentResponse.dto'
 
 @Resolver(() => Mention)
 export class MentionResolver {

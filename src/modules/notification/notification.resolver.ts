@@ -1,56 +1,57 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { NotificationService } from './notification.service'
 import { Notification } from './entity/notification.entity'
-import { CreateNotificationDto } from './dto/createNotificationdto'
+import { CreateNotificationDto } from './dto/CreateNotificationdto'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { Auth } from 'src/common/decerator/auth.decerator'
 import { Role } from 'src/common/constant/enum.constant'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
+import { NotificationOutput } from './dto/notification.output'
 
 @Resolver(() => Notification)
 export class NotificationResolver {
   constructor (private readonly notificationService: NotificationService) {}
 
-  @Mutation(() => Notification)
+  @Mutation(() => NotificationOutput)
   @Auth(Role.USER)
   async sendNotification (
     @CurrentUser() user: CurrentUserDto,
     @Args('createNotificationDto') createNotificationDto: CreateNotificationDto,
-  ): Promise<Notification> {
+  ): Promise<NotificationOutput> {
     return this.notificationService.send(user.id, createNotificationDto)
   }
 
-  @Query(() => [Notification])
+  @Query(() => [NotificationOutput])
   @Auth(Role.USER)
   async getAllNotifications (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<Notification[]> {
+  ): Promise<NotificationOutput[]> {
     return this.notificationService.getAll(user.id)
   }
 
-  @Query(() => Notification)
+  @Query(() => NotificationOutput)
   @Auth(Role.USER)
   async getNotificationById (
     @CurrentUser() user: CurrentUserDto,
     @Args('id', { type: () => Int }) id: number,
-  ): Promise<Notification> {
+  ): Promise<NotificationOutput> {
     return this.notificationService.get(user.id, id)
   }
 
-  @Query(() => [Notification])
+  @Query(() => [NotificationOutput])
   @Auth(Role.USER)
   async userNotifications (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<Notification[]> {
+  ): Promise<NotificationOutput[]> {
     return this.notificationService.userNotifications(user.id)
   }
 
-  @Query(() => [Notification])
+  @Query(() => [NotificationOutput])
   @Auth(Role.USER)
   async unreadNotifications (
     @CurrentUser() user: CurrentUserDto,
     @Args('receiverId', { type: () => Int }) receiverId: number,
-  ): Promise<Notification[]> {
+  ): Promise<NotificationOutput[]> {
     return this.notificationService.gotNotRead(user.id, receiverId)
   }
 
