@@ -7,7 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Notification } from './entity/notification.entity'
 import { WebSocketModule } from 'src/common/websocket/websocket.module'
 import { User } from '../users/entity/user.entity'
-import { firebaseAdminProvider } from './firebase'
+import { firebaseAdminProvider } from '../../common/firebase/firebaseAdminProvider'
 
 @Module({
   imports: [

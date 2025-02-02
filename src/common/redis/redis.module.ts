@@ -7,7 +7,8 @@ import * as redisStore from 'cache-manager-ioredis'
   imports: [
     CacheModule.register({
       isGlobal: true,
-      store: redisStore,
+      store: require('cache-manager-redis-store'),
+      // store: redisStore,
       ttl: 3600,
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
