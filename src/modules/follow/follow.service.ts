@@ -5,14 +5,15 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserService } from '../users/users.service'
+import DataLoader from 'dataloader'
+import { createUserLoader } from 'src/common/loaders/date-loaders'
 import { User } from '../users/entity/user.entity'
-import { RelationResponseInput } from './dto/RelationResponse.dto'
+import { RelationResponseInput } from './dto/followResponse.dto'
+import { Follow } from './entity/follow.entity'
 import { Repository } from 'typeorm'
-import { Relation } from './entity/relation.entity'
 import { Status, UserStatus } from 'src/common/constant/enum.constant'
 import {
   AccountPrivacy,
-  NoBlocks,
   NoFollowYou,
   NoFriendName,
   NoFriends,
@@ -22,12 +23,18 @@ import {
 } from 'src/common/constant/messages.constant'
 
 @Injectable()
-export class RelationService {
+export class FollowService {
+  private userLoader: DataLoader<number, User>
+
   constructor (
     private usersService: UserService,
-    @InjectRepository(Relation)
-    private relationRepository: Repository<Relation>,
-  ) {}
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Follow)
+    private relationRepository: Repository<Follow>,
+  ) {
+    this.userLoader = createUserLoader(this.userRepository)
+  }
 
   async follow (followerId: number, userName: string): Promise<string> {
     const following = await this.usersService.findByUserName(userName)
@@ -35,11 +42,11 @@ export class RelationService {
       throw new NotFoundException(NoFriendName)
     }
 
-    const relation = await this.relationRepository.findOne({
+    const follow = await this.relationRepository.findOne({
       where: { followerId, followingId: following.id },
     })
 
-    if (!relation) {
+    if (!follow) {
       let status: string
       if (following.status === UserStatus.PRIVACY) {
         status = Status.PENDING
@@ -66,7 +73,7 @@ export class RelationService {
       }  ${userName}`
     }
 
-    await this.relationRepository.remove(relation)
+    await this.relationRepository.remove(follow)
     const IsFriend = await this.relationRepository.findOne({
       where: { followerId: following.id, followingId: followerId },
     })
@@ -84,14 +91,14 @@ export class RelationService {
       throw new NotFoundException(UserNameIsWrong)
     }
 
-    const relation = await this.relationRepository.findOne({
+    const follow = await this.relationRepository.findOne({
       where: { followerId: user.id, followingId: userId },
     })
-    if (!relation) {
+    if (!follow) {
       throw new BadRequestException(NoFollowYou)
     }
 
-    if (relation.status === Status.FRIEND) {
+    if (follow.status === Status.FRIEND) {
       const isFriend = await this.relationRepository.findOne({
         where: { followingId: user.id, followerId: userId },
       })
@@ -101,18 +108,18 @@ export class RelationService {
       }
     }
 
-    await this.relationRepository.remove(relation)
+    await this.relationRepository.remove(follow)
     return `${userName} not following you`
   }
 
   async get (followerId: number, followingId: number): Promise<string> {
-    const relation = await this.relationRepository.findOne({
+    const follow = await this.relationRepository.findOne({
       where: { followerId, followingId },
     })
-    if (!relation) {
+    if (!follow) {
       return NoRelation
     }
-    return relation.status
+    return follow.status
   }
 
   async getFollower (userName: string): Promise<RelationResponseInput[]> {
@@ -125,18 +132,33 @@ export class RelationService {
       throw new BadRequestException(AccountPrivacy)
     }
 
-    const relations = await this.relationRepository.find({
+    const follows = await this.relationRepository.find({
       where: { followerId: follower.id },
     })
-    if (relations.length === 0) {
+    if (follows.length === 0) {
       throw new BadRequestException(ThereisNoRelation)
     }
 
-    const result = []
-    for (const relation of relations) {
-      const following = await this.usersService.findById(relation.followingId)
-      result.push({ follower, following, status: relation.status })
-    }
+    const users = await this.userLoader.loadMany(
+      follows.map(follow => follow.followingId),
+    )
+
+    const result = await Promise.all(
+      follows.map(async (follow, index) => {
+        const user = users[index]
+        if (user instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+
+        return {
+          id: follow.id,
+          status: follow.status,
+          following: user,
+          follower,
+        }
+      }),
+    )
+
     return result
   }
 
@@ -150,35 +172,70 @@ export class RelationService {
       throw new BadRequestException(AccountPrivacy)
     }
 
-    const relations = await this.relationRepository.find({
+    const follows = await this.relationRepository.find({
       where: { followerId: following.id },
     })
-    if (relations.length === 0) {
+    if (follows.length === 0) {
       throw new BadRequestException(ThereisNoRelation)
     }
 
-    const result = []
-    for (const relation of relations) {
-      const follower = await this.usersService.findById(relation.followingId)
-      result.push({ following, follower, status: relation.status })
-    }
+    const users = await this.userLoader.loadMany(
+      follows.map(follow => follow.followerId),
+    )
+
+    const result = await Promise.all(
+      follows.map(async (follow, index) => {
+        const user = users[index]
+        if (user instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+
+        return {
+          id: follow.id,
+          status: follow.status,
+          follower: user,
+          following,
+        }
+      }),
+    )
     return result
   }
 
   async getFriends (userId: number): Promise<RelationResponseInput[]> {
-    const relations = await this.relationRepository.find({
+    const follows = await this.relationRepository.find({
       where: { status: Status.FRIEND, followerId: userId },
     })
-    if (relations.length === 0) {
+    if (follows.length === 0) {
       throw new BadRequestException(NoFriends)
     }
 
-    const result = []
-    for (const relation of relations) {
-      const follower = await this.usersService.findById(relation.followerId)
-      const following = await this.usersService.findById(relation.followingId)
-      result.push({ follower, following, status: Status.FRIEND })
-    }
+    const followers = await this.userLoader.loadMany(
+      follows.map(follow => follow.followerId),
+    )
+    const followings = await this.userLoader.loadMany(
+      follows.map(follow => follow.followerId),
+    )
+
+    const result = await Promise.all(
+      follows.map(async (follow, index) => {
+        const follower = followers[index]
+        if (follower instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+
+        const following = followings[index]
+        if (following instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+
+        return {
+          id: follow.id,
+          status: follow.status,
+          follower,
+          following,
+        }
+      }),
+    )
     return result
   }
 
@@ -192,82 +249,21 @@ export class RelationService {
       throw new NotFoundException(UserNameIsWrong)
     }
 
-    const relation = await this.relationRepository.findOne({
+    const follow = await this.relationRepository.findOne({
       where: { followerId, followingId: following.id, status: Status.PENDING },
     })
 
-    if (!relation) {
+    if (!follow) {
       throw new BadRequestException(`${userName} not request to follow you`)
     }
 
     if (status) {
-      relation.status = Status.FOLLOW
-      await this.relationRepository.save(relation)
+      follow.status = Status.FOLLOW
+      await this.relationRepository.save(follow)
       return `${userName} follow you`
     }
 
-    await this.relationRepository.remove(relation)
+    await this.relationRepository.remove(follow)
     return `You rejected ${userName}`
-  }
-
-  async block (followerId: number, userName: string): Promise<string> {
-    const following = await this.usersService.findByUserName(userName)
-    if (!(following instanceof User)) {
-      throw new NotFoundException(UserNameIsWrong)
-    }
-
-    const relation = await this.relationRepository.findOne({
-      where: { followerId, followingId: following.id },
-    })
-
-    if (!relation) {
-      const newRelation = this.relationRepository.create({
-        followerId,
-        followingId: following.id,
-        status: Status.BLOCK,
-      })
-
-      await this.relationRepository.save(newRelation)
-      return `You have blocked ${userName}`
-    }
-
-    relation.status = Status.BLOCK
-    await this.relationRepository.save(relation)
-
-    return `You have blocked ${userName}`
-  }
-
-  async unblock (followerId: number, userName: string): Promise<string> {
-    const following = await this.usersService.findByUserName(userName)
-    if (!(following instanceof User)) {
-      throw new NotFoundException(`User with username ${userName} not found`)
-    }
-
-    const relation = await this.relationRepository.findOne({
-      where: { followerId, followingId: following.id, status: Status.BLOCK },
-    })
-
-    if (!relation) {
-      throw new BadRequestException(`You have not blocked ${userName}`)
-    }
-    await this.relationRepository.remove(relation)
-    return `You have unblocked ${userName}`
-  }
-
-  async getBlock (userId: number): Promise<RelationResponseInput[]> {
-    const relations = await this.relationRepository.find({
-      where: { status: Status.BLOCK, followerId: userId },
-    })
-    if (relations.length === 0) {
-      throw new BadRequestException(NoBlocks)
-    }
-
-    const result = []
-    for (const relation of relations) {
-      const follower = await this.usersService.findById(relation.followerId)
-      const following = await this.usersService.findById(relation.followingId)
-      result.push({ follower, following, status: Status.BLOCK })
-    }
-    return result
   }
 }

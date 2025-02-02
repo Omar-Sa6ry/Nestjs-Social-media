@@ -16,17 +16,29 @@ import {
   CommentsNotFound,
   DeleteComment,
   UpdateComment,
+  UserNameIsWrong,
 } from 'src/common/constant/messages.constant'
+import DataLoader from 'dataloader'
+import {
+  createCommentLoader,
+  createUserLoader,
+} from 'src/common/loaders/date-loaders'
 
 @Injectable()
 export class ReplyService {
+  private commentLoader: DataLoader<number, Comment[]>
+  private userLoader: DataLoader<number, User>
+
   constructor (
     private readonly websocketGateway: WebSocketMessageGateway,
     @InjectRepository(Reply)
     private replyRepository: Repository<Reply>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
-  ) {}
+  ) {
+    this.commentLoader = createCommentLoader(this.commentRepository)
+    this.userLoader = createUserLoader(this.userRepository)
+  }
 
   async write (
     userId: number,
@@ -112,23 +124,34 @@ export class ReplyService {
       throw new BadRequestException(CommentsNotFound)
     }
 
-    const result = []
-    for (const reply of replys) {
-      const comment = await this.commentRepository.findOne({
-        where: { id: reply.commentId },
-      })
-      const user = await this.userRepository.findOne({
-        where: { id: reply.userId },
-      })
+    const users = await this.userLoader.loadMany(
+      replys.map(reply => reply.userId),
+    )
+    const comments = await this.commentLoader.loadMany(
+      replys.map(comment => comment.commentId),
+    )
 
-      result.push({
-        id: reply.id,
-        content: reply.content,
-        comment,
-        user,
-        createdAt: reply.createdAt,
-      })
-    }
+    const result = await Promise.all(
+      replys.map(async (reply, index) => {
+        const user = users[index]
+        if (user instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const postComments = comments[index]
+        if (postComments instanceof Error) {
+          throw new NotFoundException(CommentsNotFound)
+        }
+
+        return {
+          id: reply.id,
+          content: reply.content,
+          user,
+          comment: postComments[0],
+          createdAt: reply.createdAt,
+        }
+      }),
+    )
+
     return result
   }
 
@@ -156,23 +179,34 @@ export class ReplyService {
       throw new BadRequestException(CommentsNotFound)
     }
 
-    const result = []
-    for (const reply of replys) {
-      const comment = await this.commentRepository.findOne({
-        where: { id: reply.commentId },
-      })
-      const user = await this.userRepository.findOne({
-        where: { id: reply.userId },
-      })
+    const users = await this.userLoader.loadMany(
+      replys.map(reply => reply.userId),
+    )
+    const comments = await this.commentLoader.loadMany(
+      replys.map(comment => comment.commentId),
+    )
 
-      result.push({
-        id: comment.id,
-        content: comment.content,
-        comment,
-        user,
-        createdAt: comment.createdAt,
-      })
-    }
+    const result = await Promise.all(
+      replys.map(async (reply, index) => {
+        const user = users[index]
+        if (user instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const postComments = comments[index]
+        if (postComments instanceof Error) {
+          throw new NotFoundException(CommentsNotFound)
+        }
+
+        return {
+          id: reply.id,
+          content: reply.content,
+          user,
+          comment: postComments[0],
+          createdAt: reply.createdAt,
+        }
+      }),
+    )
+
     return result
   }
 
@@ -199,23 +233,34 @@ export class ReplyService {
       }
     }
 
-    const result = []
-    for (const reply of replys) {
-      const comment = await this.commentRepository.findOne({
-        where: { id: reply.commentId },
-      })
-      const user = await this.userRepository.findOne({
-        where: { id: reply.userId },
-      })
+    const users = await this.userLoader.loadMany(
+      replys.map(reply => reply.userId),
+    )
+    const comments = await this.commentLoader.loadMany(
+      replys.map(comment => comment.commentId),
+    )
 
-      result.push({
-        id: reply.id,
-        content: reply.content,
-        comment,
-        user,
-        createdAt: reply.createdAt,
-      })
-    }
+    const result = await Promise.all(
+      replys.map(async (reply, index) => {
+        const user = users[index]
+        if (user instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const postComments = comments[index]
+        if (postComments instanceof Error) {
+          throw new NotFoundException(CommentsNotFound)
+        }
+
+        return {
+          id: reply.id,
+          content: reply.content,
+          user,
+          comment: postComments[0],
+          createdAt: reply.createdAt,
+        }
+      }),
+    )
+
     return result
   }
 

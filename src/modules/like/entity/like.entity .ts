@@ -48,6 +48,7 @@ export class Like {
   @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
   post: Post
+  content: any
 
   @AfterInsert()
   logInsert () {

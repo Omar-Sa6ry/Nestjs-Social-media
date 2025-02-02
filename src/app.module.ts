@@ -18,8 +18,6 @@ import { NotificationModule } from './modules/notification/notification.module'
 import { PostModule } from './modules/post/post.module'
 import { MessageModule } from './modules/message/message.module'
 import { RedisModule } from './common/redis/redis.module'
-import { RelationModule } from './modules/friendship/relation.module'
-import { Relation } from './modules/friendship/entity/relation.entity'
 import { Image } from './modules/post/entity/image.entity'
 import { UploadModule } from './modules/upload/upload.module'
 import { Mention } from './modules/mention/entity/mention.entity '
@@ -29,6 +27,10 @@ import { Like } from './modules/like/entity/like.entity '
 import { CommentModule } from './modules/comment/comment.module'
 import { ReplyModule } from './modules/reply/reply.module'
 import { Reply } from './modules/reply/entity/reply.entity '
+import { BlockModule } from './modules/Block/block.module'
+import { Block } from './modules/Block/entity/block.entity'
+import { RelationModule } from './modules/follow/follow.module'
+import { Follow } from './modules/follow/entity/follow.entity'
 
 @Module({
   imports: [
@@ -53,7 +55,8 @@ import { Reply } from './modules/reply/entity/reply.entity '
         entities: [
           User,
           Notification,
-          Relation,
+          Follow,
+          Block,
           Message,
           Post,
           Image,
@@ -91,6 +94,7 @@ import { Reply } from './modules/reply/entity/reply.entity '
     NotificationModule,
     PostModule,
     RelationModule,
+    BlockModule,
     LikeModule,
     CommentModule,
     ReplyModule,

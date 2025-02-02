@@ -6,10 +6,11 @@ import { Message } from './entity/message.entity'
 import { RedisModule } from 'src/common/redis/redis.module'
 import { UserModule } from '../users/users.module'
 import { WebSocketModule } from 'src/common/websocket/websocket.module'
+import { User } from '../users/entity/user.entity'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Message]),
+    TypeOrmModule.forFeature([Message, User]),
     RedisModule,
     UserModule,
     WebSocketModule,

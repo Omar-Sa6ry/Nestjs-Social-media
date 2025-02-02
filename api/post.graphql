@@ -1,0 +1,77 @@
+mutation {
+  createPost(content: "This is my first post", images: []) {
+    id
+    content
+    likes 
+    comments{
+      content
+    }
+    user{
+      userName
+    }
+    createdAt
+  }
+}
+
+query {
+  getPostById(id: 39) {
+    id
+    content
+    likes
+    user{
+      userName
+    }
+   comments{content}
+    createdAt
+  }
+}
+
+query {
+  searchPosts(content: "This is my first post", pagination: { limit: 10, offset: 0 }) {
+      id
+    likes
+    user{
+      phone
+    }
+    content
+    comments{
+      content
+    }
+    createdAt
+  }
+}
+
+query {
+  getUserPosts {
+    id
+    likes
+    user{
+      phone
+    }
+    content
+    comments{
+      content
+    }
+    createdAt
+  }
+}
+
+
+mutation {
+  updatePost(id: 39, content: "Updated post content") {
+    id
+    likes
+    comments{
+      content
+    }
+    user{
+      userName
+    }
+    content
+    createdAt
+  }
+}
+
+mutation {
+  deletePost(id: 36)
+}

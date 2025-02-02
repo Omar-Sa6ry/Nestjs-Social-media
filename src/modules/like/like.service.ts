@@ -9,11 +9,12 @@ import { Post } from '../post/entity/post.entity '
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { User } from '../users/entity/user.entity'
 import { Comment } from '../comment/entity/comment.entity '
-import { PostResponse } from '../post/dto/PostResponse.dto'
+import { PostResponse } from '../post/dto/postResponse.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
   CommentLikeExisted,
   CommentNotFound,
+  CommentsNotFound,
   CreateCommentLike,
   CreatePostLike,
   DeleteCommentLike,
@@ -26,9 +27,19 @@ import {
   UserNameIsWrong,
   ZeroLikes,
 } from 'src/common/constant/messages.constant'
+import DataLoader from 'dataloader'
+import {
+  createCommentLoader,
+  createLikeLoader,
+  createUserLoader,
+} from 'src/common/loaders/date-loaders'
 
 @Injectable()
 export class LikeService {
+  private userLoader: DataLoader<number, User>
+  private likeLoader: DataLoader<number, number>
+  private commentLoader: DataLoader<number, Comment[]>
+
   constructor (
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
@@ -36,7 +47,11 @@ export class LikeService {
     private likeRepository: Repository<Like>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
-  ) {}
+  ) {
+    this.userLoader = createUserLoader(this.userRepository)
+    this.commentLoader = createCommentLoader(this.commentRepository)
+    this.likeLoader = createLikeLoader(this)
+  }
 
   // --------------Post-----------
 
@@ -94,37 +109,39 @@ export class LikeService {
       throw new BadRequestException(NotAnyLikes)
     }
 
-    let result = []
-    for (const postlike of postLikes) {
-      const post = await this.postRepository.findOne({
-        where: { id: postlike.userId },
-      })
-      if (!post) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const users = await this.userLoader.loadMany(
+      postLikes.map(post => post.userId),
+    )
+    const likes = await this.likeLoader.loadMany(postLikes.map(post => post.id))
+    const comments = await this.commentLoader.loadMany(
+      postLikes.map(post => post.id),
+    )
 
-      const user = await this.userRepository.findOne({
-        where: { id: post.userId },
-      })
-      if (!user) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    let result = await Promise.all(
+      postLikes.map(async (post, index) => {
+        const user = users[index]
+        if (user instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const postComments = comments[index]
+        if (postComments instanceof Error) {
+          throw new NotFoundException(CommentsNotFound)
+        }
+        const postLikes = likes[index]
+        if (postLikes instanceof Error) {
+          throw new NotFoundException('Error fetching likes')
+        }
 
-      const comments = await this.commentRepository.find({
-        where: { id: post.userId },
-      })
-
-      const likes = await this.numPostLikes(post.id)
-
-      result.push({
-        id: post.id,
-        content: post.content,
-        user,
-        comments,
-        likes,
-        createdAt: post.createdAt,
-      })
-    }
+        return {
+          id: post.id,
+          content: post.content,
+          user,
+          comments: postComments,
+          likes: postLikes,
+          createdAt: post.createdAt,
+        }
+      }),
+    )
 
     if (paginationDto) {
       const { limit, offset } = paginationDto

@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
+import * as DataLoader from 'dataloader'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
@@ -12,10 +13,11 @@ import { LikeService } from '../like/like.service'
 import { User } from '../users/entity/user.entity'
 import { PostResponse } from './dto/PostResponse.dto'
 import { Comment } from '../comment/entity/comment.entity '
-import { Repository } from 'typeorm'
+import { ILike, In, Repository } from 'typeorm'
 import { RedisService } from 'src/common/redis/redis.service'
 import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
 import {
+  CommentsNotFound,
   DeletePost,
   EnterContentOrImage,
   ImageLength,
@@ -25,9 +27,18 @@ import {
   PostsNotFound,
   UserNameIsWrong,
 } from 'src/common/constant/messages.constant'
+import {
+  createCommentLoader,
+  createLikeLoader,
+  createUserLoader,
+} from 'src/common/loaders/date-loaders'
 
 @Injectable()
 export class PostService {
+  private userLoader: DataLoader<number, User>
+  private likeLoader: DataLoader<number, number>
+  private commentLoader: DataLoader<number, Comment[]>
+
   constructor (
     private readonly redisService: RedisService,
     private readonly uploadService: UploadService,
@@ -37,7 +48,11 @@ export class PostService {
     private postRepository: Repository<Post>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
-  ) {}
+  ) {
+    this.userLoader = createUserLoader(this.userRepository)
+    this.commentLoader = createCommentLoader(this.commentRepository)
+    this.likeLoader = createLikeLoader(this.likeService)
+  }
 
   async create (
     userId: number,
@@ -127,13 +142,13 @@ export class PostService {
   }
 
   async getContent (
-    content: string,
+    content?: string,
     paginationDto?: PaginationDto,
   ): Promise<PostResponse[]> {
     let posts = await this.postRepository.find({
-      order: { createdAt: 'DESC' },
+      where: { content: ILike(`${content}`) },
+      order: { createdAt: 'ASC' },
     })
-    posts.filter(post => post.content.includes(content))
 
     if (posts.length === 0) {
       throw new NotFoundException(PostsNotFound)
@@ -146,30 +161,38 @@ export class PostService {
       }
     }
 
-    const result = []
-    for (const post of posts) {
-      const user = await this.userRepository.findOne({
-        where: { id: post.userId },
-      })
-      if (!user) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const users = await this.userLoader.loadMany(posts.map(post => post.userId))
+    const likes = await this.likeLoader.loadMany(posts.map(post => post.id))
+    const comments = await this.commentLoader.loadMany(
+      posts.map(post => post.id),
+    )
 
-      const comments = await this.commentRepository.find({
-        where: { id: post.userId },
-      })
+    const result = await Promise.all(
+      posts.map(async (post, index) => {
+        const user = users[index]
+        if (user instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const postComments = comments[index]
+        if (postComments instanceof Error) {
+          throw new NotFoundException(CommentsNotFound)
+        }
+        const postLikes = likes[index]
+        if (postLikes instanceof Error) {
+          throw new NotFoundException('Error fetching likes')
+        }
 
-      const likes = await this.likeService.numPostLikes(post.id)
+        return {
+          id: post.id,
+          content: post.content,
+          user,
+          comments: postComments,
+          likes: postLikes,
+          createdAt: post.createdAt,
+        }
+      }),
+    )
 
-      result.push({
-        id: post.id,
-        content: post.content,
-        user,
-        comments,
-        likes,
-        createdAt: post.createdAt,
-      })
-    }
     return result
   }
 

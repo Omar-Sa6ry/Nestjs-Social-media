@@ -46,7 +46,7 @@ export class PostResolver {
 
   @Query(() => [PostResponsee])
   async searchPosts (
-    @Args('content', { type: () => String }) content: string,
+    @Args('content', { type: () => String, nullable: true }) content: string,
     @Args('pagination', { type: () => PaginationDto, nullable: true })
     paginationDto: PaginationDto,
   ): Promise<PostResponsee[]> {

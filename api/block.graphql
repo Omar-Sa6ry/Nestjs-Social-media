@@ -1,0 +1,20 @@
+mutation {
+  blockUser(userName: "ohlghhhhhj")
+}
+
+mutation {
+  unblockUser(userName: "ohlghhhhhj")
+}
+
+query {
+  getBlockedUsers {
+    follower {
+      id
+      userName
+    }
+    following {
+      id
+      userName
+    }
+  }
+}

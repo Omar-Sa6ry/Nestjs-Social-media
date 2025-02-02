@@ -26,6 +26,8 @@ import {
   ThisNotificationNotExosted,
   DeleteAllNotification,
 } from 'src/common/constant/messages.constant'
+import DataLoader from 'dataloader'
+import { createUserLoader } from 'src/common/loaders/date-loaders'
 
 // Other methods...
 export interface ISendFirebaseMessages {
@@ -36,13 +38,21 @@ export interface ISendFirebaseMessages {
 
 @Injectable()
 export class NotificationService {
+  private senderLoader: DataLoader<number, User>
+  private recieverLoader: DataLoader<number, User>
+
   constructor (
     private readonly websocketGateway: WebSocketMessageGateway,
     private usersService: UserService,
     private readonly redisService: RedisService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
   ) {
+    this.senderLoader = createUserLoader(this.userRepository)
+    this.recieverLoader = createUserLoader(this.userRepository)
+
     const firebaseCredentials = JSON.parse(process.env.FIREBASE_CREDENTIAL_JSON)
     firebase.initializeApp({
       credential: firebase.credential.cert(firebaseCredentials),
@@ -198,25 +208,33 @@ export class NotificationService {
       throw new NotFoundException(NoNotificationsSend)
     }
 
-    const result = []
+    const senders = await this.senderLoader.loadMany(
+      notifications.map(msg => msg.senderId),
+    )
+    const recievers = await this.recieverLoader.loadMany(
+      notifications.map(msg => msg.receiverId),
+    )
 
-    for (const notification of notifications) {
-      const sender = await this.usersService.findById(notification.senderId)
-      if (!(sender instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const result = await Promise.all(
+      notifications.map(async (notification, index) => {
+        const sender = senders[index]
+        if (sender instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const reciever = recievers[index]
+        if (reciever instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
 
-      result.push({
-        id: notification.id,
-        Isread: notification.Isread,
-        createdAt: notification.createdAt,
-        sender,
-        receive: user,
-      })
-    }
-
-    const relationCacheKey = `notification:${userId}`
-    await this.redisService.set(relationCacheKey, result)
+        return {
+          id: notification.id,
+          Isread: notification.Isread,
+          createdAt: notification.createdAt,
+          sender,
+          receive: reciever,
+        }
+      }),
+    )
 
     return result
   }
@@ -269,22 +287,34 @@ export class NotificationService {
       throw new NotFoundException(NoNotificationsSend)
     }
 
-    const result = []
+    const senders = await this.senderLoader.loadMany(
+      notifications.map(msg => msg.senderId),
+    )
+    const recievers = await this.recieverLoader.loadMany(
+      notifications.map(msg => msg.receiverId),
+    )
 
-    for (const notification of notifications) {
-      const sender = await this.usersService.findById(notification.senderId)
-      if (!(sender instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const result = await Promise.all(
+      notifications.map(async (notification, index) => {
+        const sender = senders[index]
+        if (sender instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const reciever = recievers[index]
+        if (reciever instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
 
-      result.push({
-        id: notification.id,
-        Isread: notification.Isread,
-        createdAt: notification.createdAt,
-        sender,
-        receive: user,
-      })
-    }
+        return {
+          id: notification.id,
+          Isread: notification.Isread,
+          createdAt: notification.createdAt,
+          sender,
+          receive: reciever,
+        }
+      }),
+    )
+
     return result
   }
 
@@ -301,22 +331,34 @@ export class NotificationService {
       where: { receiverId, senderId, Isread: false },
     })
 
-    const result = []
+    const senders = await this.senderLoader.loadMany(
+      notifications.map(msg => msg.senderId),
+    )
+    const recievers = await this.recieverLoader.loadMany(
+      notifications.map(msg => msg.receiverId),
+    )
 
-    for (const notification of notifications) {
-      const sender = await this.usersService.findById(notification.senderId)
-      if (!(sender instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const result = await Promise.all(
+      notifications.map(async (notification, index) => {
+        const sender = senders[index]
+        if (sender instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const reciever = recievers[index]
+        if (reciever instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
 
-      result.push({
-        id: notification.id,
-        Isread: notification.Isread,
-        createdAt: notification.createdAt,
-        sender,
-        receive: user,
-      })
-    }
+        return {
+          id: notification.id,
+          Isread: notification.Isread,
+          createdAt: notification.createdAt,
+          sender,
+          receive: reciever,
+        }
+      }),
+    )
+
     return result
   }
 

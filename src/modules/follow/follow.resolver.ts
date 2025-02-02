@@ -1,42 +1,16 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
-import { RelationService } from './relation.service'
-import { RelationResponseOutput } from './dto/RelationResponse.dto'
+import { FollowService } from './follow.service'
+import { RelationResponseOutput } from './dto/followResponse.dto'
 import { User } from '../users/entity/user.entity'
 import { Role } from 'src/common/constant/enum.constant'
 import { Auth } from 'src/common/decerator/auth.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
-import { Relation } from './entity/relation.entity'
+import { Follow } from './entity/follow.entity'
 
-@Resolver(() => Relation)
-export class RelationResolver {
-  constructor (private readonly relationService: RelationService) {}
-
-  @Mutation(() => String)
-  @Auth(Role.USER)
-  async blockUser (
-    @CurrentUser() user: CurrentUserDto,
-    @Args('userName') userName: string,
-  ): Promise<string> {
-    return this.relationService.block(user.id, userName)
-  }
-
-  @Mutation(() => String)
-  @Auth(Role.USER)
-  async unblockUser (
-    @CurrentUser() user: CurrentUserDto,
-    @Args('userName') userName: string,
-  ): Promise<string> {
-    return this.relationService.unblock(user.id, userName)
-  }
-
-  @Query(() => [RelationResponseOutput])
-  @Auth(Role.USER)
-  async getBlockedUsers (
-    @CurrentUser() user: CurrentUserDto,
-  ): Promise<RelationResponseOutput[]> {
-    return this.relationService.getBlock(user.id)
-  }
+@Resolver(() => Follow)
+export class FollowResolver {
+  constructor (private readonly followService: FollowService) {}
 
   @Mutation(() => String)
   @Auth(Role.USER)
@@ -44,7 +18,7 @@ export class RelationResolver {
     @CurrentUser() user: User,
     @Args('userName') userName: string,
   ): Promise<string> {
-    return this.relationService.follow(user.id, userName)
+    return this.followService.follow(user.id, userName)
   }
 
   @Mutation(() => String)
@@ -53,7 +27,7 @@ export class RelationResolver {
     @CurrentUser() user: User,
     @Args('userName') userName: string,
   ): Promise<string> {
-    return this.relationService.unfollowing(user.id, userName)
+    return this.followService.unfollowing(user.id, userName)
   }
 
   @Query(() => String)
@@ -62,7 +36,7 @@ export class RelationResolver {
     @CurrentUser() user: User,
     @Args('followingId') followingId: number,
   ): Promise<string> {
-    return this.relationService.get(user.id, followingId)
+    return this.followService.get(user.id, followingId)
   }
 
   @Query(() => [RelationResponseOutput])
@@ -70,7 +44,7 @@ export class RelationResolver {
   async getFollowers (
     @Args('userName') userName: string,
   ): Promise<RelationResponseOutput[]> {
-    return this.relationService.getFollower(userName)
+    return this.followService.getFollower(userName)
   }
 
   @Query(() => [RelationResponseOutput])
@@ -78,7 +52,7 @@ export class RelationResolver {
   async getFollowings (
     @Args('userName') userName: string,
   ): Promise<RelationResponseOutput[]> {
-    return this.relationService.getFollowing(userName)
+    return this.followService.getFollowing(userName)
   }
 
   @Query(() => [RelationResponseOutput])
@@ -86,7 +60,7 @@ export class RelationResolver {
   async getFriends (
     @CurrentUser() user: CurrentUserDto,
   ): Promise<RelationResponseOutput[]> {
-    return this.relationService.getFriends(user.id)
+    return this.followService.getFriends(user.id)
   }
 
   @Mutation(() => String)
@@ -96,6 +70,6 @@ export class RelationResolver {
     @Args('userName') userName: string,
     @Args('status') status: boolean,
   ): Promise<string> {
-    return this.relationService.accept(user.id, userName, status)
+    return this.followService.accept(user.id, userName, status)
   }
 }

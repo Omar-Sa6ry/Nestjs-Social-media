@@ -2,8 +2,8 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Role, UserStatus } from 'src/common/constant/enum.constant'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { Message } from 'src/modules/message/entity/message.entity'
-import { Relation } from 'src/modules/friendship/entity/relation.entity'
 import { Like } from 'src/modules/like/entity/like.entity '
+import { Follow } from 'src/modules/follow/entity/follow.entity'
 import { Notification } from 'src/modules/notification/entity/notification.entity'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { Post } from 'src/modules/post/entity/post.entity '
@@ -83,11 +83,11 @@ export class User {
   })
   notificationR: Notification[]
 
-  @OneToMany(() => Relation, relation => relation.followerId)
-  relations: Relation[]
+  @OneToMany(() => Follow, Follow => Follow.followerId)
+  relations: Follow[]
 
-  @OneToMany(() => Relation, relation => relation.followingId)
-  friendRelations: Relation[]
+  @OneToMany(() => Follow, Follow => Follow.followingId)
+  friendRelations: Follow[]
 
   @OneToMany(() => Message, message => message.receiverId, {
     onDelete: 'SET NULL',

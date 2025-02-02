@@ -6,12 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../users/entity/user.entity'
-import { PostMentionResponse } from './dtos/MentionPostResponse.dto'
+import { PostMentionResponse } from './dtos/mentionPostResponse.dto'
 import { Mention } from './entity/mention.entity '
 import { Post } from '../post/entity/post.entity '
 import { UserService } from '../users/users.service'
 import { Comment } from '../comment/entity/comment.entity '
-import { CommentMentionResponse } from './dtos/MentionCommentResponse.dto'
+import { CommentMentionResponse } from './dtos/mentionCommentResponse.dto'
 import {
   CommentNotFound,
   DeleteMention,
@@ -22,18 +22,45 @@ import {
   PostNotFound,
   UserMentionNotFound,
 } from 'src/common/constant/messages.constant'
+import {
+  createCommentMentionLoader,
+  createPostMentionLoader,
+} from 'src/common/loaders/date-loaders'
+import DataLoader from 'dataloader'
 
 @Injectable()
 export class MentionService {
+  private postMentionLoader: DataLoader<
+    { userId: number; mentionTo: number; postId: number },
+    any
+  >
+  private commentMentionLoader: DataLoader<
+    { userId: number; mentionTo: number; commentId: number },
+    any
+  >
+
   constructor (
     private usersService: UserService,
     @InjectRepository(Mention)
     private mentionRepository: Repository<Mention>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
-  ) {}
+  ) {
+    ;(this.postMentionLoader = createPostMentionLoader(
+      this.userRepository,
+      this.postRepository,
+      this.mentionRepository,
+    )),
+      (this.commentMentionLoader = createCommentMentionLoader(
+        this.userRepository,
+        this.commentRepository,
+        this.mentionRepository,
+      ))
+  }
 
   // ---------------- Post -------------------------
 
@@ -73,8 +100,8 @@ export class MentionService {
 
     const result = {
       id: mention.id,
-      username: user.userName,
-      mentionTo: mentionedUser.id,
+      mentionFrom: user,
+      mentionTo: mentionedUser,
       post: post,
       createdAt: mention.createdAt,
     }
@@ -111,8 +138,8 @@ export class MentionService {
 
     const result = {
       id: mention.id,
-      username: user.userName,
-      mentionTo: mentionedUser.id,
+      mentionFrom: user,
+      mentionTo: mentionedUser,
       post: post,
       createdAt: mention.createdAt,
     }
@@ -133,24 +160,13 @@ export class MentionService {
       throw new NotFoundException(UserMentionNotFound)
     }
 
-    const result = []
-    for (const mention of mentions) {
-      const post = await this.postRepository.findOne({
-        where: { id: mention.postId },
-      })
-      if (!post) {
-        throw new NotFoundException(PostNotFound)
-      }
+    const mentionKeys = mentions.map(mention => ({
+      userId,
+      mentionTo: mention.to,
+      postId: mention.postId,
+    }))
 
-      result.push({
-        id: mention.id,
-        username: user.userName,
-        mentionTo: mention.to,
-        post: post,
-        createdAt: mention.createdAt,
-      })
-    }
-    return result
+    return this.postMentionLoader.loadMany(mentionKeys)
   }
 
   async getFromPost (userId: number): Promise<PostMentionResponse[]> {
@@ -167,24 +183,13 @@ export class MentionService {
       throw new NotFoundException(UserMentionNotFound)
     }
 
-    const result = []
-    for (const mention of mentions) {
-      const post = await this.postRepository.findOne({
-        where: { id: mention.postId },
-      })
-      if (!post) {
-        throw new NotFoundException(PostNotFound)
-      }
+    const mentionKeys = mentions.map(mention => ({
+      userId: mention.userId,
+      mentionTo: mention.to,
+      postId: mention.postId,
+    }))
 
-      result.push({
-        id: mention.id,
-        username: user.userName,
-        mentionTo: mention.to,
-        post: post,
-        createdAt: mention.createdAt,
-      })
-    }
-    return result
+    return this.postMentionLoader.loadMany(mentionKeys)
   }
 
   async getPost (postId: number): Promise<PostMentionResponse[]> {
@@ -196,24 +201,13 @@ export class MentionService {
       throw new NotFoundException(NoMentionForPost)
     }
 
-    const result = []
-    for (const mention of mentions) {
-      const post = await this.postRepository.findOne({
-        where: { id: mention.postId },
-      })
-      if (!post) {
-        throw new NotFoundException(PostNotFound)
-      }
+    const mentionKeys = mentions.map(mention => ({
+      userId: mention.userId,
+      mentionTo: mention.to,
+      postId: mention.postId,
+    }))
 
-      result.push({
-        id: mention.id,
-        username: mention.userId,
-        mentionTo: mention.to,
-        post: post,
-        createdAt: mention.createdAt,
-      })
-    }
-    return result
+    return this.postMentionLoader.loadMany(mentionKeys)
   }
 
   async isPostMention (postId: number, userName: string): Promise<boolean> {
@@ -360,24 +354,13 @@ export class MentionService {
       throw new NotFoundException(UserMentionNotFound)
     }
 
-    const result = []
-    for (const mention of mentions) {
-      const comment = await this.commentRepository.findOne({
-        where: { id: mention.commentId },
-      })
-      if (!comment) {
-        throw new NotFoundException(PostNotFound)
-      }
+    const mentionKeys = mentions.map(mention => ({
+      userId: mention.userId,
+      mentionTo: mention.to,
+      commentId: mention.commentId,
+    }))
 
-      result.push({
-        id: mention.id,
-        username: user.userName,
-        mentionTo: mention.to,
-        comment,
-        createdAt: mention.createdAt,
-      })
-    }
-    return result
+    return this.commentMentionLoader.loadMany(mentionKeys)
   }
 
   async getFromComment (userId: number): Promise<CommentMentionResponse[]> {
@@ -394,24 +377,13 @@ export class MentionService {
       throw new NotFoundException(UserMentionNotFound)
     }
 
-    const result = []
-    for (const mention of mentions) {
-      const comment = await this.commentRepository.findOne({
-        where: { id: mention.commentId },
-      })
-      if (!comment) {
-        throw new NotFoundException(PostNotFound)
-      }
+    const mentionKeys = mentions.map(mention => ({
+      userId: mention.userId,
+      mentionTo: mention.to,
+      commentId: mention.commentId,
+    }))
 
-      result.push({
-        id: mention.id,
-        username: user.userName,
-        mentionTo: mention.to,
-        comment,
-        createdAt: mention.createdAt,
-      })
-    }
-    return result
+    return this.commentMentionLoader.loadMany(mentionKeys)
   }
 
   async getComment (commentId: number): Promise<CommentMentionResponse[]> {
@@ -423,24 +395,13 @@ export class MentionService {
       throw new NotFoundException(NoMentionForPost)
     }
 
-    const result = []
-    for (const mention of mentions) {
-      const comment = await this.commentRepository.findOne({
-        where: { id: mention.commentId },
-      })
-      if (!comment) {
-        throw new NotFoundException(PostNotFound)
-      }
+    const mentionKeys = mentions.map(mention => ({
+      userId: mention.userId,
+      mentionTo: mention.to,
+      commentId: mention.commentId,
+    }))
 
-      result.push({
-        id: mention.id,
-        username: mention.userId,
-        mentionTo: mention.to,
-        comment,
-        createdAt: mention.createdAt,
-      })
-    }
-    return result
+    return this.commentMentionLoader.loadMany(mentionKeys)
   }
 
   async isCommentMention (

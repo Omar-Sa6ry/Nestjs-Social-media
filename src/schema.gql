@@ -64,16 +64,10 @@ type MessageOutput {
   createdAt: DateTime!
 }
 
-type RelationResponseOutput {
-  follower: User!
-  following: User!
-  status: String!
-}
-
 type PostMentionResponsee {
   id: Float!
-  username: String!
-  mentionTo: Float!
+  mentionFrom: User!
+  mentionTo: User!
   post: Post!
   createdAt: DateTime!
 }
@@ -102,6 +96,12 @@ type ReplyResponsee {
   createdAt: DateTime!
 }
 
+type RelationResponseOutput {
+  follower: User!
+  following: User!
+  status: String!
+}
+
 type Query {
   sayHello: String!
   getUserById(id: Float!): User!
@@ -113,7 +113,7 @@ type Query {
   userNotifications: [NotificationOutput!]!
   unreadNotifications(receiverId: Int!): [NotificationOutput!]!
   getPostById(id: Int!): PostResponsee!
-  searchPosts(content: String!, pagination: PaginationDto): [PostResponsee!]!
+  searchPosts(content: String, pagination: PaginationDto): [PostResponsee!]!
   getUserPosts: [PostResponsee!]!
   isPostLiked(postId: Int!): Boolean!
   likedUser(pagination: PaginationDto): [PostResponsee!]!
@@ -121,7 +121,6 @@ type Query {
   hasLikedComment(commentId: Int!): Boolean!
   getUserLikedComments(pagination: PaginationDto): [Comment!]!
   getCommentLikesCount(commentId: Int!): Int!
-  getBlockedUsers: [RelationResponseOutput!]!
   getRelationStatus(followingId: Float!): String!
   getFollowers(userName: String!): [RelationResponseOutput!]!
   getFollowings(userName: String!): [RelationResponseOutput!]!
@@ -187,8 +186,6 @@ type Mutation {
   unlikePost(postId: Int!): String!
   likeComment(commentId: Int!): String!
   unlikeComment(commentId: Int!): String!
-  blockUser(userName: String!): String!
-  unblockUser(userName: String!): String!
   followUser(userName: String!): String!
   unfollowingUser(userName: String!): String!
   acceptFollowRequest(userName: String!, status: Boolean!): String!

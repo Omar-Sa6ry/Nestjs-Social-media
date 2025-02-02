@@ -14,7 +14,7 @@ import {
 
 @Entity()
 @ObjectType()
-export class Relation {
+export class Follow {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number

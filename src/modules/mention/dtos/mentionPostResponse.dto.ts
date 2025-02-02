@@ -1,6 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { IsDate, IsInt, IsString } from 'class-validator'
 import { Post } from 'src/modules/post/entity/post.entity '
+import { User } from 'src/modules/users/entity/user.entity'
 
 @InputType()
 export class PostMentionResponse {
@@ -8,13 +9,11 @@ export class PostMentionResponse {
   @IsInt()
   id: number
 
-  @Field()
-  @IsString()
-  username: string
+  @Field(() => User)
+  mentionFrom: User
 
-  @Field()
-  @IsInt()
-  mentionTo: number
+  @Field(() => User)
+  mentionTo: User
 
   @Field(() => Post)
   post: Post
@@ -30,13 +29,11 @@ export class PostMentionResponsee {
   @IsInt()
   id: number
 
-  @Field()
-  @IsString()
-  username: string
+  @Field(() => User)
+  mentionFrom: User
 
-  @Field()
-  @IsInt()
-  mentionTo: number
+  @Field(() => User)
+  mentionTo: User
 
   @Field(() => Post)
   post: Post

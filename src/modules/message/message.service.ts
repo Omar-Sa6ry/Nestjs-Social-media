@@ -19,16 +19,26 @@ import {
   NoMessagesSend,
   UserNameIsWrong,
 } from 'src/common/constant/messages.constant'
+import DataLoader from 'dataloader'
+import { createUserLoader } from 'src/common/loaders/date-loaders'
 
 @Injectable()
 export class MessageService {
+  private senderLoader: DataLoader<number, User>
+  private recieverLoader: DataLoader<number, User>
+
   constructor (
     private usersService: UserService,
     private readonly redisService: RedisService,
     private readonly websocketGateway: WebSocketMessageGateway,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
-  ) {}
+  ) {
+    this.senderLoader = createUserLoader(this.userRepository)
+    this.recieverLoader = createUserLoader(this.userRepository)
+  }
 
   async send (
     senderId: number,
@@ -90,27 +100,34 @@ export class MessageService {
       throw new NotFoundException(NoMessages)
     }
 
-    const result = []
-    for (const message of messages) {
-      const sender = await this.usersService.findById(message.senderId)
-      if (!(sender instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const senders = await this.senderLoader.loadMany(
+      messages.map(msg => msg.senderId),
+    )
+    const recievers = await this.recieverLoader.loadMany(
+      messages.map(msg => msg.receiverId),
+    )
 
-      const user = await this.usersService.findById(message.receiverId)
-      if (!(user instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const result = await Promise.all(
+      messages.map(async (message, index) => {
+        const sender = senders[index]
+        if (sender instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const reciever = recievers[index]
+        if (reciever instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
 
-      result.push({
-        id: message.id,
-        content: message.content,
-        Isread: message.Isread,
-        createdAt: message.createdAt,
-        sender,
-        receive: user,
-      })
-    }
+        return {
+          id: message.id,
+          content: message.content,
+          Isread: message.Isread,
+          createdAt: message.createdAt,
+          sender,
+          receive: reciever,
+        }
+      }),
+    )
 
     const relationCacheKey = `message:${userId}:${user.id}`
     await this.redisService.set(relationCacheKey, result)
@@ -127,31 +144,35 @@ export class MessageService {
       throw new NotFoundException(NoMessagesSend)
     }
 
-    const result = []
-    for (const message of messages) {
-      const sender = await this.usersService.findById(message.senderId)
-      if (!(sender instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const senders = await this.senderLoader.loadMany(
+      messages.map(msg => msg.senderId),
+    )
+    const recievers = await this.recieverLoader.loadMany(
+      messages.map(msg => msg.receiverId),
+    )
 
-      const user = await this.usersService.findById(message.receiverId)
-      if (!(user instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const result = await Promise.all(
+      messages.map(async (message, index) => {
+        const sender = senders[index]
+        if (sender instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const reciever = recievers[index]
+        if (reciever instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
 
-      result.push({
-        id: message.id,
-        content: message.content,
-        Isread: message.Isread,
-        createdAt: message.createdAt,
-        sender,
-        receive: user,
-      })
-
-      const relationCacheKey = `message:${userId}`
-      await this.redisService.set(relationCacheKey, messages)
-      return result
-    }
+        return {
+          id: message.id,
+          content: message.content,
+          Isread: message.Isread,
+          createdAt: message.createdAt,
+          sender,
+          receive: reciever,
+        }
+      }),
+    )
+    return result
   }
 
   async markMessageRead (senderId: number, userName: string): Promise<string> {
@@ -179,28 +200,36 @@ export class MessageService {
       where: { receiverId, senderId, Isread: false },
     })
 
-    const result = []
-    for (const message of messages) {
-      const sender = await this.usersService.findById(message.senderId)
-      if (!(sender instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const senders = await this.senderLoader.loadMany(
+      messages.map(msg => msg.senderId),
+    )
+    const recievers = await this.recieverLoader.loadMany(
+      messages.map(msg => msg.receiverId),
+    )
 
-      const user = await this.usersService.findById(message.receiverId)
-      if (!(user instanceof User)) {
-        throw new NotFoundException(UserNameIsWrong)
-      }
+    const result = await Promise.all(
+      messages.map(async (message, index) => {
+        const sender = senders[index]
+        if (sender instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
+        const reciever = recievers[index]
+        if (reciever instanceof Error) {
+          throw new NotFoundException(UserNameIsWrong)
+        }
 
-      result.push({
-        id: message.id,
-        content: message.content,
-        Isread: message.Isread,
-        createdAt: message.createdAt,
-        sender,
-        receive: user,
-      })
-      return result
-    }
+        return {
+          id: message.id,
+          content: message.content,
+          Isread: message.Isread,
+          createdAt: message.createdAt,
+          sender,
+          receive: reciever,
+        }
+      }),
+    )
+
+    return result
   }
 
   async deleteMessage (senderId: number, id: number): Promise<string> {

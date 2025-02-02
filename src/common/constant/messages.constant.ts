@@ -13,10 +13,11 @@ export const PasswordValidator = 'Password should be from 6 to 16 digits'
 export const EnterEmailOrUserName = 'You must enter your email or user name'
 export const OldPasswordENewPassword = 'old password is equal to new password'
 export const UserNameIsWrong = 'User Name Not Found'
+export const UserNotFound = 'User Not Found'
 
 // Follow
 export const NoFriendName = 'There is no user with this userName'
-export const AccountPrivacy ='This account is privacy'
+export const AccountPrivacy = 'This account is privacy'
 export const NoFriends = 'You havnot any friends'
 export const NoBlocks = 'You havnot any Blocks'
 export const NoFollowYou = 'This user Not Follow you'
@@ -77,7 +78,7 @@ export const UpdateComment = 'Comment is update Sucessfully'
 export const DeleteComment = 'Comment is deleted Sucessfully'
 
 // Comment Mention
-export const NoMentionOnComment="No Mentions on this comment"
+export const NoMentionOnComment = 'No Mentions on this comment'
 
 // Likes of Comment
 export const NoLikeComment = 'There is no likes on this Comment from you'
