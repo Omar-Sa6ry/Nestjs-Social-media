@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import { User } from '../users/entity/user.entity'
 import { AuthResponse } from './dtos/AuthRes.dto'
@@ -14,6 +14,7 @@ import { Role } from 'src/common/constant/enum.constant'
 import { NoToken } from 'src/common/constant/messages.constant'
 import { RedisService } from 'src/common/redis/redis.service'
 import { Auth } from 'src/common/decerator/auth.decerator'
+import { Query } from '@nestjs/common'
 
 @Resolver(of => User)
 export class AuthResolver {
@@ -24,6 +25,7 @@ export class AuthResolver {
 
   @Mutation(returns => AuthResponse)
   async register (
+    @Args('fcmToken') fcmToken: string,
     @Args('createUserDto') createUserDto: CreateUserDto,
     @Args('avatar') avatar: CreateImagDto,
   ) {
@@ -34,11 +36,14 @@ export class AuthResolver {
       return { result: cachedUser }
     }
 
-    return await this.authService.register(createUserDto, avatar)
+    return await this.authService.register(fcmToken, createUserDto, avatar)
   }
 
   @Mutation(returns => AuthResponse)
-  async login (@Args('loginDto') loginDto: LoginDto) {
+  async login (
+    @Args('fcmToken') fcmToken: string,
+    @Args('loginDto') loginDto: LoginDto,
+  ) {
     const userCacheKey = `user:${loginDto.email}`
     const cachedUser = await this.redisService.get(userCacheKey)
 
@@ -46,7 +51,7 @@ export class AuthResolver {
       return { result: cachedUser }
     }
 
-    return await this.authService.login(loginDto)
+    return await this.authService.login(fcmToken, loginDto)
   }
 
   @Mutation(returns => String)

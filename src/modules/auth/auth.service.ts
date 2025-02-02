@@ -27,7 +27,6 @@ import {
   EndOfEmail,
   InvalidToken,
   IsnotAdmin,
-  IsnotCompany,
   IsnotManager,
   OldPasswordENewPassword,
   SamePassword,
@@ -44,7 +43,11 @@ export class AuthService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async register (createUserDto: CreateUserDto, avatar?: CreateImagDto) {
+  async register (
+    fcmToken: string,
+    createUserDto: CreateUserDto,
+    avatar?: CreateImagDto,
+  ) {
     const { userName, phone, email } = createUserDto
     if (!email.endsWith('@gmail.com')) {
       throw new BadRequestException(EndOfEmail)
@@ -68,6 +71,7 @@ export class AuthService {
         }
       }
 
+      user.fcmToken = fcmToken
       await this.userRepository.save(user)
       await this.sendEmailService.sendEmail(
         email,
@@ -76,7 +80,6 @@ export class AuthService {
       )
 
       const token = await this.generateToken.jwt(user?.email, user?.id)
-      user.firebaseToken = token
       await this.userRepository.save(user)
       const result = { user, token }
       const userCacheKey = `user:${email}`
@@ -91,7 +94,7 @@ export class AuthService {
     }
   }
 
-  async login (loginDto: LoginDto) {
+  async login (fcmToken: string, loginDto: LoginDto) {
     const { email, password } = loginDto
 
     let user = await this.userService.findByEmail(email.toLowerCase())
@@ -103,7 +106,7 @@ export class AuthService {
     const token = await this.generateToken.jwt(user?.email, user?.id)
     const userCacheKey = `user:${email}`
     await this.redisService.set(userCacheKey, { user, token })
-    user.firebaseToken = token
+    user.fcmToken = fcmToken
     await this.userRepository.save(user)
     return { user, token }
   }

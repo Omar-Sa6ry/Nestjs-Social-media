@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Notification } from './entity/notification.entity'
 import { WebSocketModule } from 'src/common/websocket/websocket.module'
 import { User } from '../users/entity/user.entity'
+import { firebaseAdminProvider } from './firebase'
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { User } from '../users/entity/user.entity'
     RedisModule,
     TypeOrmModule.forFeature([Notification, User]),
   ],
-  providers: [NotificationService, NotificationResolver],
+  providers: [NotificationService, NotificationResolver, firebaseAdminProvider],
 })
 export class NotificationModule {}

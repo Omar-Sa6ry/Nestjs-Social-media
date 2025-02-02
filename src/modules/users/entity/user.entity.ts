@@ -69,7 +69,7 @@ export class User {
   resetTokenExpiry?: Date | null
 
   @Column({ nullable: true })
-  firebaseToken?: string
+  fcmToken: string
 
   @OneToMany(() => Notification, notification => notification.senderId, {
     onDelete: 'SET NULL',
