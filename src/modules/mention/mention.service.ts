@@ -3,15 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
+import DataLoader from 'dataloader'
+import { CommentMentionResponse } from './dtos/MentionCommentResponse.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../users/entity/user.entity'
-import { PostMentionResponse } from './dtos/mentionPostResponse.dto'
 import { Mention } from './entity/mention.entity '
+import { PostMentionResponse } from './dtos/MentionPostResponse.dto'
 import { Post } from '../post/entity/post.entity '
 import { UserService } from '../users/users.service'
 import { Comment } from '../comment/entity/comment.entity '
-import { CommentMentionResponse } from './dtos/mentionCommentResponse.dto'
 import {
   CommentNotFound,
   DeleteMention,
@@ -26,7 +27,6 @@ import {
   createCommentMentionLoader,
   createPostMentionLoader,
 } from 'src/common/loaders/date-loaders'
-import DataLoader from 'dataloader'
 
 @Injectable()
 export class MentionService {

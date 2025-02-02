@@ -4,10 +4,12 @@
 /build
 /images
 
-# Ignore Docker files
-Dockerfile
+# Docker files
+docker-compose.override.yml
+docker-compose.override.yaml
 docker-compose.yml
 .dockerignore
+Dockerfile
 
 # Logs
 logs
