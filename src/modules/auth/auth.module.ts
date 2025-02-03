@@ -11,7 +11,6 @@ import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 import { RedisModule } from 'src/common/redis/redis.module'
 import { Image } from '../post/entity/image.entity'
 import { UploadModule } from '../../common/upload/upload.module'
-import { UploadService } from '../../common/upload/upload.service'
 
 @Module({
   imports: [
@@ -30,7 +29,6 @@ import { UploadService } from '../../common/upload/upload.service'
     AuthResolver,
     AuthService,
     SendEmailService,
-    UploadService,
     GenerateToken,
     JwtService,
   ],
