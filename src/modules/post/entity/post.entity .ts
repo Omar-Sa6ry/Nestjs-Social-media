@@ -11,6 +11,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -19,6 +20,7 @@ import {
 
 @Entity()
 @ObjectType()
+@Index('idx_post_userId', ['userId'])
 export class Post {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

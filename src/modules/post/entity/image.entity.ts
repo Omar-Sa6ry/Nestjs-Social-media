@@ -6,12 +6,15 @@ import {
   AfterUpdate,
   Column,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 
 @Entity()
 @ObjectType()
+@Index('idx_image_path', ['path'])
+@Index('idx_image_postId', ['postId'])
 export class Image {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

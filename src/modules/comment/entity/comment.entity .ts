@@ -10,6 +10,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -18,6 +19,8 @@ import {
 
 @Entity()
 @ObjectType()
+@Index('idx_comment_postId', ['postId']) 
+@Index('idx_comment_userId', ['userId']) 
 export class Comment {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

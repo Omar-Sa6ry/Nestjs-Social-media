@@ -11,6 +11,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -19,6 +20,8 @@ import {
 
 @Entity()
 @ObjectType()
+@Index('idx_reply_userId', ['userId'])
+@Index('idx_reply_commentId', ['commentId'])
 export class Reply {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

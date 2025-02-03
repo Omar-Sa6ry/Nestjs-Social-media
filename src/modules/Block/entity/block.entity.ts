@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { Status } from 'src/common/constant/enum.constant'
 import { User } from 'src/modules/users/entity/user.entity'
 import {
   AfterInsert,
@@ -7,6 +6,7 @@ import {
   AfterUpdate,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -14,15 +14,18 @@ import {
 
 @Entity()
 @ObjectType()
+@Index('idx_blocker_blocking', ['followerId', 'followingId'], { unique: true })
 export class Block {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number
 
+  @Index()
   @Column({ type: 'int' })
   @Field(() => Int)
   followerId: number
 
+  @Index()
   @Column({ type: 'int' })
   @Field(() => Int)
   followingId: number

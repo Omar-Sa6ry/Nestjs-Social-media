@@ -9,6 +9,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -16,6 +17,9 @@ import {
 
 @Entity()
 @ObjectType()
+@Index('idx_like_postId', ['postId']) 
+@Index('idx_like_userId', ['userId']) 
+@Index('idx_like_conmmentId', ['commentId']) 
 export class Like {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

@@ -13,12 +13,17 @@ import {
   AfterUpdate,
   Column,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 
 @Entity()
 @ObjectType()
+@Index('idx_phone', ['phone'])
+@Index('idx_userName', ['userName'])
+@Index('idx_email', ['email'])
+@Index('idx_avatar', ['avatar'])
 export class User {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

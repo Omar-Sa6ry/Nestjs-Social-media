@@ -7,6 +7,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -14,6 +15,8 @@ import {
 
 @Entity()
 @ObjectType()
+@Index('idx_message_senderId', ['senderId']) 
+@Index('idx_message_receiverId', ['receiverId']) 
 export class Message {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
