@@ -21,7 +21,7 @@ import { SendEmailService } from 'src/common/queue/services/sendemail.service'
 import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 import { RedisService } from 'src/common/redis/redis.service'
 import { CreateUserDto } from './dtos/CreateUserData.dto'
-import { UploadService } from '../upload/upload.service'
+import { UploadService } from '../../common/upload/upload.service'
 import {
   EmailIsWrong,
   EndOfEmail,

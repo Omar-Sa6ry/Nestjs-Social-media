@@ -22,6 +22,9 @@ export class PostResponse {
   @Field(() => [Comment], { nullable: true })
   comments: Comment[]
 
+  @Field(() => [String])
+  images: string[]
+
   @Field()
   @IsDate()
   createdAt: Date
@@ -44,7 +47,10 @@ export class PostResponsee {
   likes: number
 
   @Field(() => [Comment], { nullable: true })
-  comments: Comment[] 
+  comments: Comment[]
+
+  @Field(() => [String])
+  images: string[]
 
   @Field()
   @IsDate()

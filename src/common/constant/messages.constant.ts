@@ -30,6 +30,7 @@ export const StatusOfRelation =
 export const NotSaveImage = 'Could not save image'
 export const AvatarNotFound = 'Avatar Not Found'
 export const ImageNotMatch = 'This image is not match with userId'
+export const ImagesNotFound = 'Images not Found'
 
 // Message
 export const NoMessages = 'There is any message'
@@ -89,3 +90,6 @@ export const CommentLikeExisted = 'you like on this comment'
 
 // Decerator
 export const CurrentUserMsg = 'User not found in request'
+
+// Cloudinary
+export const CloudinaryFailed = 'Cloudinary upload failed'

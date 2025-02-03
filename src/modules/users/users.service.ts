@@ -16,7 +16,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { UploadService } from '../upload/upload.service'
+import { UploadService } from '../../common/upload/upload.service'
 
 @Injectable()
 export class UserService {
@@ -95,9 +95,7 @@ export class UserService {
         if (typeof filename === 'string') {
           user.avatar = filename
 
-          if (oldPath && fs.existsSync(oldPath)) {
-            unlinkSync(oldPath)
-          }
+          await this.uploadService.deleteImageByPath(oldPath)
         }
       }
 
@@ -121,6 +119,7 @@ export class UserService {
       throw new NotFoundException(EmailIsWrong)
     }
 
+    await this.uploadService.deleteImageByPath(user.avatar)
     await this.userRepository.remove(user)
     return `User with email : ${id} deleted Successfully`
   }

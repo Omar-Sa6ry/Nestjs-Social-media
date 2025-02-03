@@ -5,9 +5,8 @@ import { UserNotFound } from '../constant/messages.constant'
 import { User } from 'src/modules/users/entity/user.entity'
 import { Repository, In } from 'typeorm'
 import { Post } from 'src/modules/post/entity/post.entity '
-import { NotFoundException } from '@nestjs/common'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
-import { Notification } from 'src/modules/notification/entity/notification.entity'
+import { Image } from 'src/modules/post/entity/image.entity'
 
 export function createUserLoader (userRepository: Repository<User>) {
   return new DataLoader<number, User>(async (userIds: number[]) => {
@@ -31,6 +30,21 @@ export function createLikeLoader (likeService: LikeService) {
   })
 }
 
+export function createImageLoader (imageRepository: Repository<Image>) {
+  return new DataLoader<number, Image[]>(async (postIds: number[]) => {
+    const images = await imageRepository.find({
+      where: { postId: In(postIds) },
+      select: ['path'],
+    })
+
+    // const images: string[] = []
+    // await imgs.map(i => i.path)
+
+    const imageMap = new Map<number, Image[]>(postIds.map(id => [id, []]))
+    images.forEach(image => imageMap.get(image.postId)?.push(image))
+    return postIds.map(id => imageMap.get(id) || [])
+  })
+}
 
 export function createCommentLoader (commentRepository: Repository<Comment>) {
   return new DataLoader<number, Comment[]>(async (postIds: number[]) => {
@@ -156,51 +170,3 @@ export function createCommentMentionLoader (
     })
   })
 }
-
-// export function createNotificationLoader (
-//   userRepository: Repository<User>,
-//   notificationRepository: Repository<Notification>,
-// ) {
-//   return new DataLoader<{ senderId: number; recieverId: number }, any>(
-//     async keys => {
-//       const senderIds = keys.map(k => k.senderId)
-//       const recieverIds = keys.map(k => k.recieverId)
-
-//       const users = await userRepository.find({
-//         where: { id: In([...senderIds, ...recieverIds]) },
-//       })
-//       const userMap = new Map(users.map(user => [user.id, user]))
-
-//       const notifications = await notificationRepository.find({
-//         where: {
-//           receiverId: In(recieverIds),
-//           senderId: In(senderIds),
-//         },
-//       })
-//       const notificationMap = new Map(
-//         notifications.map(notification => [
-//           `${notification.senderId}-${notification.receiverId}`,
-//           notification,
-//         ]),
-//       )
-
-//       return keys.map(({ senderId, recieverId }) => {
-//         const notification = notificationMap.get(`${senderId}-${recieverId}`)
-//         if (!notification) return null
-
-//         const sender = userMap.get(senderId)
-//         const reciever = userMap.get(recieverId)
-
-//         if (!sender || !reciever) return null
-
-//         return {
-//           id: notification.id,
-//           sender,
-//           reciever,
-//           IsRead: notification.Isread,
-//           createdAt: notification.createdAt,
-//         }
-//       })
-//     },
-//   )
-// }

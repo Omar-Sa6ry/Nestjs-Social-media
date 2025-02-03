@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { UploadService } from './upload.service'
-import { Image } from '../post/entity/image.entity'
+import { Image } from '../../modules/post/entity/image.entity'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Image])],

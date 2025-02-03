@@ -19,6 +19,7 @@ import {
   CreatePostLike,
   DeleteCommentLike,
   DeletePostLike,
+  ImagesNotFound,
   NoLikeComment,
   NoLikePost,
   NotAnyLikes,
@@ -30,13 +31,16 @@ import {
 import DataLoader from 'dataloader'
 import {
   createCommentLoader,
+  createImageLoader,
   createLikeLoader,
   createUserLoader,
 } from 'src/common/loaders/date-loaders'
+import { Image } from '../post/entity/image.entity'
 
 @Injectable()
 export class LikeService {
   private userLoader: DataLoader<number, User>
+  private imageLoader: DataLoader<number, Image[]>
   private likeLoader: DataLoader<number, number>
   private commentLoader: DataLoader<number, Comment[]>
 
@@ -46,9 +50,11 @@ export class LikeService {
     @InjectRepository(Like)
     private likeRepository: Repository<Like>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Image) private imageRepository: Repository<Image>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
   ) {
     this.userLoader = createUserLoader(this.userRepository)
+    this.imageLoader = createImageLoader(this.imageRepository)
     this.commentLoader = createCommentLoader(this.commentRepository)
     this.likeLoader = createLikeLoader(this)
   }
@@ -113,6 +119,9 @@ export class LikeService {
       postLikes.map(post => post.userId),
     )
     const likes = await this.likeLoader.loadMany(postLikes.map(post => post.id))
+    const images = await this.imageLoader.loadMany(
+      postLikes.map(post => post.id),
+    )
     const comments = await this.commentLoader.loadMany(
       postLikes.map(post => post.id),
     )
@@ -123,6 +132,14 @@ export class LikeService {
         if (user instanceof Error) {
           throw new NotFoundException(UserNameIsWrong)
         }
+
+        const postImages = images[index]
+        if (postImages instanceof Error) {
+          throw new NotFoundException(ImagesNotFound)
+        }
+        const imgs: string[] = []
+        await postImages.map(i => imgs.push(i.path))
+
         const postComments = comments[index]
         if (postComments instanceof Error) {
           throw new NotFoundException(CommentsNotFound)
@@ -134,8 +151,9 @@ export class LikeService {
 
         return {
           id: post.id,
-          content: post.content,
           user,
+          content: post.content,
+          images:imgs,
           comments: postComments,
           likes: postLikes,
           createdAt: post.createdAt,

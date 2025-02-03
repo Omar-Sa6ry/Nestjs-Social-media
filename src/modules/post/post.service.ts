@@ -8,12 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { CreateImagDto } from 'src/common/dtos/createImage.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Post } from './entity/post.entity '
-import { UploadService } from '../upload/upload.service'
+import { UploadService } from '../../common/upload/upload.service'
 import { LikeService } from '../like/like.service'
 import { User } from '../users/entity/user.entity'
 import { PostResponse } from './dto/PostResponse.dto'
 import { Comment } from '../comment/entity/comment.entity '
-import { ILike, In, Repository } from 'typeorm'
+import { Image } from './entity/image.entity'
+import { ILike, Repository } from 'typeorm'
 import { RedisService } from 'src/common/redis/redis.service'
 import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
 import {
@@ -21,6 +22,7 @@ import {
   DeletePost,
   EnterContentOrImage,
   ImageLength,
+  ImagesNotFound,
   NoPosts,
   NotPostYou,
   PostNotFound,
@@ -29,6 +31,7 @@ import {
 } from 'src/common/constant/messages.constant'
 import {
   createCommentLoader,
+  createImageLoader,
   createLikeLoader,
   createUserLoader,
 } from 'src/common/loaders/date-loaders'
@@ -38,6 +41,7 @@ export class PostService {
   private userLoader: DataLoader<number, User>
   private likeLoader: DataLoader<number, number>
   private commentLoader: DataLoader<number, Comment[]>
+  private imageLoader: DataLoader<number, Image[]>
 
   constructor (
     private readonly redisService: RedisService,
@@ -47,10 +51,12 @@ export class PostService {
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Image) private imageRepository: Repository<Image>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
   ) {
     this.userLoader = createUserLoader(this.userRepository)
     this.commentLoader = createCommentLoader(this.commentRepository)
+    this.imageLoader = createImageLoader(this.imageRepository)
     this.likeLoader = createLikeLoader(this.likeService)
   }
 
@@ -70,12 +76,10 @@ export class PostService {
     const post = await this.postRepository.create({ content, userId })
     await this.postRepository.save(post)
 
-    if (createImageDto.length !== 0) {
-      const images = await this.uploadService.uploadImages(
-        createImageDto,
-        post.id,
-      )
-    }
+    const images = await this.uploadService.uploadImages(
+      createImageDto,
+      post.id,
+    )
 
     const relationCacheKey = `post:${post.id}`
     await this.redisService.set(relationCacheKey, post)
@@ -93,6 +97,7 @@ export class PostService {
       user,
       comments: null,
       likes: 0,
+      images,
       createdAt: post.createdAt,
     }
 
@@ -112,6 +117,13 @@ export class PostService {
     if (!post) {
       throw new NotFoundException(PostNotFound)
     }
+
+    const images: string[] = []
+    const photos = await this.imageRepository.find({
+      where: { postId: post.id },
+      select: ['path'],
+    })
+    await photos.map(i => images.push(i.path))
 
     const relationCacheKey = `posts:${id}`
     await this.redisService.set(relationCacheKey, post)
@@ -135,6 +147,7 @@ export class PostService {
       user,
       comments,
       likes,
+      images,
       createdAt: post.createdAt,
     }
 
@@ -163,6 +176,7 @@ export class PostService {
 
     const users = await this.userLoader.loadMany(posts.map(post => post.userId))
     const likes = await this.likeLoader.loadMany(posts.map(post => post.id))
+    const images = await this.imageLoader.loadMany(posts.map(post => post.id))
     const comments = await this.commentLoader.loadMany(
       posts.map(post => post.id),
     )
@@ -173,10 +187,19 @@ export class PostService {
         if (user instanceof Error) {
           throw new NotFoundException(UserNameIsWrong)
         }
+
         const postComments = comments[index]
         if (postComments instanceof Error) {
           throw new NotFoundException(CommentsNotFound)
         }
+
+        const postImages = images[index]
+        if (postImages instanceof Error) {
+          throw new NotFoundException(ImagesNotFound)
+        }
+        const imgs: string[] = []
+        await postImages.map(i => imgs.push(i.path))
+
         const postLikes = likes[index]
         if (postLikes instanceof Error) {
           throw new NotFoundException('Error fetching likes')
@@ -188,6 +211,7 @@ export class PostService {
           user,
           comments: postComments,
           likes: postLikes,
+          images: imgs,
           createdAt: post.createdAt,
         }
       }),
@@ -266,6 +290,13 @@ export class PostService {
 
     const likes = await this.likeService.numPostLikes(post.id)
 
+    const images: string[] = []
+    const photos = await this.imageRepository.find({
+      where: { postId: post.id },
+      select: ['path'],
+    })
+    await photos.map(i => images.push(i.path))
+
     this.websocketGateway.broadcast('postUpdated', {
       postId: id,
       userId,
@@ -277,6 +308,7 @@ export class PostService {
       user,
       comments,
       likes,
+      images,
       createdAt: post.createdAt,
     }
 
@@ -293,6 +325,8 @@ export class PostService {
     if (userId !== post.userId) {
       throw new BadRequestException(NotPostYou)
     }
+
+    await this.uploadService.deleteImagesByPostId(post.id)
     await this.postRepository.remove(post)
 
     this.websocketGateway.broadcast('postDeleted', {

@@ -52,6 +52,7 @@ type PostResponsee {
   user: User!
   likes: Float!
   comments: [Comment!]
+  images: [String!]!
   createdAt: DateTime!
 }
 
