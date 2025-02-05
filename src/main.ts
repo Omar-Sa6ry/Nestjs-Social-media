@@ -2,14 +2,14 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { CustomExceptionFilter } from './common/filter/global.exceptionFilter'
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js'
 
 async function bootstrap () {
   const app = await NestFactory.create(AppModule)
   app.enableCors()
-
   app.useGlobalPipes(new ValidationPipe())
-
+  app.useGlobalFilters(new CustomExceptionFilter())
   app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 5 }))
 
   const config = new DocumentBuilder()

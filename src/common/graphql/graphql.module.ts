@@ -1,0 +1,29 @@
+import { ApolloDriver } from "@nestjs/apollo"
+import { Module } from "@nestjs/common"
+import { GraphQLModule } from "@nestjs/graphql"
+import { join } from "path"
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context: ({ req }) => ({ req }),
+      playground: true,
+      uploads: true,
+      // Exception Filter
+      debug: false,
+      formatError: error => {
+        const { code, stacktrace, path, locations, ...extensions } =
+          error.extensions || {}
+        const { message: ___, locations: __ } = error
+
+        return {
+          ...extensions,
+          path,
+        }
+      },
+    }),
+  ],
+})
+export class GraphqlModule {}

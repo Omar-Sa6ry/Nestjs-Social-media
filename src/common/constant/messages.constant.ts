@@ -100,3 +100,6 @@ export const CurrentUserMsg = 'User not found in request'
 
 // Cloudinary
 export const CloudinaryFailed = 'Cloudinary upload failed'
+
+// Exception filter
+export const ExceptionFilterMsg = 'An error occurred'

@@ -33,18 +33,11 @@ import { RelationModule } from './modules/follow/follow.module'
 import { Follow } from './modules/follow/entity/follow.entity'
 import { Hashtag } from './modules/hastage/entity/hastage.entity'
 import { HashtagModule } from './modules/hastage/hashtage.module'
+import { GraphqlModule } from './common/graphql/graphql.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({ cache: true, isGlobal: true }),
-    GraphQLModule.forRoot({
-      driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      context: ({ req }) => ({ req }),
-      uploads: true,
-      debug: true,
-      playground: true,
-    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -90,6 +83,7 @@ import { HashtagModule } from './modules/hastage/hashtage.module'
         limit: 100,
       },
     ]),
+    GraphqlModule,
     RedisModule,
     AuthModule,
     UploadModule,
