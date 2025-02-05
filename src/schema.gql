@@ -38,14 +38,6 @@ type AuthResponse {
   token: String!
 }
 
-type NotificationOutput {
-  id: Float!
-  Isread: Boolean!
-  sender: User!
-  receive: User!
-  createdAt: DateTime!
-}
-
 type PostResponsee {
   id: Float!
   content: String!
@@ -124,6 +116,14 @@ type ReplyHastageResponse {
   content: String!
   reply: ReplyResponsee!
   user: User!
+  createdAt: DateTime!
+}
+
+type NotificationOutput {
+  id: Float!
+  Isread: Boolean!
+  sender: User!
+  receive: User!
   createdAt: DateTime!
 }
 
