@@ -27,7 +27,7 @@ type User {
   id: Int!
   userName: String!
   avatar: String!
-  bio: String!
+  bio: String
   phone: String!
   email: String!
   password: String!
@@ -103,6 +103,30 @@ type RelationResponseOutput {
   status: String!
 }
 
+type PostHastageResponse {
+  id: Float!
+  content: String!
+  post: PostResponsee!
+  user: User!
+  createdAt: DateTime!
+}
+
+type CommentHastageResponse {
+  id: Float!
+  content: String!
+  comment: CommentResponsee!
+  user: User!
+  createdAt: DateTime!
+}
+
+type ReplyHastageResponse {
+  id: Float!
+  content: String!
+  reply: ReplyResponsee!
+  user: User!
+  createdAt: DateTime!
+}
+
 type Query {
   sayHello: String!
   getUserById(id: Float!): User!
@@ -153,6 +177,15 @@ type Query {
   getCommentMentionsFromUser: [CommentMentionResponsee!]!
   getCommentMentionsForComment(commentId: Int!): [CommentMentionResponsee!]!
   isUserMentionedInComment(commentId: Int!, userName: String!): Boolean!
+  findPostByHashtag(content: String!): PostHastageResponse!
+  findAllPostHashtags(postId: Float!, limit: Float! = 10, skip: Float! = 0): [PostHastageResponse!]!
+  findAllUserHashtagOnPost(limit: Float! = 10, skip: Float! = 0): [PostHastageResponse!]!
+  findCommentByHashtag(content: String!): CommentHastageResponse!
+  findAllCommentHashtags(commentId: Float!, limit: Float! = 10, skip: Float! = 0): [CommentHastageResponse!]!
+  findAllUserHashtagsOnComments(limit: Float! = 10, skip: Float! = 0): [CommentHastageResponse!]!
+  findReplyHashtag(content: String!): ReplyHastageResponse
+  findAllReplyHashtags(replyId: Int!, limit: Int, skip: Int): [ReplyHastageResponse!]!
+  findAllUserHashtagOnReply(limit: Int, skip: Int): [ReplyHastageResponse!]!
 }
 
 input CheckEmail {
@@ -203,6 +236,13 @@ type Mutation {
   deletePostMention(userName: String!, postId: Int!): String!
   createCommentMention(userName: String!, commentId: Int!): CommentMentionResponsee!
   deleteCommentMention(userName: String!, commentId: Int!): String!
+  createHashtagPost(postId: Float!, content: String!): PostHastageResponse!
+  updateHashtagPost(id: Float!, postId: Float!, content: String!): PostHastageResponse!
+  createHashtagComment(commentId: Float!, content: String!): CommentHastageResponse!
+  updateHashtagComment(id: Float!, commentId: Float!, content: String!): CommentHastageResponse!
+  createHashtagReply(replyId: Int!, content: String!): ReplyHastageResponse!
+  updateHashtagReply(id: Int!, replyId: Int!, content: String!): ReplyHastageResponse!
+  deleteHashtag(id: Int!): String!
 }
 
 input CreateUserDto {

@@ -6,6 +6,7 @@ import { Like } from 'src/modules/like/entity/like.entity '
 import { Follow } from 'src/modules/follow/entity/follow.entity'
 import { Notification } from 'src/modules/notification/entity/notification.entity'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
+import { Hashtag } from 'src/modules/hastage/entity/hastage.entity'
 import { Post } from 'src/modules/post/entity/post.entity '
 import {
   AfterInsert,
@@ -38,7 +39,7 @@ export class User {
   avatar: string
 
   @Column({ nullable: true })
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   bio: string
 
   @Column({ unique: true })
@@ -93,6 +94,12 @@ export class User {
 
   @OneToMany(() => Follow, Follow => Follow.followingId)
   friendRelations: Follow[]
+
+  @OneToMany(() => Hashtag, hashtag => hashtag.user, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  hashtags: Hashtag[]
 
   @OneToMany(() => Message, message => message.receiverId, {
     onDelete: 'SET NULL',

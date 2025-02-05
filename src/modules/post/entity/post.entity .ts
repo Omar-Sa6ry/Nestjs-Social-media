@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { User } from 'src/modules/users/entity/user.entity'
 import { Like } from 'src/modules/like/entity/like.entity '
+import { Hashtag } from 'src/modules/hastage/entity/hastage.entity'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { Image } from './image.entity'
 import { Comment } from '../../comment/entity/comment.entity '
@@ -48,6 +49,12 @@ export class Post {
     nullable: true,
   })
   images: string[]
+
+  @OneToMany(() => Hashtag, hashtag => hashtag.post, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  hashtags: Hashtag[]
 
   @OneToMany(() => Comment, comment => comment.postId, {
     onDelete: 'SET NULL',

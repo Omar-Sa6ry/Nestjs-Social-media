@@ -1,0 +1,116 @@
+mutation {
+  createHashtagComment(commentId: 12, content: "#GraphQL") {
+    id
+    content
+    user {
+      userName
+      phone
+      avatar
+      email
+    }
+
+    comment {
+      content
+      createdAt
+      post {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+mutation {
+  deleteHashtag(id: 16)
+}
+
+query {
+  findCommentByHashtag(content: "#GraphQL") {
+    id
+    content
+    user {
+      userName
+      phone
+      avatar
+      email
+    }
+
+    comment {
+      content
+      createdAt
+      post {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+query {
+  findAllCommentHashtags(commentId: 12, limit: 10, skip: 0) {
+    id
+    content
+    user {
+      userName
+      phone
+      avatar
+      email
+    }
+
+    comment {
+      content
+      createdAt
+      post {
+        content
+        images
+        createdAt
+      }
+    }
+  }
+}
+
+query {
+  findAllUserHashtagsOnComments(limit: 10, skip: 0) {
+    id
+    content
+    user {
+      userName
+      phone
+      avatar
+      email
+    }
+
+    comment {
+      content
+      createdAt
+      post {
+        content
+        images
+        createdAt
+      }
+    }
+  }
+}
+
+mutation {
+  updateHashtagComment(commentId: 12, content: "#UpdatedCommentHashtag") {
+    id
+    content
+    user {
+      userName
+      phone
+      avatar
+      email
+    }
+
+    comment {
+      content
+      createdAt
+      post {
+        content
+        images
+        createdAt
+      }
+    }
+  }
+}

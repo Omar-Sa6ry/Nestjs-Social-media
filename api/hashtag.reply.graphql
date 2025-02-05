@@ -1,0 +1,91 @@
+mutation {
+  createHashtagReply(replyId: 3, content: "#Redis") {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+      avatar
+      bio
+    }
+    reply {
+      content
+      createdAt
+      comment {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+query {
+  findReplyHashtag(content: "#Redis") {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+      avatar
+      bio
+    }
+    reply {
+      content
+      createdAt
+      comment {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+query {
+  findAllReplyHashtags(replyId: 3, limit: 10, skip: 0) {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+      avatar
+      bio
+    }
+    reply {
+      content
+      createdAt
+      comment {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+mutation {
+  updateHashtagReply(replyId: 3, id: 19, content: "#UpdatedReplyHashtag") {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+      avatar
+      bio
+    }
+    reply {
+      content
+      createdAt
+      comment {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+mutation {
+  deleteHashtag(id: 16)
+}

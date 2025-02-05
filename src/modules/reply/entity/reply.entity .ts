@@ -3,6 +3,7 @@ import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 import { Like } from 'src/modules/like/entity/like.entity '
 import { Comment } from 'src/modules/comment/entity/comment.entity '
+import { Hashtag } from 'src/modules/hastage/entity/hastage.entity'
 import { Post } from '../../post/entity/post.entity '
 import {
   AfterInsert,
@@ -46,6 +47,12 @@ export class Reply {
   @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User
+
+  @OneToMany(() => Hashtag, hashtag => hashtag.reply, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  hashtags: Hashtag[]
 
   @ManyToOne(() => Post, post => post.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'commentId' })

@@ -31,6 +31,8 @@ import { BlockModule } from './modules/Block/block.module'
 import { Block } from './modules/Block/entity/block.entity'
 import { RelationModule } from './modules/follow/follow.module'
 import { Follow } from './modules/follow/entity/follow.entity'
+import { Hashtag } from './modules/hastage/entity/hastage.entity'
+import { HashtagModule } from './modules/hastage/hashtage.module'
 
 @Module({
   imports: [
@@ -64,6 +66,7 @@ import { Follow } from './modules/follow/entity/follow.entity'
           Reply,
           Mention,
           Like,
+          Hashtag,
         ],
         synchronize: true,
         logging: false,
@@ -100,6 +103,7 @@ import { Follow } from './modules/follow/entity/follow.entity'
     ReplyModule,
     MessageModule,
     MentionModule,
+    HashtagModule,
   ],
 
   providers: [AppService, AppResolver],

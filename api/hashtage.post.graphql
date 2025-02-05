@@ -1,0 +1,119 @@
+mutation {
+  createHashtagPost(postId: 39, content: "#NestJS") {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+    }
+    post {
+      content
+      createdAt
+      likes
+      images
+
+      comments {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+query {
+  findPostByHashtag(content: "#NestJS") {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+    }
+    post {
+      content
+      createdAt
+      likes
+      images
+
+      comments {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+query {
+  findAllPostHashtags(postId: 39, limit: 10, skip: 0) {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+      avatar
+      bio
+    }
+    post {
+      content
+      createdAt
+      likes
+      images
+
+      comments {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+mutation {
+  updateHashtagPost(postId: 39, content: "#UpdatedHashtag") {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+      avatar
+      bio
+    }
+    post {
+      content
+      createdAt
+      comments {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+query {
+  findAllUserHashtagOnPost(limit: 10, skip: 0) {
+    id
+    content
+    user {
+      userName
+      email
+      phone
+    }
+    post {
+      content
+      createdAt
+      likes
+      images
+
+      comments {
+        content
+        createdAt
+      }
+    }
+  }
+}
+
+mutation {
+  deleteHashtag(id: 16)
+}

@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { User } from 'src/modules/users/entity/user.entity'
+import { Hashtag } from 'src/modules/hastage/entity/hastage.entity'
 import { Like } from 'src/modules/like/entity/like.entity '
 import { Post } from '../../post/entity/post.entity '
 import {
@@ -19,8 +20,8 @@ import {
 
 @Entity()
 @ObjectType()
-@Index('idx_comment_postId', ['postId']) 
-@Index('idx_comment_userId', ['userId']) 
+@Index('idx_comment_postId', ['postId'])
+@Index('idx_comment_userId', ['userId'])
 export class Comment {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
@@ -55,6 +56,12 @@ export class Comment {
     nullable: true,
   })
   mentionComment: Mention[]
+
+  @OneToMany(() => Hashtag, hashtag => hashtag.comment, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  hashtags: Hashtag[]
 
   @OneToMany(() => Like, like => like.commentId, {
     onDelete: 'SET NULL',

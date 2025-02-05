@@ -64,6 +64,13 @@ export const NotAnyLikes = 'You didnot do any likes yet'
 export const ZeroLikes = 'There is no likes on post'
 export const PostLikeExisted = 'you like on this post'
 
+// Hastage
+export const HashtagExisted = 'Hashtag already exists'
+export const HashtagNotFound = 'Hashtag not Found'
+export const NoHashtage = 'There Hashtage not Found'
+export const NoHashtages = 'There are not hashtages'
+export const DeleteHashtage = 'hastage id deleted successfully'
+
 // Mentions of post
 export const MentionPostFound = 'This mention not found'
 export const NoMentionForYou = 'No mentions for you'
