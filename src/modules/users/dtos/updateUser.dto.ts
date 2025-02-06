@@ -5,7 +5,6 @@ import {
   IsString,
   IsPhoneNumber,
   IsOptional,
-  IsNumber,
 } from 'class-validator'
 
 @InputType()

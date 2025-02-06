@@ -326,7 +326,9 @@ export class PostService {
       throw new BadRequestException(NotPostYou)
     }
 
-    await this.uploadService.deleteImagesByPostId(post.id)
+    if (post.images) {
+      await this.uploadService.deleteImagesByPostId(post.id)
+    }
     await this.postRepository.remove(post)
 
     this.websocketGateway.broadcast('postDeleted', {

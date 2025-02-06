@@ -5,6 +5,7 @@ import { Message } from 'src/modules/message/entity/message.entity'
 import { Like } from 'src/modules/like/entity/like.entity '
 import { Follow } from 'src/modules/follow/entity/follow.entity'
 import { Notification } from 'src/modules/notification/entity/notification.entity'
+import { Exclude } from 'class-transformer'
 import { Mention } from 'src/modules/mention/entity/mention.entity '
 import { Hashtag } from 'src/modules/hastage/entity/hastage.entity'
 import { Post } from 'src/modules/post/entity/post.entity '
@@ -51,7 +52,7 @@ export class User {
   email: string
 
   @Column()
-  @Field(() => String)
+  @Exclude()
   password: string
 
   @Column({
@@ -59,6 +60,7 @@ export class User {
     enum: Role,
     default: Role.USER,
   })
+  @Exclude()
   role: Role
 
   @Column({
@@ -69,12 +71,15 @@ export class User {
   status: UserStatus
 
   @Column({ nullable: true })
+  @Exclude()
   resetToken?: string
 
   @Column({ type: 'timestamp', nullable: true })
+  @Exclude()
   resetTokenExpiry?: Date | null
 
   @Column({ nullable: true })
+  @Exclude()
   fcmToken: string
 
   @OneToMany(() => Notification, notification => notification.senderId, {

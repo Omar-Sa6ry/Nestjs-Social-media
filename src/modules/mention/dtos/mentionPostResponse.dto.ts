@@ -1,5 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
-import { IsDate, IsInt, IsString } from 'class-validator'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate, IsInt } from 'class-validator'
 import { Post } from 'src/modules/post/entity/post.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 
@@ -27,18 +28,26 @@ export class PostMentionResponse {
 export class PostMentionResponsee {
   @Field()
   @IsInt()
+  @Expose()
   id: number
 
   @Field(() => User)
+  @Expose()
   mentionFrom: User
 
   @Field(() => User)
+  @Expose()
   mentionTo: User
 
   @Field(() => Post)
+  @Expose()
   post: Post
 
   @Field()
   @IsDate()
+  @Expose()
+  @Transform(({ value }) => new Date(value).toLocaleString(), {
+    toClassOnly: true,
+  })
   createdAt: Date
 }

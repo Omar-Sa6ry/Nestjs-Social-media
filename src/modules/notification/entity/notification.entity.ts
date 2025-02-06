@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Transform } from 'class-transformer'
 import { User } from 'src/modules/users/entity/user.entity'
 import {
   AfterInsert,
@@ -15,8 +16,8 @@ import {
 
 @Entity()
 @ObjectType()
-@Index('idx_notification_senderId', ['senderId']) 
-@Index('idx_notification_receiverId', ['receiverId']) 
+@Index('idx_notification_senderId', ['senderId'])
+@Index('idx_notification_receiverId', ['receiverId'])
 export class Notification {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
@@ -40,6 +41,9 @@ export class Notification {
 
   @CreateDateColumn()
   @Field(() => Date)
+  @Transform(({ value }) => new Date(value).toLocaleString(), {
+    toClassOnly: true,
+  })
   createdAt: Date
 
   @ManyToOne(() => User, user => user.relations, { onDelete: 'CASCADE' })

@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Transform } from 'class-transformer'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { Post } from 'src/modules/post/entity/post.entity '
 import { Reply } from 'src/modules/reply/entity/reply.entity '
@@ -23,8 +24,8 @@ export class Hashtag {
   id: number
 
   @Column()
-   @Field(() => String)
- content: string
+  @Field(() => String)
+  content: string
 
   @Column({ nullable: true })
   @Field(() => Int)
@@ -59,6 +60,9 @@ export class Hashtag {
   post: Post
 
   @CreateDateColumn({ type: 'date' })
+  @Transform(({ value }) => new Date(value).toLocaleString(), {
+    toClassOnly: true,
+  })
   createdAt: Date
 
   @AfterInsert()

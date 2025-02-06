@@ -1,4 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
+import { Expose, Transform } from 'class-transformer'
 import { IsDate, IsInt, IsString } from 'class-validator'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { User } from 'src/modules/users/entity/user.entity'
@@ -28,20 +29,27 @@ export class ReplyResponse {
 export class ReplyResponsee {
   @Field()
   @IsInt()
+  @Expose()
   id: number
 
   @Field()
   @IsString()
+  @Expose()
   content: string
 
   @Field(() => Comment)
+  @Expose()
   comment: Comment
 
   @Field(() => User)
+  @Expose()
   user: User
 
   @Field()
   @IsDate()
+  @Expose()
+  @Transform(({ value }) => new Date(value).toLocaleString(), {
+    toClassOnly: true,
+  })
   createdAt: Date
 }
-

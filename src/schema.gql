@@ -30,7 +30,6 @@ type User {
   bio: String
   phone: String!
   email: String!
-  password: String!
 }
 
 type AuthResponse {

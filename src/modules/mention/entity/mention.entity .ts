@@ -15,6 +15,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
+import { Transform } from 'class-transformer'
 
 @Entity()
 @ObjectType()
@@ -64,7 +65,9 @@ export class Mention {
 
   @CreateDateColumn()
   @Field(() => Date)
-  createdAt: Date
+   @Transform(({ value }) => new Date(value).toLocaleString(), {
+     toClassOnly: true,
+   }) createdAt: Date
 
   @AfterInsert()
   logInsert () {

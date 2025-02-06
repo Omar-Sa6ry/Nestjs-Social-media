@@ -28,6 +28,7 @@ export class Block {
   @Index()
   @Column({ type: 'int' })
   @Field(() => Int)
+
   followingId: number
 
   @ManyToOne(() => User, user => user.relations, { onDelete: 'CASCADE' })

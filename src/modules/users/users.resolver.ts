@@ -1,7 +1,11 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { User } from './entity/user.entity'
 import { UserService } from './users.service'
-import { ParseIntPipe } from '@nestjs/common'
+import {
+  ParseIntPipe,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common'
 import { UpdateUserDto } from './dtos/UpdateUser.dto'
 import { Role } from 'src/common/constant/enum.constant'
 import { CheckEmail } from 'src/common/dtos/checkEmail.dto '
@@ -46,7 +50,8 @@ export class UserResolver {
   async getUserByUserName (@Args('userName') userName: string) {
     const userCacheKey = `user:${userName}`
     const cachedUser = await this.redisService.get(userCacheKey)
-    if (cachedUser) {
+    if (cachedUser instanceof User) {
+      console.log(cachedUser)
       return { user: cachedUser }
     }
 

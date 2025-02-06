@@ -1,7 +1,7 @@
-import { ApolloDriver } from "@nestjs/apollo"
-import { Module } from "@nestjs/common"
-import { GraphQLModule } from "@nestjs/graphql"
-import { join } from "path"
+import { ApolloDriver } from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
+import { GraphQLModule } from '@nestjs/graphql'
+import { join } from 'path'
 
 @Module({
   imports: [
@@ -14,13 +14,13 @@ import { join } from "path"
       // Exception Filter
       debug: false,
       formatError: error => {
-        const { code, stacktrace, path, locations, ...extensions } =
-          error.extensions || {}
-        const { message: ___, locations: __ } = error
+        const { originalError } = error.extensions || {}
 
         return {
-          ...extensions,
-          path,
+          ...originalError,
+          message: error.message,
+          timestamp: new Date().toISOString(),
+          path: error.path,
         }
       },
     }),

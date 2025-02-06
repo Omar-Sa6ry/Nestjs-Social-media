@@ -15,7 +15,9 @@ import {
 
 @Entity()
 @ObjectType()
-@Index('idx_follower_following', ['followerId', 'followingId'], { unique: true })
+@Index('idx_follower_following', ['followerId', 'followingId'], {
+  unique: true,
+})
 export class Follow {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

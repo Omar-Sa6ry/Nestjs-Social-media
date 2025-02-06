@@ -2,6 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { IsDate, IsInt, IsString } from 'class-validator'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { User } from 'src/modules/users/entity/user.entity'
+import { Expose, Transform } from 'class-transformer'
 
 @InputType()
 export class PostResponse {
@@ -34,25 +35,35 @@ export class PostResponse {
 export class PostResponsee {
   @Field()
   @IsInt()
+  @Expose()
   id: number
 
   @Field()
   @IsString()
+  @Expose()
   content: string
 
   @Field(() => User)
+  @Expose()
   user: User
 
   @Field()
+  @Expose()
   likes: number
 
   @Field(() => [Comment], { nullable: true })
+  @Expose()
   comments: Comment[]
 
   @Field(() => [String])
+  @Expose()
   images: string[]
 
   @Field()
   @IsDate()
+  @Expose()
+  @Transform(({ value }) => new Date(value).toLocaleString(), {
+    toClassOnly: true,
+  })
   createdAt: Date
 }
