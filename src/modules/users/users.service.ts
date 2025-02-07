@@ -29,7 +29,7 @@ export class UserService {
   async findById (id: number) {
     const user = await this.userRepository.findOne({ where: { id } })
     if (!user) {
-      return new NotFoundException(`User with this ${id} not found`)
+      throw new NotFoundException(`User with this ${id} not found`)
     }
 
     const userCacheKey = `user:${user.id}`
@@ -41,7 +41,7 @@ export class UserService {
   async findByUserName (userName: string) {
     const user = await this.userRepository.findOne({ where: { userName } })
     if (!user) {
-      return new NotFoundException(`User with ${userName} not found`)
+      throw new NotFoundException(`User with ${userName} not found`)
     }
     const userCacheKey = `user:${user.userName}`
     await this.redisService.set(userCacheKey, user)
@@ -51,7 +51,7 @@ export class UserService {
   async findByEmail (email: string) {
     const user = await this.userRepository.findOne({ where: { email } })
     if (!user) {
-      return new NotFoundException(`User with ${email} not found`)
+      throw new NotFoundException(`User with ${email} not found`)
     }
     const userCacheKey = `user:${user.email}`
     await this.redisService.set(userCacheKey, user)
