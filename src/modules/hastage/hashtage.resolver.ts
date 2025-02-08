@@ -1,13 +1,22 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { Hashtag } from './entity/hastage.entity'
 import { HashtagService } from './hastage.service'
-import { PostHastageResponse } from './dtos/HashtagPostOutput.dto '
-import { CommentHastageResponse } from './dtos/HashtagCommentOutput.dto  '
+import {
+  PostHastageResponse,
+  PostHastagesResponse,
+} from './dtos/HashtagPostOutput.dto '
+import {
+  CommentHastageResponse,
+  CommentHastagesResponse,
+} from './dtos/HashtagCommentOutput.dto  '
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { Role } from 'src/common/constant/enum.constant'
 import { Auth } from 'src/common/decerator/auth.decerator'
-import { ReplyHastageResponse } from './dtos/HashtagReplyOutput.dto   '
+import {
+  ReplyHastageResponse,
+  ReplyHastagesResponse,
+} from './dtos/HashtagReplyOutput.dto   '
 
 @Resolver(() => Hashtag)
 export class HashtagResolver {
@@ -22,7 +31,12 @@ export class HashtagResolver {
     @Args('postId') postId: number,
     @Args('content') content: string,
   ): Promise<PostHastageResponse> {
-    return this.hashtagService.createHastagePost(user.id, postId, content)
+    const data = await this.hashtagService.createHastagePost(
+      user.id,
+      postId,
+      content,
+    )
+    return { data }
   }
 
   @Query(() => PostHastageResponse)
@@ -30,18 +44,20 @@ export class HashtagResolver {
   async findPostByHashtag (
     @Args('content') content: string,
   ): Promise<PostHastageResponse> {
-    return this.hashtagService.findPostHashtag(content)
+    return { data: await this.hashtagService.findPostHashtag(content) }
   }
 
-  @Query(() => [PostHastageResponse])
-  @Auth(Role.USER)
-  async findAllPostHashtags (
-    @Args('postId') postId: number,
-    @Args('limit', { defaultValue: 10 }) limit: number,
-    @Args('skip', { defaultValue: 0 }) skip: number,
-  ): Promise<PostHastageResponse[]> {
-    return this.hashtagService.findAllPostHashtag(postId, limit, skip)
-  }
+  // @Query(() => PostHastagesResponse)
+  // @Auth(Role.USER)
+  // async findAllPostHashtags (
+  //   @Args('postId') postId: number,
+  //   @Args('limit', { defaultValue: 10 }) limit: number,
+  //   @Args('skip', { defaultValue: 0 }) skip: number,
+  // ): Promise<PostHastagesResponse> {
+  //   return {
+  //     data: await this.hashtagService.findAllPostHashtag(postId, limit, skip),
+  //   }
+  // }
 
   @Mutation(() => PostHastageResponse)
   @Auth(Role.USER)
@@ -51,17 +67,40 @@ export class HashtagResolver {
     @Args('postId') postId: number,
     @Args('content') content: string,
   ): Promise<PostHastageResponse> {
-    return this.hashtagService.updateHastagePost(user.id, id, postId, content)
+    return {
+      data: await this.hashtagService.updateHastagePost(
+        user.id,
+        id,
+        postId,
+        content,
+      ),
+    }
   }
 
-  @Query(() => [PostHastageResponse])
+  @Query(() => PostHastagesResponse)
   @Auth(Role.USER)
   async findAllUserHashtagOnPost (
     @CurrentUser() user: CurrentUserDto,
     @Args('limit', { defaultValue: 10 }) limit: number,
     @Args('skip', { defaultValue: 0 }) skip: number,
-  ): Promise<PostHastageResponse[]> {
-    return this.hashtagService.findAllUserHashtagOnPost(user.id, limit, skip)
+  ): Promise<PostHastagesResponse> {
+    const items = await this.hashtagService.findAllUserHashtagOnPost(
+      user.id,
+      limit,
+      skip,
+    )
+
+    const totalCount = await this.hashtagService.findAllUserHashtagOnPostCount(
+      user.id,
+    )
+
+    return {
+      items,
+      pagination: {
+        currentPage: Math.floor(skip / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    }
   }
 
   // ------------------ Comment---------------
@@ -73,7 +112,13 @@ export class HashtagResolver {
     @Args('commentId') commentId: number,
     @Args('content') content: string,
   ): Promise<CommentHastageResponse> {
-    return this.hashtagService.createHastageComment(user.id, commentId, content)
+    return {
+      data: await this.hashtagService.createHastageComment(
+        user.id,
+        commentId,
+        content,
+      ),
+    }
   }
 
   @Query(() => CommentHastageResponse)
@@ -81,27 +126,56 @@ export class HashtagResolver {
   async findCommentByHashtag (
     @Args('content') content: string,
   ): Promise<CommentHastageResponse> {
-    return this.hashtagService.findCommentHashtag(content)
+    return { data: await this.hashtagService.findCommentHashtag(content) }
   }
 
-  @Query(() => [CommentHastageResponse])
+  @Query(() => CommentHastagesResponse)
   @Auth(Role.USER)
   async findAllCommentHashtags (
     @Args('commentId') commentId: number,
     @Args('limit', { defaultValue: 10 }) limit: number,
     @Args('skip', { defaultValue: 0 }) skip: number,
-  ): Promise<CommentHastageResponse[]> {
-    return this.hashtagService.findAllCommentHashtag(commentId, limit, skip)
+  ): Promise<CommentHastagesResponse> {
+    const items = await this.hashtagService.findAllCommentHashtag(
+      commentId,
+      limit,
+      skip,
+    )
+    const totalCount = await this.hashtagService.findAllCommentHashtagCount(
+      commentId,
+    )
+    return {
+      items,
+      pagination: {
+        currentPage: Math.floor(skip / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    }
   }
 
-  @Query(() => [CommentHastageResponse])
+  @Query(() => CommentHastagesResponse)
   @Auth(Role.USER)
   async findAllUserHashtagsOnComments (
     @CurrentUser() user: CurrentUserDto,
     @Args('limit', { defaultValue: 10 }) limit: number,
     @Args('skip', { defaultValue: 0 }) skip: number,
-  ): Promise<CommentHastageResponse[]> {
-    return this.hashtagService.findAllUserHashtagOnComment(user.id, limit, skip)
+  ): Promise<CommentHastagesResponse> {
+    const items = await this.hashtagService.findAllUserHashtagOnComment(
+      user.id,
+      limit,
+      skip,
+    )
+
+    const totalCount =
+      await this.hashtagService.findAllUserHashtagOnCommentCount(user.id)
+
+    return {
+      items,
+      pagination: {
+        currentPage: Math.floor(skip / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    }
   }
 
   @Mutation(() => CommentHastageResponse)
@@ -112,12 +186,14 @@ export class HashtagResolver {
     @Args('commentId') commentId: number,
     @Args('content') content: string,
   ): Promise<CommentHastageResponse> {
-    return this.hashtagService.updateHastageComment(
-      user.id,
-      id,
-      commentId,
-      content,
-    )
+    return {
+      data: await this.hashtagService.updateHastageComment(
+        user.id,
+        id,
+        commentId,
+        content,
+      ),
+    }
   }
 
   // ---------------Reply--------------
@@ -129,7 +205,13 @@ export class HashtagResolver {
     @Args('replyId', { type: () => Int }) replyId: number,
     @Args('content') content: string,
   ): Promise<ReplyHastageResponse> {
-    return this.hashtagService.createHastageReply(user.id, replyId, content)
+    return {
+      data: await this.hashtagService.createHastageReply(
+        user.id,
+        replyId,
+        content,
+      ),
+    }
   }
 
   @Query(() => ReplyHastageResponse, { nullable: true })
@@ -137,27 +219,56 @@ export class HashtagResolver {
   async findReplyHashtag (
     @Args('content') content: string,
   ): Promise<ReplyHastageResponse> {
-    return this.hashtagService.findReplyHashtag(content)
+    return { data: await this.hashtagService.findReplyHashtag(content) }
   }
 
-  @Query(() => [ReplyHastageResponse])
+  @Query(() => ReplyHastagesResponse)
   @Auth(Role.USER)
   async findAllReplyHashtags (
     @Args('replyId', { type: () => Int }) replyId: number,
     @Args('limit', { type: () => Int, nullable: true }) limit = 10,
     @Args('skip', { type: () => Int, nullable: true }) skip = 0,
-  ): Promise<ReplyHastageResponse[]> {
-    return this.hashtagService.findAllReplyHashtag(replyId, limit, skip)
+  ): Promise<ReplyHastagesResponse> {
+    const items = await this.hashtagService.findAllReplyHashtag(
+      replyId,
+      limit,
+      skip,
+    )
+    const totalCount = await this.hashtagService.findAllReplyHashtagCount(
+      replyId,
+    )
+    return {
+      items,
+      pagination: {
+        currentPage: Math.floor(skip / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    }
   }
 
-  @Query(() => [ReplyHastageResponse])
+  @Query(() => ReplyHastagesResponse)
   @Auth(Role.USER)
   async findAllUserHashtagOnReply (
     @CurrentUser() user: CurrentUserDto,
     @Args('limit', { type: () => Int, nullable: true }) limit = 10,
     @Args('skip', { type: () => Int, nullable: true }) skip = 0,
-  ): Promise<ReplyHastageResponse[]> {
-    return this.hashtagService.findAllUserHashtagOnReply(user.id, limit, skip)
+  ): Promise<ReplyHastagesResponse> {
+    const items = await this.hashtagService.findAllUserHashtagOnReply(
+      user.id,
+      limit,
+      skip,
+    )
+
+    const totalCount = await this.hashtagService.findAllUserHashtagOnReplyCount(
+      user.id,
+    )
+    return {
+      items,
+      pagination: {
+        currentPage: Math.floor(skip / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    }
   }
 
   @Mutation(() => ReplyHastageResponse)
@@ -168,7 +279,14 @@ export class HashtagResolver {
     @Args('replyId', { type: () => Int }) replyId: number,
     @Args('content') content: string,
   ): Promise<ReplyHastageResponse> {
-    return this.hashtagService.updateHastageReply(user.id, id, replyId, content)
+    return {
+      data: await this.hashtagService.updateHastageReply(
+        user.id,
+        id,
+        replyId,
+        content,
+      ),
+    }
   }
 
   // ------------- Global-------------

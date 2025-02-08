@@ -32,9 +32,21 @@ type User {
   email: String!
 }
 
-type AuthResponse {
+type AuthOutPut {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
   user: User!
   token: String!
+}
+
+type AuthResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: AuthOutPut
 }
 
 type PostResponsee {
@@ -72,12 +84,34 @@ type CommentMentionResponsee {
   createdAt: DateTime!
 }
 
+type PaginationInfo {
+  totalPages: Int!
+  currentPage: Int!
+}
+
 type CommentResponsee {
   id: Float!
   content: String!
   post: Post!
   user: User!
   createdAt: DateTime!
+}
+
+type CommentsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [CommentResponsee!]
+  pagination: PaginationInfo
+}
+
+type CommentResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: CommentResponsee
 }
 
 type ReplyResponsee {
@@ -89,12 +123,25 @@ type ReplyResponsee {
 }
 
 type RelationResponseOutput {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
   follower: User!
   following: User!
   status: String!
 }
 
-type PostHastageResponse {
+type followsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [RelationResponseOutput!]
+  pagination: PaginationInfo
+}
+
+type PostHastageOutPut {
   id: Float!
   content: String!
   post: PostResponsee!
@@ -102,7 +149,28 @@ type PostHastageResponse {
   createdAt: DateTime!
 }
 
-type CommentHastageResponse {
+type PostHastagesResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [PostHastageOutPut!]
+  pagination: PaginationInfo
+}
+
+type PostHastageResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: PostHastageOutPut
+}
+
+type CommentHastageOutPut {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
   id: Float!
   content: String!
   comment: CommentResponsee!
@@ -110,12 +178,46 @@ type CommentHastageResponse {
   createdAt: DateTime!
 }
 
-type ReplyHastageResponse {
+type CommentHastagesResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [CommentHastageOutPut!]
+  pagination: PaginationInfo
+}
+
+type CommentHastageResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: CommentHastageOutPut
+}
+
+type ReplyHastageOutPut {
   id: Float!
   content: String!
   reply: ReplyResponsee!
   user: User!
   createdAt: DateTime!
+}
+
+type ReplyHastagesResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [ReplyHastageOutPut!]
+  pagination: PaginationInfo
+}
+
+type ReplyHastageResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: ReplyHastageOutPut
 }
 
 type NotificationOutput {
@@ -146,15 +248,15 @@ type Query {
   getUserLikedComments(pagination: PaginationDto): [Comment!]!
   getCommentLikesCount(commentId: Int!): Int!
   getRelationStatus(followingId: Float!): String!
-  getFollowers(userName: String!): [RelationResponseOutput!]!
-  getFollowings(userName: String!): [RelationResponseOutput!]!
-  getFriends: [RelationResponseOutput!]!
-  getComment(postId: Int!, content: String!): CommentResponsee!
-  getCommentsForPost(postId: Int!): [CommentResponsee!]!
+  getFollowers(userName: String!): followsResponse!
+  getFollowings(userName: String!): followsResponse!
+  getFriends: followsResponse!
+  getComment(postId: Int!, content: String!): CommentResponse!
+  getCommentsForPost(postId: Int!, limit: Float! = 10, skip: Float! = 0): CommentsResponse!
   getCountCommentPost(postId: Int!): Int!
-  getCommentsByUserOnPost(postId: Int!): [CommentResponsee!]!
-  getCommentsByUser: [CommentResponsee!]!
-  getLastComments(postId: Int!, pagination: PaginationDto): [CommentResponsee!]!
+  getCommentsByUserOnPost(postId: Int!): CommentsResponse!
+  getCommentsByUser: CommentsResponse!
+  getLastComments(postId: Int!, pagination: PaginationDto): CommentsResponse!
   getUserByComment(commentId: Int!): User!
   getPostByComment(commentId: Int!): Post!
   getReply(commentId: Float!, content: String!): ReplyResponsee!
@@ -177,14 +279,13 @@ type Query {
   getCommentMentionsForComment(commentId: Int!): [CommentMentionResponsee!]!
   isUserMentionedInComment(commentId: Int!, userName: String!): Boolean!
   findPostByHashtag(content: String!): PostHastageResponse!
-  findAllPostHashtags(postId: Float!, limit: Float! = 10, skip: Float! = 0): [PostHastageResponse!]!
-  findAllUserHashtagOnPost(limit: Float! = 10, skip: Float! = 0): [PostHastageResponse!]!
+  findAllUserHashtagOnPost(limit: Float! = 10, skip: Float! = 0): PostHastagesResponse!
   findCommentByHashtag(content: String!): CommentHastageResponse!
-  findAllCommentHashtags(commentId: Float!, limit: Float! = 10, skip: Float! = 0): [CommentHastageResponse!]!
-  findAllUserHashtagsOnComments(limit: Float! = 10, skip: Float! = 0): [CommentHastageResponse!]!
+  findAllCommentHashtags(commentId: Float!, limit: Float! = 10, skip: Float! = 0): CommentHastagesResponse!
+  findAllUserHashtagsOnComments(limit: Float! = 10, skip: Float! = 0): CommentHastagesResponse!
   findReplyHashtag(content: String!): ReplyHastageResponse
-  findAllReplyHashtags(replyId: Int!, limit: Int, skip: Int): [ReplyHastageResponse!]!
-  findAllUserHashtagOnReply(limit: Int, skip: Int): [ReplyHastageResponse!]!
+  findAllReplyHashtags(replyId: Int!, limit: Int, skip: Int): ReplyHastagesResponse!
+  findAllUserHashtagOnReply(limit: Int, skip: Int): ReplyHastagesResponse!
 }
 
 input CheckEmail {
@@ -202,8 +303,8 @@ type Mutation {
   forgotPassword(checkEmail: CheckEmail!): String!
   resetPassword(resetPasswordDto: ResetPasswordDto!): String!
   changePassword(changePasswordDto: ChangePasswordDto!): String!
-  adminLogin(loginDto: LoginDto!): AuthResponse!
-  managerLogin(loginDto: LoginDto!): AuthResponse!
+  adminLogin(fcmToken: String!, loginDto: LoginDto!): AuthResponse!
+  managerLogin(fcmToken: String!, loginDto: LoginDto!): AuthResponse!
   logout: Boolean!
   updateUser(updateUserDto: UpdateUserDto!): User!
   UpdateUserRole(checkEmail: CheckEmail!, companyId: Float!): String!
@@ -222,7 +323,7 @@ type Mutation {
   followUser(userName: String!): String!
   unfollowingUser(userName: String!): String!
   acceptFollowRequest(userName: String!, status: Boolean!): String!
-  writeComment(postId: Int!, content: String!): CommentResponsee!
+  writeComment(postId: Int!, content: String!): CommentResponse!
   updateComment(commentId: Int!, content: String!): String!
   deleteComment(commentId: Int!): String!
   writeReply(commentId: Float!, content: String!): ReplyResponsee!

@@ -5,7 +5,7 @@ import { User } from 'src/modules/users/entity/user.entity'
 import { Expose, Transform } from 'class-transformer'
 
 @InputType()
-export class PostResponse {
+export class PostInput {
   @Field()
   @IsInt()
   id: number

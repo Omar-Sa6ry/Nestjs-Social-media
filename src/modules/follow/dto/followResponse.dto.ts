@@ -1,6 +1,8 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { Expose } from 'class-transformer'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
+import { BaseResponse } from 'src/common/dtos/BaseResponse'
+import { PaginationInfo } from 'src/common/dtos/pagintion'
 import { User } from 'src/modules/users/entity/user.entity'
 
 @InputType()
@@ -17,7 +19,7 @@ export class RelationResponseInput {
 }
 
 @ObjectType()
-export class RelationResponseOutput {
+export class RelationResponseOutput extends BaseResponse {
   @Field(() => User)
   @Expose()
   follower: User
@@ -30,4 +32,23 @@ export class RelationResponseOutput {
   @IsString()
   @Expose()
   status: string
+}
+
+@ObjectType()
+export class followsResponse extends BaseResponse {
+  @Field(() => [RelationResponseOutput], { nullable: true })
+  @Expose()
+  items: RelationResponseOutput[]
+
+  @IsOptional()
+  @Field(() => PaginationInfo, { nullable: true })
+  @Expose()
+  pagination?: PaginationInfo
+}
+
+@ObjectType()
+export class followResponse extends BaseResponse {
+  @Field(() => RelationResponseOutput, { nullable: true })
+  @Expose()
+  data: RelationResponseOutput
 }

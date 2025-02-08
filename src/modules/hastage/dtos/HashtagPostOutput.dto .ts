@@ -1,14 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate, IsInt, IsString } from 'class-validator'
+import { User } from 'src/modules/users/entity/user.entity'
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator'
+import { BaseResponse } from 'src/common/dtos/BaseResponse'
 import {
-  PostResponse,
+  PostInput,
   PostResponsee,
 } from 'src/modules/post/dto/PostResponse.dto'
-import { User } from 'src/modules/users/entity/user.entity'
+import { PaginationInfo } from 'src/common/dtos/pagintion'
 
 @ObjectType()
-export class PostHastageResponse {
+export class PostHastageOutPut {
   @Field()
   @IsInt()
   @Expose()
@@ -22,7 +24,7 @@ export class PostHastageResponse {
   @Field()
   @Field(() => PostResponsee)
   @Expose()
-  post: PostResponse
+  post: PostInput
 
   @Field(() => User)
   @Expose()
@@ -35,4 +37,23 @@ export class PostHastageResponse {
     toClassOnly: true,
   })
   createdAt: Date
+}
+
+@ObjectType()
+export class PostHastagesResponse extends BaseResponse {
+  @Field(() => [PostHastageOutPut], { nullable: true })
+  @Expose()
+  items: PostHastageOutPut[]
+
+  @IsOptional()
+  @Field(() => PaginationInfo, { nullable: true })
+  @Expose()
+  pagination?: PaginationInfo
+}
+
+@ObjectType()
+export class PostHastageResponse extends BaseResponse {
+  @Field(() => PostHastageOutPut, { nullable: true })
+  @Expose()
+  data: PostHastageOutPut
 }

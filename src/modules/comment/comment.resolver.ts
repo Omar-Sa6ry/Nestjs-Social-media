@@ -1,6 +1,10 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { CommentService } from './comment.service'
-import { CommentResponsee } from './dto/CommentResponse.dto'
+import {
+  CommentResponse,
+  CommentResponsee,
+  CommentsResponse,
+} from './dto/CommentResponse.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { User } from '../users/entity/user.entity'
 import { Auth } from 'src/common/decerator/auth.decerator'
@@ -13,32 +17,46 @@ import { Post } from '../post/entity/post.entity '
 export class CommentResolver {
   constructor (private readonly commentService: CommentService) {}
 
-  @Mutation(() => CommentResponsee)
+  @Mutation(() => CommentResponse)
   @Auth(Role.USER)
   async writeComment (
     @CurrentUser() user: CurrentUserDto,
     @Args('postId', { type: () => Int }) postId: number,
     @Args('content', { type: () => String }) content: string,
-  ): Promise<CommentResponsee> {
-    return this.commentService.write(user.id, postId, content)
+  ): Promise<CommentResponse> {
+    return {
+      data: await this.commentService.write(user.id, postId, content),
+      statusCode: 201,
+    }
   }
 
-  @Query(() => CommentResponsee)
+  @Query(() => CommentResponse)
   @Auth(Role.USER)
   async getComment (
     @CurrentUser() user: CurrentUserDto,
     @Args('postId', { type: () => Int }) postId: number,
     @Args('content', { type: () => String }) content: string,
-  ): Promise<CommentResponsee> {
-    return this.commentService.get(user.id, postId, content)
+  ): Promise<CommentResponse> {
+    return { data: await this.commentService.get(user.id, postId, content) }
   }
 
-  @Query(() => [CommentResponsee])
+  @Query(() => CommentsResponse)
   @Auth(Role.USER)
   async getCommentsForPost (
     @Args('postId', { type: () => Int }) postId: number,
-  ): Promise<CommentResponsee[]> {
-    return this.commentService.getCommentPost(postId)
+    @Args('limit', { defaultValue: 10 }) limit: number,
+    @Args('skip', { defaultValue: 0 }) skip: number,
+  ): Promise<CommentsResponse> {
+    const items = await this.commentService.getCommentPost(postId, limit, skip)
+    const totalCount = await this.commentService.getCommentPostCount(postId)
+
+    return {
+      items,
+      pagination: {
+        currentPage: Math.floor(skip / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    }
   }
 
   @Query(() => Int)
@@ -49,32 +67,40 @@ export class CommentResolver {
     return this.commentService.getCountCommentPost(postId)
   }
 
-  @Query(() => [CommentResponsee])
+  @Query(() => CommentsResponse)
   @Auth(Role.USER)
   async getCommentsByUserOnPost (
     @CurrentUser() user: CurrentUserDto,
     @Args('postId', { type: () => Int }) postId: number,
-  ): Promise<CommentResponsee[]> {
-    return this.commentService.getCommentUserOnPost(user.id, postId)
+  ): Promise<CommentsResponse> {
+    return {
+      items: await this.commentService.getCommentUserOnPost(user.id, postId),
+    }
   }
 
-  @Query(() => [CommentResponsee])
+  @Query(() => CommentsResponse)
   @Auth(Role.USER)
   async getCommentsByUser (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<CommentResponsee[]> {
-    return this.commentService.getCommentUser(user.id)
+  ): Promise<CommentsResponse> {
+    return { items: await this.commentService.getCommentUser(user.id) }
   }
 
-  @Query(() => [CommentResponsee])
+  @Query(() => CommentsResponse)
   @Auth(Role.USER)
   async getLastComments (
     @CurrentUser() user: CurrentUserDto,
     @Args('postId', { type: () => Int }) postId: number,
     @Args('pagination', { type: () => PaginationDto, nullable: true })
     paginationDto?: PaginationDto,
-  ): Promise<CommentResponsee[]> {
-    return this.commentService.getLastComment(user.id, postId, paginationDto)
+  ): Promise<CommentsResponse> {
+    return {
+      items: await this.commentService.getLastComment(
+        user.id,
+        postId,
+        paginationDto,
+      ),
+    }
   }
 
   @Query(() => User)

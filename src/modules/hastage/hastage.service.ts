@@ -451,6 +451,14 @@ export class HashtagService {
     )
   }
 
+  async findAllUserHashtagOnPostCount (userId: number) {
+    const count = await this.hashtagRepository.count({
+      where: { userId, postId: Not(IsNull()) },
+    })
+
+    return count
+  }
+
   // ----------------- Comment ---------------------
 
   async createHastageComment (
@@ -787,6 +795,18 @@ export class HashtagService {
     }
   }
 
+  async findAllCommentHashtagCount (commentId: number) {
+    return await this.hashtagRepository.count({
+      where: { commentId },
+    })
+  }
+
+  async findAllUserHashtagOnCommentCount (userId: number) {
+    return await this.hashtagRepository.count({
+      where: { userId, commentId: Not(IsNull()) },
+    })
+  }
+
   // ----------------- Reply ---------------------
 
   async createHastageReply (
@@ -918,7 +938,7 @@ export class HashtagService {
     })
 
     if (hashtags.length === 0) {
-      throw new BadRequestException(NoHashtages)
+      throw new NotFoundException(NoHashtages)
     }
 
     const users = await this.userLoader.loadMany(
@@ -1120,6 +1140,18 @@ export class HashtagService {
     } finally {
       await query.release()
     }
+  }
+
+  async findAllReplyHashtagCount (replyId: number) {
+    return await this.hashtagRepository.count({
+      where: { replyId },
+    })
+  }
+
+  async findAllUserHashtagOnReplyCount (userId: number) {
+    return await this.hashtagRepository.count({
+      where: { userId, replyId: Not(IsNull()) },
+    })
   }
 
   // ------------Global--------

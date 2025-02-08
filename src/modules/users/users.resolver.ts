@@ -51,7 +51,6 @@ export class UserResolver {
     const userCacheKey = `user:${userName}`
     const cachedUser = await this.redisService.get(userCacheKey)
     if (cachedUser instanceof User) {
-      console.log(cachedUser)
       return { user: cachedUser }
     }
 

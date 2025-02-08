@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { Comment } from './entity/comment.entity '
 import { User } from '../users/entity/user.entity'
-import { CommentResponse } from './dto/CommentResponse.dto'
+import { CommentInput } from './dto/CommentResponse.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Post } from '../post/entity/post.entity '
 import DataLoader from 'dataloader'
@@ -43,7 +43,7 @@ export class CommentService {
     userId: number,
     postId: number,
     content: string,
-  ): Promise<CommentResponse> {
+  ): Promise<CommentInput> {
     const post = await this.postRepository.findOne({
       where: { id: postId },
     })
@@ -82,7 +82,7 @@ export class CommentService {
     userId: number,
     postId: number,
     content: string,
-  ): Promise<CommentResponse> {
+  ): Promise<CommentInput> {
     const comment = await this.commentRepository.findOne({
       where: {
         userId,
@@ -112,11 +112,17 @@ export class CommentService {
     return result
   }
 
-  async getCommentPost (postId: number): Promise<CommentResponse[]> {
+  async getCommentPost (
+    postId: number,
+    limit: number,
+    skip: number,
+  ): Promise<CommentInput[]> {
     const comments = await this.commentRepository.find({
       where: {
         postId,
       },
+      take: limit,
+      skip,
     })
 
     if (comments.length === 0) {
@@ -127,7 +133,7 @@ export class CommentService {
       comments.map(comment => comment.id),
     )
 
-    const result: CommentResponse[][] = await Promise.all(
+    const result: CommentInput[][] = await Promise.all(
       comments.map(async (details, index) => {
         const detail = commentDetails[index]
         if (detail instanceof Error) {
@@ -139,6 +145,14 @@ export class CommentService {
     )
 
     return result.flat()
+  }
+
+  async getCommentPostCount (postId: number) {
+    return await this.commentRepository.count({
+      where: {
+        postId,
+      },
+    })
   }
 
   async getCountCommentPost (postId: number): Promise<number> {
@@ -157,7 +171,7 @@ export class CommentService {
   async getCommentUserOnPost (
     userId: number,
     postId: number,
-  ): Promise<CommentResponse[]> {
+  ): Promise<CommentInput[]> {
     const comments = await this.commentRepository.find({
       where: {
         userId,
@@ -187,7 +201,7 @@ export class CommentService {
     return result.flat()
   }
 
-  async getCommentUser (userId: number): Promise<CommentResponse[]> {
+  async getCommentUser (userId: number): Promise<CommentInput[]> {
     const comments = await this.commentRepository.find({
       where: {
         userId,
@@ -220,7 +234,7 @@ export class CommentService {
     userId: number,
     postId: number,
     paginationDto?: PaginationDto,
-  ): Promise<CommentResponse[]> {
+  ): Promise<CommentInput[]> {
     let comments = await this.commentRepository.find({
       where: {
         userId,

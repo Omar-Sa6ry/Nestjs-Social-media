@@ -5,7 +5,7 @@ import { Auth } from 'src/common/decerator/auth.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { Block } from './entity/block.entity'
-import { BlockResponseOutput } from './dto/BlockResponse.dto'
+import { BlockResponse, BlockResponseOutput } from './dto/BlockResponse.dto'
 
 @Resolver(() => Block)
 export class BlockResolver {
@@ -29,11 +29,21 @@ export class BlockResolver {
     return this.blockService.unblock(user.id, userName)
   }
 
-  @Query(() => [BlockResponseOutput])
+  @Query(() => BlockResponse)
   @Auth(Role.USER)
   async getBlockedUsers (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<BlockResponseOutput[]> {
-    return this.blockService.getBlock(user.id)
+    @Args('limit', { defaultValue: 10 }) limit: number,
+    @Args('skip', { defaultValue: 0 }) skip: number,
+  ): Promise<BlockResponse> {
+    const items = await this.blockService.getBlock(user.id, limit, skip)
+    const totalCount = await this.blockService.Count(user.id)
+    return {
+      items,
+      pagination: {
+        currentPage: Math.floor(skip / limit) + 1,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    }
   }
 }

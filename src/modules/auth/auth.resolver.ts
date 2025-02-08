@@ -1,7 +1,7 @@
 import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import { User } from '../users/entity/user.entity'
-import { AuthResponse } from './dtos/AuthRes.dto'
+import { AuthOutPut, AuthResponse } from './dtos/AuthRes.dto'
 import { CreateUserDto } from './dtos/CreateUserData.dto'
 import { LoginDto } from './dtos/Login.dto'
 import { ResetPasswordDto } from './dtos/ResetPassword.dto'
@@ -28,30 +28,26 @@ export class AuthResolver {
     @Args('fcmToken') fcmToken: string,
     @Args('createUserDto') createUserDto: CreateUserDto,
     @Args('avatar') avatar: CreateImagDto,
-  ) {
-    const userCacheKey = `user:${createUserDto.email}`
-    const cachedUser = await this.redisService.get(userCacheKey)
-
-    if (cachedUser) {
-      return { result: cachedUser }
+  ): Promise<AuthResponse> {
+    return {
+      statusCode: 201,
+      data: await this.authService.register(fcmToken, createUserDto, avatar),
     }
-
-    return await this.authService.register(fcmToken, createUserDto, avatar)
   }
 
   @Mutation(returns => AuthResponse)
   async login (
     @Args('fcmToken') fcmToken: string,
     @Args('loginDto') loginDto: LoginDto,
-  ) {
+  ): Promise<AuthResponse> {
     const userCacheKey = `user:${loginDto.email}`
     const cachedUser = await this.redisService.get(userCacheKey)
 
-    if (cachedUser) {
-      return { result: cachedUser }
+    if (cachedUser instanceof AuthOutPut) {
+      return { data: cachedUser }
     }
 
-    return await this.authService.login(fcmToken, loginDto)
+    return { data: await this.authService.login(fcmToken, loginDto) }
   }
 
   @Mutation(returns => String)
@@ -76,27 +72,33 @@ export class AuthResolver {
   }
 
   @Mutation(returns => AuthResponse)
-  async adminLogin (@Args('loginDto') loginDto: LoginDto) {
+  async adminLogin (
+    @Args('fcmToken') fcmToken: string,
+    @Args('loginDto') loginDto: LoginDto,
+  ): Promise<AuthResponse> {
     const userCacheKey = `user:${loginDto.email}`
     const cachedUser = await this.redisService.get(userCacheKey)
 
-    if (cachedUser) {
-      return { result: cachedUser }
+    if (cachedUser instanceof AuthOutPut) {
+      return { data: cachedUser }
     }
 
-    return await this.authService.adminLogin(loginDto)
+    return { data: await this.authService.adminLogin(loginDto) }
   }
 
   @Mutation(returns => AuthResponse)
-  async managerLogin (@Args('loginDto') loginDto: LoginDto) {
+  async managerLogin (
+    @Args('fcmToken') fcmToken: string,
+    @Args('loginDto') loginDto: LoginDto,
+  ): Promise<AuthResponse> {
     const userCacheKey = `user:${loginDto.email}`
     const cachedUser = await this.redisService.get(userCacheKey)
 
-    if (cachedUser) {
-      return { result: cachedUser }
+    if (cachedUser instanceof AuthOutPut) {
+      return { data: cachedUser }
     }
 
-    return await this.authService.managerLogin(loginDto)
+    return { data: await this.authService.managerLogin(loginDto) }
   }
 
   @Mutation(() => Boolean)

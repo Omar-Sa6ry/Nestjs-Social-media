@@ -1,6 +1,9 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { FollowService } from './follow.service'
-import { RelationResponseOutput } from './dto/followResponse.dto'
+import {
+  followsResponse,
+  RelationResponseOutput,
+} from './dto/followResponse.dto'
 import { User } from '../users/entity/user.entity'
 import { Role } from 'src/common/constant/enum.constant'
 import { Auth } from 'src/common/decerator/auth.decerator'
@@ -39,28 +42,28 @@ export class FollowResolver {
     return this.followService.get(user.id, followingId)
   }
 
-  @Query(() => [RelationResponseOutput])
+  @Query(() => followsResponse)
   @Auth(Role.USER)
   async getFollowers (
     @Args('userName') userName: string,
-  ): Promise<RelationResponseOutput[]> {
-    return this.followService.getFollower(userName)
+  ): Promise<followsResponse> {
+    return { items: await this.followService.getFollower(userName) }
   }
 
-  @Query(() => [RelationResponseOutput])
+  @Query(() => followsResponse)
   @Auth(Role.USER)
   async getFollowings (
     @Args('userName') userName: string,
-  ): Promise<RelationResponseOutput[]> {
-    return this.followService.getFollowing(userName)
+  ): Promise<followsResponse> {
+    return { items: await this.followService.getFollowing(userName) }
   }
 
-  @Query(() => [RelationResponseOutput])
+  @Query(() => followsResponse)
   @Auth(Role.USER)
   async getFriends (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<RelationResponseOutput[]> {
-    return this.followService.getFriends(user.id)
+  ): Promise<followsResponse> {
+    return { items: await this.followService.getFriends(user.id) }
   }
 
   @Mutation(() => String)

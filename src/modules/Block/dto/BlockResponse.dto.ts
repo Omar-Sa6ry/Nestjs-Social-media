@@ -1,6 +1,8 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { Expose } from 'class-transformer'
-import { IsInt } from 'class-validator'
+import { IsInt, IsOptional } from 'class-validator'
+import { BaseResponse } from 'src/common/dtos/BaseResponse'
+import { PaginationInfo } from 'src/common/dtos/pagintion'
 import { User } from 'src/modules/users/entity/user.entity'
 
 @InputType()
@@ -17,7 +19,7 @@ export class BlockResponseInput {
 }
 
 @ObjectType()
-export class BlockResponseOutput {
+export class BlockResponseOutput extends BaseResponse {
   @Field()
   @IsInt()
   @Expose()
@@ -30,4 +32,16 @@ export class BlockResponseOutput {
   @Field(() => User)
   @Expose()
   following: User
+}
+
+@ObjectType()
+export class BlockResponse extends BaseResponse {
+  @Field(() => [BlockResponseOutput], { nullable: true })
+  @Expose()
+  items: BlockResponseOutput[]
+
+  @IsOptional()
+  @Field(() => PaginationInfo, { nullable: true })
+  @Expose()
+  pagination?: PaginationInfo
 }

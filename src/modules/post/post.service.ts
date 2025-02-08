@@ -11,7 +11,7 @@ import { Post } from './entity/post.entity '
 import { UploadService } from '../../common/upload/upload.service'
 import { LikeService } from '../like/like.service'
 import { User } from '../users/entity/user.entity'
-import { PostResponse } from './dto/PostResponse.dto'
+import { PostInput } from './dto/PostResponse.dto'
 import { Comment } from '../comment/entity/comment.entity '
 import { Image } from './entity/image.entity'
 import { ILike, Repository } from 'typeorm'
@@ -64,7 +64,7 @@ export class PostService {
     userId: number,
     content: string,
     createImageDto: CreateImagDto[],
-  ): Promise<PostResponse> {
+  ): Promise<PostInput> {
     if (!content && createImageDto.length === 0) {
       throw new BadRequestException(EnterContentOrImage)
     }
@@ -110,7 +110,7 @@ export class PostService {
     return result
   }
 
-  async getId (id: number): Promise<PostResponse> {
+  async getId (id: number): Promise<PostInput> {
     const post = await this.postRepository.findOne({
       where: { id },
     })
@@ -157,7 +157,7 @@ export class PostService {
   async getContent (
     content?: string,
     paginationDto?: PaginationDto,
-  ): Promise<PostResponse[]> {
+  ): Promise<PostInput[]> {
     let posts = await this.postRepository.find({
       where: { content: ILike(`${content}`) },
       order: { createdAt: 'ASC' },
@@ -220,7 +220,7 @@ export class PostService {
     return result
   }
 
-  async userPosts (userId: number): Promise<PostResponse[]> {
+  async userPosts (userId: number): Promise<PostInput[]> {
     const posts = await this.postRepository.find({
       where: { userId },
       order: { createdAt: 'ASC' },
@@ -264,7 +264,7 @@ export class PostService {
     userId: number,
     id: number,
     content: string,
-  ): Promise<PostResponse> {
+  ): Promise<PostInput> {
     if (!content) {
       throw new BadRequestException(EnterContentOrImage)
     }

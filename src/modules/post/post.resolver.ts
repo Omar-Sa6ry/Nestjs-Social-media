@@ -8,7 +8,7 @@ import { Role } from 'src/common/constant/enum.constant'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { RedisService } from 'src/common/redis/redis.service'
-import { PostResponse, PostResponsee } from './dto/PostResponse.dto'
+import { PostInput, PostResponsee } from './dto/PostResponse.dto'
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -36,7 +36,7 @@ export class PostResolver {
     const cachedPost = await this.redisService.get(postCacheKey)
     if (
       cachedPost instanceof PostResponsee ||
-      cachedPost instanceof PostResponse
+      cachedPost instanceof PostInput
     ) {
       return cachedPost
     }

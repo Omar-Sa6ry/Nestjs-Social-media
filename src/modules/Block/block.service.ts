@@ -74,9 +74,16 @@ export class BlockService {
     return `You have unblocked ${userName}`
   }
 
-  async getBlock (userId: number): Promise<BlockResponseInput[]> {
+  async getBlock (
+    userId: number,
+    limit: number,
+    skip: number,
+  ): Promise<BlockResponseInput[]> {
     const blocks = await this.blockRepository.find({
       where: { followerId: userId },
+      skip,
+      take: limit,
+      order: { id: 'DESC' },
     })
     if (blocks.length === 0) {
       throw new BadRequestException(NoBlocks)
@@ -106,5 +113,13 @@ export class BlockService {
     )
 
     return result
+  }
+
+  async Count (userId: number) {
+    const count = await this.blockRepository.count({
+      where: { followerId: userId },
+    })
+
+    return count
   }
 }

@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsDate, IsInt, IsString } from 'class-validator'
-import { PostResponse } from 'src/modules/post/dto/PostResponse.dto'
+import { PostInput } from 'src/modules/post/dto/PostResponse.dto'
 import { User } from 'src/modules/users/entity/user.entity'
 
 @InputType()
@@ -14,8 +14,8 @@ export class PostHastageResponse {
   content: string
 
   @Field()
-  @Field(() => PostResponse)
-  post: PostResponse
+  @Field(() => PostInput)
+  post: PostInput
 
   @Field(() => User)
   user: User

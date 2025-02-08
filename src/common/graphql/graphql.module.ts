@@ -1,9 +1,7 @@
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
-import { APP_FILTER } from '@nestjs/core'
 import { GraphQLModule } from '@nestjs/graphql'
 import { join } from 'path'
-import { CustomExceptionFilter } from '../filter/global.exceptionFilter'
 
 @Module({
   imports: [
@@ -13,16 +11,14 @@ import { CustomExceptionFilter } from '../filter/global.exceptionFilter'
       context: ({ req }) => ({ req }),
       playground: true,
       uploads: true,
-      // Exception Filter
-      debug: false,
+      debug: true,
+
       formatError: error => {
-        const originalerror = error.extensions.originalError || {}
-        
+        const originalError = error.extensions || {}
         return {
-          ...originalerror,
-          message: error.message,
-          timestamp: new Date().toISOString(),
-          path: error.path,
+          ...originalError,
+          stacktrace: undefined,
+          code: undefined,
         }
       },
     }),

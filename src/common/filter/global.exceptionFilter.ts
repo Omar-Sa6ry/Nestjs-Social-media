@@ -10,7 +10,6 @@ import {
 @Catch(HttpException)
 export class CustomExceptionFilter implements ExceptionFilter {
   catch (exception: HttpException, host: ArgumentsHost) {
-    console.log('🚨 CustomExceptionFilter triggered!')
 
     const gqlHost = GqlArgumentsHost.create(host)
     const path = gqlHost.getInfo().fieldName

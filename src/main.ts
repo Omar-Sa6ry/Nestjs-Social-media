@@ -4,14 +4,16 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { CustomExceptionFilter } from './common/filter/global.exceptionFilter'
 import { SerializationExceptionFilter } from './common/filter/serialize.exceptionFilter'
-import { SerializeInterceptor } from './common/interceptors/serialize'
+// import { SerializeInterceptor } from './common/interceptors/serialize'
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js'
+import { GeneralResponseInterceptor } from './common/interceptor/generalResponse.interceptor'
 
 async function bootstrap () {
   const app = await NestFactory.create(AppModule)
 
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalInterceptors(new GeneralResponseInterceptor())
   app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 5 }))
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
 
@@ -31,3 +33,4 @@ async function bootstrap () {
 }
 
 bootstrap()
+

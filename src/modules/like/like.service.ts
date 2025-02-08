@@ -9,7 +9,6 @@ import { Post } from '../post/entity/post.entity '
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { User } from '../users/entity/user.entity'
 import { Comment } from '../comment/entity/comment.entity '
-import { PostResponse } from '../post/dto/PostResponse.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
   CommentLikeExisted,
@@ -36,6 +35,7 @@ import {
   createUserLoader,
 } from 'src/common/loaders/date-loaders'
 import { Image } from '../post/entity/image.entity'
+import { PostInput } from '../post/dto/PostResponse.dto'
 
 @Injectable()
 export class LikeService {
@@ -107,7 +107,7 @@ export class LikeService {
   async userPostLikes (
     userId: number,
     paginationDto?: PaginationDto,
-  ): Promise<PostResponse[]> {
+  ): Promise<PostInput[]> {
     const postLikes = await this.likeRepository.find({
       where: { userId },
     })
