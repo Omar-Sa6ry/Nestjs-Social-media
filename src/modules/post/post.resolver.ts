@@ -8,7 +8,12 @@ import { Role } from 'src/common/constant/enum.constant'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { RedisService } from 'src/common/redis/redis.service'
-import { PostInput, PostResponsee } from './dto/PostResponse.dto'
+import {
+  PostInput,
+  PostResponse,
+  PostResponsee,
+  PostsResponse,
+} from './dto/PostResponse.dto'
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -17,58 +22,60 @@ export class PostResolver {
     private readonly postService: PostService,
   ) {}
 
-  @Mutation(() => PostResponsee)
+  @Mutation(() => PostResponse)
   @Auth(Role.USER)
   async createPost (
     @CurrentUser() user: CurrentUserDto,
     @Args('content', { type: () => String, nullable: true }) content: string,
     @Args('images', { type: () => [CreateImagDto], nullable: true })
     images: CreateImagDto[],
-  ): Promise<PostResponsee> {
-    return this.postService.create(user.id, content, images || [])
+  ): Promise<PostResponse> {
+    return {
+      data: await this.postService.create(user.id, content, images || []),
+    }
   }
 
-  @Query(() => PostResponsee)
+  @Query(() => PostResponse)
   async getPostById (
     @Args('id', { type: () => Int }) id: number,
-  ): Promise<PostResponsee> {
+  ): Promise<PostResponse> {
     const postCacheKey = `post:${id}`
     const cachedPost = await this.redisService.get(postCacheKey)
     if (
       cachedPost instanceof PostResponsee ||
       cachedPost instanceof PostInput
     ) {
-      return cachedPost
+      return { data: cachedPost }
     }
 
-    return await this.postService.getId(id)
+    return { data: await this.postService.getId(id) }
   }
 
-  @Query(() => [PostResponsee])
+  @Query(() => PostsResponse)
   async searchPosts (
     @Args('content', { type: () => String, nullable: true }) content: string,
     @Args('pagination', { type: () => PaginationDto, nullable: true })
     paginationDto: PaginationDto,
-  ): Promise<PostResponsee[]> {
-    return this.postService.getContent(content, paginationDto)
+  ): Promise<PostsResponse> {
+    return { items: await this.postService.getContent(content, paginationDto) }
   }
 
-  @Query(() => [PostResponsee])
+  @Query(() => PostsResponse)
   @Auth(Role.USER)
   async getUserPosts (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<PostResponsee[]> {
-    return this.postService.userPosts(user.id)
+  ): Promise<PostsResponse> {
+    return { items: await this.postService.userPosts(user.id) }
   }
 
-  @Mutation(() => PostResponsee)
+  @Mutation(() => PostResponse)
   @Auth(Role.USER)
   async updatePost (
     @CurrentUser() user: CurrentUserDto,
     @Args('id', { type: () => Int }) id: number,
     @Args('content', { type: () => String }) content: string,
-  ): Promise<PostResponsee> {
-    return this.postService.update(user.id, id, content)
+  ): Promise<PostResponse> {
+    return { data: await this.postService.update(user.id, id, content) }
   }
 
   @Mutation(() => String)

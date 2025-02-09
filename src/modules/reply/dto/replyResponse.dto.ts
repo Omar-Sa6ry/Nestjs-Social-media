@@ -1,11 +1,13 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate, IsInt, IsString } from 'class-validator'
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator'
+import { BaseResponse } from 'src/common/dtos/BaseResponse'
+import { PaginationInfo } from 'src/common/dtos/pagintion'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 
 @InputType()
-export class ReplyResponse {
+export class ReplyInput {
   @Field()
   @IsInt()
   id: number
@@ -26,7 +28,7 @@ export class ReplyResponse {
 }
 
 @ObjectType()
-export class ReplyResponsee {
+export class ReplyOutPut {
   @Field()
   @IsInt()
   @Expose()
@@ -52,4 +54,23 @@ export class ReplyResponsee {
     toClassOnly: true,
   })
   createdAt: Date
+}
+
+@ObjectType()
+export class ReplysResponse extends BaseResponse {
+  @Field(() => [ReplyOutPut], { nullable: true })
+  @Expose()
+  items: ReplyOutPut[]
+
+  @IsOptional()
+  @Field(() => PaginationInfo, { nullable: true })
+  @Expose()
+  pagination?: PaginationInfo
+}
+
+@ObjectType()
+export class ReplyResponse extends BaseResponse {
+  @Field(() => ReplyOutPut, { nullable: true })
+  @Expose()
+  data: ReplyOutPut
 }

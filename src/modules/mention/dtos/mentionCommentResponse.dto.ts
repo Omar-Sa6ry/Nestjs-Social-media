@@ -1,6 +1,8 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate, IsInt, IsString } from 'class-validator'
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator'
+import { BaseResponse } from 'src/common/dtos/BaseResponse'
+import { PaginationInfo } from 'src/common/dtos/pagintion'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 
 @InputType()
@@ -53,4 +55,23 @@ export class CommentMentionResponsee {
     toClassOnly: true,
   })
   createdAt: Date
+}
+
+@ObjectType()
+export class CommentsMenResponse extends BaseResponse {
+  @Field(() => [CommentMentionResponsee], { nullable: true })
+  @Expose()
+  items: CommentMentionResponsee[]
+
+  @IsOptional()
+  @Field(() => PaginationInfo, { nullable: true })
+  @Expose()
+  pagination?: PaginationInfo
+}
+
+@ObjectType()
+export class CommentMenResponse extends BaseResponse {
+  @Field(() => CommentMentionResponsee, { nullable: true })
+  @Expose()
+  data: CommentMentionResponsee
 }

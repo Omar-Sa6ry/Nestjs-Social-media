@@ -1,43 +1,44 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { ReplyService } from './reply.service'
-import { ReplyResponsee } from './dto/ReplyResponse.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { User } from '../users/entity/user.entity'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { Role } from 'src/common/constant/enum.constant'
 import { Auth } from 'src/common/decerator/auth.decerator'
+import { ReplyResponse, ReplysResponse } from './dto/ReplyResponse.dto'
+import { Reply } from './entity/reply.entity'
 
-@Resolver(() => ReplyResponsee)
+@Resolver(() => Reply)
 export class ReplyResolver {
   constructor (private readonly replyService: ReplyService) {}
 
-  @Mutation(() => ReplyResponsee)
+  @Mutation(() => ReplyResponse)
   @Auth(Role.USER)
   async writeReply (
     @CurrentUser() user: CurrentUserDto,
     @Args('commentId') commentId: number,
     @Args('content') content: string,
-  ): Promise<ReplyResponsee> {
-    return await this.replyService.write(user.id, commentId, content)
+  ): Promise<ReplyResponse> {
+    return { data: await this.replyService.write(user.id, commentId, content) }
   }
 
-  @Query(() => ReplyResponsee)
+  @Query(() => ReplyResponse)
   @Auth(Role.USER)
   async getReply (
     @CurrentUser() user: CurrentUserDto,
     @Args('commentId') commentId: number,
     @Args('content') content: string,
-  ): Promise<ReplyResponsee> {
-    return await this.replyService.get(user.id, commentId, content)
+  ): Promise<ReplyResponse> {
+    return { data: await this.replyService.get(user.id, commentId, content) }
   }
 
-  @Query(() => [ReplyResponsee])
+  @Query(() => ReplysResponse)
   @Auth(Role.USER)
   async getRepliesByComment (
     @Args('commentId') commentId: number,
-  ): Promise<ReplyResponsee[]> {
-    return await this.replyService.getCommentPost(commentId)
+  ): Promise<ReplysResponse> {
+    return { items: await this.replyService.getCommentPost(commentId) }
   }
 
   @Query(() => Number)
@@ -46,26 +47,28 @@ export class ReplyResolver {
     return await this.replyService.getCountCommentPost(commentId)
   }
 
-  @Query(() => [ReplyResponsee])
+  @Query(() => ReplysResponse)
   @Auth(Role.USER)
   async getRepliesByUser (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<ReplyResponsee[]> {
-    return await this.replyService.getCommentUser(user.id)
+  ): Promise<ReplysResponse> {
+    return { items: await this.replyService.getCommentUser(user.id) }
   }
 
-  @Query(() => [ReplyResponsee])
+  @Query(() => ReplysResponse)
   @Auth(Role.USER)
   async getLastReplies (
     @CurrentUser() user: CurrentUserDto,
     @Args('commentId') commentId: number,
     @Args('paginationDto') paginationDto: PaginationDto,
-  ): Promise<ReplyResponsee[]> {
-    return await this.replyService.getLastComment(
-      user.id,
-      commentId,
-      paginationDto,
-    )
+  ): Promise<ReplysResponse> {
+    return {
+      items: await this.replyService.getLastComment(
+        user.id,
+        commentId,
+        paginationDto,
+      ),
+    }
   }
 
   @Query(() => User)

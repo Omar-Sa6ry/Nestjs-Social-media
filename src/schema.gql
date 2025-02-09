@@ -49,6 +49,19 @@ type AuthResponse {
   data: AuthOutPut
 }
 
+type UserResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: User
+}
+
+type PaginationInfo {
+  totalPages: Int!
+  currentPage: Int!
+}
+
 type PostResponsee {
   id: Float!
   content: String!
@@ -57,6 +70,23 @@ type PostResponsee {
   comments: [Comment!]
   images: [String!]!
   createdAt: DateTime!
+}
+
+type PostsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [PostResponsee!]
+  pagination: PaginationInfo
+}
+
+type PostResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: PostResponsee
 }
 
 type MessageOutput {
@@ -68,12 +98,46 @@ type MessageOutput {
   createdAt: DateTime!
 }
 
+type MessagesResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [MessageOutput!]
+  pagination: PaginationInfo
+}
+
+type MessageResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: MessageOutput
+}
+
 type PostMentionResponsee {
   id: Float!
   mentionFrom: User!
   mentionTo: User!
   post: Post!
   createdAt: DateTime!
+}
+
+type PostsMenResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [PostMentionResponsee!]
+  pagination: PaginationInfo
+}
+
+type PostMenResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: PostMentionResponsee
 }
 
 type CommentMentionResponsee {
@@ -84,9 +148,21 @@ type CommentMentionResponsee {
   createdAt: DateTime!
 }
 
-type PaginationInfo {
-  totalPages: Int!
-  currentPage: Int!
+type CommentsMenResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [CommentMentionResponsee!]
+  pagination: PaginationInfo
+}
+
+type CommentMenResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: CommentMentionResponsee
 }
 
 type CommentResponsee {
@@ -114,12 +190,29 @@ type CommentResponse {
   data: CommentResponsee
 }
 
-type ReplyResponsee {
+type ReplyOutPut {
   id: Float!
   content: String!
   comment: Comment!
   user: User!
   createdAt: DateTime!
+}
+
+type ReplysResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [ReplyOutPut!]
+  pagination: PaginationInfo
+}
+
+type ReplyResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: ReplyOutPut
 }
 
 type RelationResponseOutput {
@@ -198,7 +291,7 @@ type CommentHastageResponse {
 type ReplyHastageOutPut {
   id: Float!
   content: String!
-  reply: ReplyResponsee!
+  reply: ReplyOutPut!
   user: User!
   createdAt: DateTime!
 }
@@ -228,19 +321,36 @@ type NotificationOutput {
   createdAt: DateTime!
 }
 
+type NotificationsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [NotificationOutput!]
+  pagination: PaginationInfo
+}
+
+type NotificationResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: NotificationOutput
+}
+
 type Query {
   sayHello: String!
-  getUserById(id: Float!): User!
-  getUserByEmail(email: CheckEmail!): User!
-  getUserByUserName(userName: String!): User!
+  getUserById(id: Float!): UserResponse!
+  getUserByEmail(email: CheckEmail!): UserResponse!
+  getUserByUserName(userName: String!): UserResponse!
   deleteUser: String!
-  getAllNotifications: [NotificationOutput!]!
-  getNotificationById(id: Int!): NotificationOutput!
-  userNotifications: [NotificationOutput!]!
-  unreadNotifications(receiverId: Int!): [NotificationOutput!]!
-  getPostById(id: Int!): PostResponsee!
-  searchPosts(content: String, pagination: PaginationDto): [PostResponsee!]!
-  getUserPosts: [PostResponsee!]!
+  getAllNotifications: NotificationsResponse!
+  getNotificationById(id: Int!): NotificationResponse!
+  userNotifications: NotificationsResponse!
+  unreadNotifications(receiverId: Int!): NotificationsResponse!
+  getPostById(id: Int!): PostResponse!
+  searchPosts(content: String, pagination: PaginationDto): PostsResponse!
+  getUserPosts: PostsResponse!
   isPostLiked(postId: Int!): Boolean!
   likedUser(pagination: PaginationDto): [PostResponsee!]!
   postLikeCount(postId: Int!): Int!
@@ -259,24 +369,24 @@ type Query {
   getLastComments(postId: Int!, pagination: PaginationDto): CommentsResponse!
   getUserByComment(commentId: Int!): User!
   getPostByComment(commentId: Int!): Post!
-  getReply(commentId: Float!, content: String!): ReplyResponsee!
-  getRepliesByComment(commentId: Float!): [ReplyResponsee!]!
+  getReply(commentId: Float!, content: String!): ReplyResponse!
+  getRepliesByComment(commentId: Float!): ReplysResponse!
   getRepliesCount(commentId: Float!): Float!
-  getRepliesByUser: [ReplyResponsee!]!
-  getLastReplies(commentId: Float!, paginationDto: PaginationDto!): [ReplyResponsee!]!
+  getRepliesByUser: ReplysResponse!
+  getLastReplies(commentId: Float!, paginationDto: PaginationDto!): ReplysResponse!
   getUserByReply(id: Float!): User!
-  chat(userName: String!): [MessageOutput!]!
-  userMessages: [MessageOutput!]!
-  unreadMessages(receiverId: Int!): [MessageOutput!]!
-  getPostMention(userName: String!, postId: Int!): PostMentionResponsee!
-  postMentionsToUser: [PostMentionResponsee!]!
-  postMentionsFromUser: [PostMentionResponsee!]!
-  mentionsForPost(postId: Int!): [PostMentionResponsee!]!
+  chat(userName: String!): MessagesResponse!
+  userMessages: MessagesResponse!
+  unreadMessages(receiverId: Int!): MessagesResponse!
+  getPostMention(userName: String!, postId: Int!): PostMenResponse!
+  postMentionsToUser: PostsMenResponse!
+  postMentionsFromUser: PostsMenResponse!
+  mentionsForPost(postId: Int!): PostsMenResponse!
   isUserPostMentioned(postId: Int!, userName: String!): Boolean!
-  getCommentMention(userName: String!, commentId: Int!): CommentMentionResponsee!
-  getCommentMentionsToUser: [CommentMentionResponsee!]!
-  getCommentMentionsFromUser: [CommentMentionResponsee!]!
-  getCommentMentionsForComment(commentId: Int!): [CommentMentionResponsee!]!
+  getCommentMention(userName: String!, commentId: Int!): CommentMenResponse!
+  getCommentMentionsToUser: CommentsMenResponse!
+  getCommentMentionsFromUser: CommentsMenResponse!
+  getCommentMentionsForComment(commentId: Int!): CommentsMenResponse!
   isUserMentionedInComment(commentId: Int!, userName: String!): Boolean!
   findPostByHashtag(content: String!): PostHastageResponse!
   findAllUserHashtagOnPost(limit: Float! = 10, skip: Float! = 0): PostHastagesResponse!
@@ -306,15 +416,15 @@ type Mutation {
   adminLogin(fcmToken: String!, loginDto: LoginDto!): AuthResponse!
   managerLogin(fcmToken: String!, loginDto: LoginDto!): AuthResponse!
   logout: Boolean!
-  updateUser(updateUserDto: UpdateUserDto!): User!
+  updateUser(updateUserDto: UpdateUserDto!): UserResponse!
   UpdateUserRole(checkEmail: CheckEmail!, companyId: Float!): String!
-  sendNotification(createNotificationDto: CreateNotificationDto!): NotificationOutput!
+  sendNotification(createNotificationDto: CreateNotificationDto!): NotificationResponse!
   markNotificationAsRead(userName: String!): String!
   markAllNotificationsAsRead(userName: String!): String!
   deleteNotification(id: Int!): String!
   deleteAllNotifications: String!
-  createPost(content: String, images: [CreateImagDto!]): PostResponsee!
-  updatePost(id: Int!, content: String!): PostResponsee!
+  createPost(content: String, images: [CreateImagDto!]): PostResponse!
+  updatePost(id: Int!, content: String!): PostResponse!
   deletePost(id: Int!): String!
   likePost(postId: Int!): String!
   unlikePost(postId: Int!): String!
@@ -326,15 +436,15 @@ type Mutation {
   writeComment(postId: Int!, content: String!): CommentResponse!
   updateComment(commentId: Int!, content: String!): String!
   deleteComment(commentId: Int!): String!
-  writeReply(commentId: Float!, content: String!): ReplyResponsee!
+  writeReply(commentId: Float!, content: String!): ReplyResponse!
   updateReply(id: Float!, content: String!): String!
   deleteReply(id: Float!): String!
-  sendMessage(createMessageDto: CreateMessageDto!): MessageOutput!
+  sendMessage(createMessageDto: CreateMessageDto!): MessageResponse!
   markMessageAsRead(userName: String!): String!
   deleteMessage(id: Int!): String!
-  createPostMention(userName: String!, postId: Int!): PostMentionResponsee!
+  createPostMention(userName: String!, postId: Int!): PostMenResponse!
   deletePostMention(userName: String!, postId: Int!): String!
-  createCommentMention(userName: String!, commentId: Int!): CommentMentionResponsee!
+  createCommentMention(userName: String!, commentId: Int!): CommentMenResponse!
   deleteCommentMention(userName: String!, commentId: Int!): String!
   createHashtagPost(postId: Float!, content: String!): PostHastageResponse!
   updateHashtagPost(id: Float!, postId: Float!, content: String!): PostHastageResponse!

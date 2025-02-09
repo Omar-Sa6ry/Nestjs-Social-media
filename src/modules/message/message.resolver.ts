@@ -6,34 +6,36 @@ import { Auth } from 'src/common/decerator/auth.decerator'
 import { Role } from 'src/common/constant/enum.constant'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
-import { MessageOutput } from './dto/message.output '
+import { MessageResponse, MessagesResponse } from './dto/message.output '
 
 @Resolver(() => Message)
 export class MessageResolver {
   constructor (private readonly messageService: MessageService) {}
 
-  @Mutation(() => MessageOutput)
+  @Mutation(() => MessageResponse)
   @Auth(Role.USER)
   async sendMessage (
     @CurrentUser() user: CurrentUserDto,
     @Args('createMessageDto') createMessageDto: CreateMessageDto,
-  ): Promise<MessageOutput> {
-    return this.messageService.send(user.id, createMessageDto)
+  ): Promise<MessageResponse> {
+    return { data: await this.messageService.send(user.id, createMessageDto) }
   }
 
-  @Query(() => [MessageOutput])
+  @Query(() => MessagesResponse)
   @Auth(Role.USER)
   async chat (
     @CurrentUser() user: CurrentUserDto,
     @Args('userName', { type: () => String }) userName: string,
-  ): Promise<MessageOutput[]> {
-    return this.messageService.chat(user.id, userName)
+  ): Promise<MessagesResponse> {
+    return { items: await this.messageService.chat(user.id, userName) }
   }
 
-  @Query(() => [MessageOutput])
+  @Query(() => MessagesResponse)
   @Auth(Role.USER)
-  async userMessages (@CurrentUser() user: CurrentUserDto): Promise<MessageOutput[]> {
-    return this.messageService.userMessages(user.id)
+  async userMessages (
+    @CurrentUser() user: CurrentUserDto,
+  ): Promise<MessagesResponse> {
+    return { items: await this.messageService.userMessages(user.id) }
   }
 
   @Mutation(() => String)
@@ -45,13 +47,13 @@ export class MessageResolver {
     return this.messageService.markMessageRead(user.id, userName)
   }
 
-  @Query(() => [MessageOutput])
+  @Query(() => MessagesResponse)
   @Auth(Role.USER)
   async unreadMessages (
     @CurrentUser() user: CurrentUserDto,
     @Args('receiverId', { type: () => Int }) receiverId: number,
-  ): Promise<MessageOutput[]> {
-    return this.messageService.gotNotRead(user.id, receiverId)
+  ): Promise<MessagesResponse> {
+    return { items: await this.messageService.gotNotRead(user.id, receiverId) }
   }
 
   @Mutation(() => String)

@@ -2,12 +2,13 @@ import * as DataLoader from 'dataloader'
 import { Injectable, Scope } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Reply } from 'src/modules/reply/entity/reply.entity '
+import { Reply } from 'src/modules/reply/entity/reply.entity'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ReplyLoader {
   constructor (
-    @InjectRepository(Reply) private readonly replyRepository: Repository<Reply>,
+    @InjectRepository(Reply)
+    private readonly replyRepository: Repository<Reply>,
   ) {}
 
   public readonly batchReplys = new DataLoader<number, Reply>(

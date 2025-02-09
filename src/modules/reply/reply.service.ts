@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { User } from '../users/entity/user.entity'
-import { ReplyResponse } from './dto/ReplyResponse.dto'
+import { ReplyInput } from './dto/ReplyResponse.dto'
 import { PaginationDto } from 'src/common/dtos/pagination.dto'
 import { Repository } from 'typeorm'
-import { Reply } from './entity/reply.entity '
+import { Reply } from './entity/reply.entity'
 import { Comment } from '../comment/entity/comment.entity '
 import { InjectRepository } from '@nestjs/typeorm'
 import { WebSocketMessageGateway } from 'src/common/websocket/websocket.gateway'
@@ -44,7 +44,7 @@ export class ReplyService {
     userId: number,
     commentId: number,
     content: string,
-  ): Promise<ReplyResponse> {
+  ): Promise<ReplyInput> {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
     })
@@ -83,7 +83,7 @@ export class ReplyService {
     userId: number,
     commentId: number,
     content: string,
-  ): Promise<ReplyResponse> {
+  ): Promise<ReplyInput> {
     const reply = await this.replyRepository.findOne({
       where: {
         userId,
@@ -113,7 +113,7 @@ export class ReplyService {
     return result
   }
 
-  async getCommentPost (commentId: number): Promise<ReplyResponse[]> {
+  async getCommentPost (commentId: number): Promise<ReplyInput[]> {
     const replys = await this.replyRepository.find({
       where: {
         commentId,
@@ -168,7 +168,7 @@ export class ReplyService {
     return replys.length
   }
 
-  async getCommentUser (userId: number): Promise<ReplyResponse[]> {
+  async getCommentUser (userId: number): Promise<ReplyInput[]> {
     const replys = await this.replyRepository.find({
       where: {
         userId,
@@ -214,7 +214,7 @@ export class ReplyService {
     userId: number,
     commentId: number,
     paginationDto?: PaginationDto,
-  ): Promise<ReplyResponse[]> {
+  ): Promise<ReplyInput[]> {
     let replys = await this.replyRepository.find({
       where: {
         userId,

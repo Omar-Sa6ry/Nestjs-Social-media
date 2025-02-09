@@ -6,53 +6,60 @@ import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { Auth } from 'src/common/decerator/auth.decerator'
 import { Role } from 'src/common/constant/enum.constant'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
-import { NotificationOutput } from './dto/notification.output'
+import {
+  NotificationResponse,
+  NotificationsResponse,
+} from './dto/notification.output'
 
 @Resolver(() => Notification)
 export class NotificationResolver {
   constructor (private readonly notificationService: NotificationService) {}
 
-  @Mutation(() => NotificationOutput)
+  @Mutation(() => NotificationResponse)
   @Auth(Role.USER)
   async sendNotification (
     @CurrentUser() user: CurrentUserDto,
     @Args('createNotificationDto') createNotificationDto: CreateNotificationDto,
-  ): Promise<NotificationOutput> {
-    return this.notificationService.send(user.id, createNotificationDto)
+  ): Promise<NotificationResponse> {
+    return {
+      data: await this.notificationService.send(user.id, createNotificationDto),
+    }
   }
 
-  @Query(() => [NotificationOutput])
+  @Query(() => NotificationsResponse)
   @Auth(Role.USER)
   async getAllNotifications (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<NotificationOutput[]> {
-    return this.notificationService.getAll(user.id)
+  ): Promise<NotificationsResponse> {
+    return { items: await this.notificationService.getAll(user.id) }
   }
 
-  @Query(() => NotificationOutput)
+  @Query(() => NotificationResponse)
   @Auth(Role.USER)
   async getNotificationById (
     @CurrentUser() user: CurrentUserDto,
     @Args('id', { type: () => Int }) id: number,
-  ): Promise<NotificationOutput> {
-    return this.notificationService.get(user.id, id)
+  ): Promise<NotificationResponse> {
+    return { data: await this.notificationService.get(user.id, id) }
   }
 
-  @Query(() => [NotificationOutput])
+  @Query(() => NotificationsResponse)
   @Auth(Role.USER)
   async userNotifications (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<NotificationOutput[]> {
-    return this.notificationService.userNotifications(user.id)
+  ): Promise<NotificationsResponse> {
+    return { items: await this.notificationService.userNotifications(user.id) }
   }
 
-  @Query(() => [NotificationOutput])
+  @Query(() => NotificationsResponse)
   @Auth(Role.USER)
   async unreadNotifications (
     @CurrentUser() user: CurrentUserDto,
     @Args('receiverId', { type: () => Int }) receiverId: number,
-  ): Promise<NotificationOutput[]> {
-    return this.notificationService.gotNotRead(user.id, receiverId)
+  ): Promise<NotificationsResponse> {
+    return {
+      items: await this.notificationService.gotNotRead(user.id, receiverId),
+    }
   }
 
   @Mutation(() => String)

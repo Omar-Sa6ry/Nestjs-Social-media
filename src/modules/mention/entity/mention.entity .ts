@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Post } from '../../post/entity/post.entity '
-import { Reply } from 'src/modules/reply/entity/reply.entity '
+import { Reply } from 'src/modules/reply/entity/reply.entity'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { User } from 'src/modules/users/entity/user.entity'
 import {
@@ -20,8 +20,8 @@ import { Transform } from 'class-transformer'
 @Entity()
 @ObjectType()
 @Index('idx_userId_to', ['userId', 'to'], { unique: true })
-@Index('idx_mention_postId', ['postId']) 
-@Index('idx_mention_userId', ['commentId']) 
+@Index('idx_mention_postId', ['postId'])
+@Index('idx_mention_userId', ['commentId'])
 export class Mention {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
@@ -65,9 +65,10 @@ export class Mention {
 
   @CreateDateColumn()
   @Field(() => Date)
-   @Transform(({ value }) => new Date(value).toLocaleString(), {
-     toClassOnly: true,
-   }) createdAt: Date
+  @Transform(({ value }) => new Date(value).toLocaleString(), {
+    toClassOnly: true,
+  })
+  createdAt: Date
 
   @AfterInsert()
   logInsert () {

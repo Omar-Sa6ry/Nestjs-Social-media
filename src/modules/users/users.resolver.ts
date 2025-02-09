@@ -1,11 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { User } from './entity/user.entity'
 import { UserService } from './users.service'
-import {
-  ParseIntPipe,
-  UseInterceptors,
-  ClassSerializerInterceptor,
-} from '@nestjs/common'
+import { ParseIntPipe } from '@nestjs/common'
 import { UpdateUserDto } from './dtos/UpdateUser.dto'
 import { Role } from 'src/common/constant/enum.constant'
 import { CheckEmail } from 'src/common/dtos/checkEmail.dto '
@@ -13,6 +9,7 @@ import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
 import { RedisService } from 'src/common/redis/redis.service'
 import { Auth } from 'src/common/decerator/auth.decerator'
+import { UserResponse } from './dtos/UserResponse.dto'
 
 @Resolver(() => User)
 export class UserResolver {
@@ -21,49 +18,55 @@ export class UserResolver {
     private readonly redisService: RedisService,
   ) {}
 
-  @Query(returns => User)
+  @Query(returns => UserResponse)
   @Auth(Role.ADMIN, Role.MANAGER)
-  async getUserById (@Args('id', ParseIntPipe) id: number) {
+  async getUserById (
+    @Args('id', ParseIntPipe) id: number,
+  ): Promise<UserResponse> {
     const userCacheKey = `user:${id}`
     const cachedUser = await this.redisService.get(userCacheKey)
-    if (cachedUser) {
-      return { user: cachedUser }
+    if (cachedUser instanceof User) {
+      return { data: cachedUser }
     }
 
-    return await this.usersService.findById(id)
+    return { data: await this.usersService.findById(id) }
   }
 
-  @Query(returns => User)
+  @Query(returns => UserResponse)
   @Auth(Role.ADMIN, Role.MANAGER)
-  async getUserByEmail (@Args('email') checkEmail: CheckEmail) {
+  async getUserByEmail (
+    @Args('email') checkEmail: CheckEmail,
+  ): Promise<UserResponse> {
     const email: string = checkEmail.email
     const userCacheKey = `user:${email}`
     const cachedUser = await this.redisService.get(userCacheKey)
-    if (cachedUser) {
-      return { user: cachedUser }
+    if (cachedUser instanceof User) {
+      return { data: cachedUser }
     }
 
-    return await this.usersService.findByEmail(email)
+    return { data: await this.usersService.findByEmail(email) }
   }
 
-  @Query(returns => User)
-  async getUserByUserName (@Args('userName') userName: string) {
+  @Query(returns => UserResponse)
+  async getUserByUserName (
+    @Args('userName') userName: string,
+  ): Promise<UserResponse> {
     const userCacheKey = `user:${userName}`
     const cachedUser = await this.redisService.get(userCacheKey)
     if (cachedUser instanceof User) {
-      return { user: cachedUser }
+      return { data: cachedUser }
     }
 
-    return await this.usersService.findByUserName(userName)
+    return { data: await this.usersService.findByUserName(userName) }
   }
 
-  @Mutation(returns => User)
+  @Mutation(returns => UserResponse)
   @Auth(Role.ADMIN, Role.MANAGER)
   async updateUser (
     @Args('updateUserDto') updateUserDto: UpdateUserDto,
     @CurrentUser() user: CurrentUserDto,
-  ) {
-    return await this.usersService.updateUser(updateUserDto, user?.id)
+  ): Promise<UserResponse> {
+    return { data: await this.usersService.updateUser(updateUserDto, user?.id) }
   }
 
   @Query(returns => String)

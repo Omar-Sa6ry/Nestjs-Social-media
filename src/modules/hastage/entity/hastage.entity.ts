@@ -2,7 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Transform } from 'class-transformer'
 import { Comment } from 'src/modules/comment/entity/comment.entity '
 import { Post } from 'src/modules/post/entity/post.entity '
-import { Reply } from 'src/modules/reply/entity/reply.entity '
+import { Reply } from 'src/modules/reply/entity/reply.entity'
 import { User } from 'src/modules/users/entity/user.entity'
 import {
   Entity,

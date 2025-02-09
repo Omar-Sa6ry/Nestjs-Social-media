@@ -2,11 +2,17 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { Role } from 'src/common/constant/enum.constant'
 import { Auth } from 'src/common/decerator/auth.decerator'
 import { CurrentUser } from 'src/common/decerator/currentUser.decerator'
-import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
-import { PostMentionResponsee } from './dtos/MentionPostResponse.dto'
 import { Mention } from './entity/mention.entity '
 import { MentionService } from './mention.service'
-import { CommentMentionResponsee } from './dtos/MentionCommentResponse.dto'
+import { CurrentUserDto } from 'src/common/dtos/currentUser.dto'
+import {
+  PostMenResponse,
+  PostsMenResponse,
+} from './dtos/MentionPostResponse.dto'
+import {
+  CommentMenResponse,
+  CommentsMenResponse,
+} from './dtos/MentionCommentResponse.dto'
 
 @Resolver(() => Mention)
 export class MentionResolver {
@@ -14,52 +20,56 @@ export class MentionResolver {
 
   // -----------Post----------
 
-  @Mutation(() => PostMentionResponsee)
+  @Mutation(() => PostMenResponse)
   @Auth(Role.USER)
   async createPostMention (
     @CurrentUser() user: CurrentUserDto,
     @Args('userName', { type: () => String }) userName: string,
     @Args('postId', { type: () => Int }) postId: number,
-  ): Promise<PostMentionResponsee> {
-    return await this.mentionService.createPostMention(
-      user.id,
-      userName,
-      postId,
-    )
+  ): Promise<PostMenResponse> {
+    return {
+      data: await this.mentionService.createPostMention(
+        user.id,
+        userName,
+        postId,
+      ),
+    }
   }
 
-  @Query(() => PostMentionResponsee)
+  @Query(() => PostMenResponse)
   @Auth(Role.USER)
   async getPostMention (
     @CurrentUser() user: CurrentUserDto,
     @Args('userName', { type: () => String }) userName: string,
     @Args('postId', { type: () => Int }) postId: number,
-  ): Promise<PostMentionResponsee> {
-    return this.mentionService.getPostMention(user.id, userName, postId)
+  ): Promise<PostMenResponse> {
+    return {
+      data: await this.mentionService.getPostMention(user.id, userName, postId),
+    }
   }
 
-  @Query(() => [PostMentionResponsee])
+  @Query(() => PostsMenResponse)
   @Auth(Role.USER)
   async postMentionsToUser (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<PostMentionResponsee[]> {
-    return this.mentionService.getToPost(user.id)
+  ): Promise<PostsMenResponse> {
+    return { items: await this.mentionService.getToPost(user.id) }
   }
 
-  @Query(() => [PostMentionResponsee])
+  @Query(() => PostsMenResponse)
   @Auth(Role.USER)
   async postMentionsFromUser (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<PostMentionResponsee[]> {
-    return this.mentionService.getFromPost(user.id)
+  ): Promise<PostsMenResponse> {
+    return { items: await this.mentionService.getFromPost(user.id) }
   }
 
-  @Query(() => [PostMentionResponsee])
+  @Query(() => PostsMenResponse)
   @Auth(Role.USER)
   async mentionsForPost (
     @Args('postId', { type: () => Int }) postId: number,
-  ): Promise<PostMentionResponsee[]> {
-    return this.mentionService.getPost(postId)
+  ): Promise<PostsMenResponse> {
+    return { items: await this.mentionService.getPost(postId) }
   }
 
   @Query(() => Boolean)
@@ -83,52 +93,60 @@ export class MentionResolver {
 
   // --------------------comment----------------------
 
-  @Mutation(() => CommentMentionResponsee)
+  @Mutation(() => CommentMenResponse)
   @Auth(Role.USER)
   async createCommentMention (
     @CurrentUser() user: CurrentUserDto,
     @Args('userName', { type: () => String }) userName: string,
     @Args('commentId', { type: () => Int }) commentId: number,
-  ): Promise<CommentMentionResponsee> {
-    return this.mentionService.createCommentMention(
-      user.id,
-      userName,
-      commentId,
-    )
+  ): Promise<CommentMenResponse> {
+    return {
+      data: await this.mentionService.createCommentMention(
+        user.id,
+        userName,
+        commentId,
+      ),
+    }
   }
 
-  @Query(() => CommentMentionResponsee)
+  @Query(() => CommentMenResponse)
   @Auth(Role.USER)
   async getCommentMention (
     @CurrentUser() user: CurrentUserDto,
     @Args('userName', { type: () => String }) userName: string,
     @Args('commentId', { type: () => Int }) commentId: number,
-  ): Promise<CommentMentionResponsee> {
-    return this.mentionService.getMentionComment(user.id, userName, commentId)
+  ): Promise<CommentMenResponse> {
+    return {
+      data: await this.mentionService.getMentionComment(
+        user.id,
+        userName,
+        commentId,
+      ),
+    }
   }
 
-  @Query(() => [CommentMentionResponsee])
+  @Query(() => CommentsMenResponse)
   @Auth(Role.USER)
   async getCommentMentionsToUser (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<CommentMentionResponsee[]> {
-    return this.mentionService.getToComment(user.id)
+  ): Promise<CommentsMenResponse> {
+    return { items: await this.mentionService.getToComment(user.id) }
   }
 
-  @Query(() => [CommentMentionResponsee])
+  @Query(() => CommentsMenResponse)
   @Auth(Role.USER)
   async getCommentMentionsFromUser (
     @CurrentUser() user: CurrentUserDto,
-  ): Promise<CommentMentionResponsee[]> {
-    return this.mentionService.getFromComment(user.id)
+  ): Promise<CommentsMenResponse> {
+    return { items: await this.mentionService.getFromComment(user.id) }
   }
 
-  @Query(() => [CommentMentionResponsee])
+  @Query(() => CommentsMenResponse)
   @Auth(Role.USER)
   async getCommentMentionsForComment (
     @Args('commentId', { type: () => Int }) commentId: number,
-  ): Promise<CommentMentionResponsee[]> {
-    return this.mentionService.getComment(commentId)
+  ): Promise<CommentsMenResponse> {
+    return { items: await this.mentionService.getComment(commentId) }
   }
 
   @Query(() => Boolean)

@@ -11,7 +11,7 @@ import { Message } from 'src/modules/message/entity/message.entity'
 import { Notification } from 'src/modules/notification/entity/notification.entity'
 import { Image } from 'src/modules/post/entity/image.entity'
 import { Post } from 'src/modules/post/entity/post.entity '
-import { Reply } from 'src/modules/reply/entity/reply.entity '
+import { Reply } from 'src/modules/reply/entity/reply.entity'
 import { User } from 'src/modules/users/entity/user.entity'
 
 @Module({

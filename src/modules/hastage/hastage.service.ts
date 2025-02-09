@@ -34,7 +34,7 @@ import {
 } from 'src/common/loaders/date-loaders'
 import { PostLoader } from './loader/post.loader'
 import { CommentHastageResponse } from './dtos/HashtagCommentResponse.dto '
-import { Reply } from '../reply/entity/reply.entity '
+import { Reply } from '../reply/entity/reply.entity'
 import { ReplyHastageResponse } from './dtos/HashtagReplyResponse.dto  '
 import { ReplyLoader } from './loader/reply.loader '
 import { CommentLoader } from './loader/comment.loader '
